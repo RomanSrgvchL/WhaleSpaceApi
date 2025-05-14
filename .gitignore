@@ -1,0 +1,5 @@
+/.idea/
+/target/
+/src/main/resources/application.properties
+/src/main/resources/initial_data.sql
+/HELP.md

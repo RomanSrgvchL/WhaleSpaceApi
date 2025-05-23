@@ -17,8 +17,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
-    private static final String BAD_CREDENTIALS = "Invalid password or username";
-    private static final String UNAUTHORIZED = "User is not authenticated";
+    private static final String BAD_CREDENTIALS = "Неверное имя пользователя или пароль";
+    private static final String UNAUTHORIZED = "Пользователь не аутентифицирован";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
@@ -27,7 +27,10 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
 
         UserResponseDto userResponseDto = new UserResponseDto(false, message);
 
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
         objectMapper.writeValue(response.getWriter(), userResponseDto);
     }
 }

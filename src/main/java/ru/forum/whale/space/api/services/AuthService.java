@@ -45,7 +45,7 @@ public class AuthService {
         HttpSession newSession = request.getSession(true);
         newSession.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
-        return new UserResponseDto(true, "Login successful");
+        return new UserResponseDto(true, "Вход выполнен успешно");
     }
 
     @Transactional
@@ -58,10 +58,10 @@ public class AuthService {
 
         peopleRepository.save(person);
 
-        return new UserResponseDto(true, "Registration successful");
+        return new UserResponseDto(true, "Регистрация прошла успешно");
     }
 
-    private Person convertToPerson(UserRequestDto userRequestDto) {
+    public Person convertToPerson(UserRequestDto userRequestDto) {
         return modelMapper.map(userRequestDto, Person.class);
     }
 }

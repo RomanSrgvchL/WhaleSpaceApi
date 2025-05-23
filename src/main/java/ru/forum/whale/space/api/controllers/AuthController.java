@@ -11,14 +11,14 @@ import ru.forum.whale.space.api.dto.request.UserRequestDto;
 import ru.forum.whale.space.api.dto.response.UserResponseDto;
 import ru.forum.whale.space.api.services.AuthService;
 import ru.forum.whale.space.api.util.ErrorsUtil;
-import ru.forum.whale.space.api.util.PersonValidator;
+import ru.forum.whale.space.api.util.UserRequestDtoValidator;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final PersonValidator personValidator;
+    private final UserRequestDtoValidator userRequestDtoValidator;
 
     @GetMapping("/check")
     public ResponseEntity<UserResponseDto> checkLoginStatus () {
@@ -42,7 +42,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> performRegistration(@RequestBody @Valid UserRequestDto userRequestDto,
                                                                BindingResult bindingResult) {
-        personValidator.validate(userRequestDto, bindingResult);
+        userRequestDtoValidator.validate(userRequestDto, bindingResult);
         if (bindingResult.hasErrors()) {
             return buildValidationErrorResponse(bindingResult);
         }

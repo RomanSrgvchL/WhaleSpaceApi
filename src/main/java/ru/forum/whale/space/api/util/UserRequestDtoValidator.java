@@ -4,22 +4,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import ru.forum.whale.space.api.dto.PersonDto;
 import ru.forum.whale.space.api.dto.request.UserRequestDto;
-import ru.forum.whale.space.api.models.Person;
 import ru.forum.whale.space.api.services.PeopleService;
 
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class PersonValidator implements Validator {
+public class UserRequestDtoValidator implements Validator {
     private final PeopleService registrationService;
 
     @Override
     public void validate(Object target, Errors errors) {
-        Optional<Person> person = registrationService.findByUsername(((UserRequestDto) target).getUsername());
-        if (person.isPresent()) {
-            errors.rejectValue("username", "", "This username is already taken");
+        Optional<PersonDto> personDto = registrationService.findByUsername(((UserRequestDto) target).getUsername());
+        if (personDto.isPresent()) {
+            errors.rejectValue("username", "", "Это имя уже занято");
         }
     }
 

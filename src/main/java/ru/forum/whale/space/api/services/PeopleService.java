@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.forum.whale.space.api.dto.PersonDTO;
+import ru.forum.whale.space.api.dto.PersonDto;
 import ru.forum.whale.space.api.models.Person;
 import ru.forum.whale.space.api.repositories.PeopleRepository;
 
@@ -19,23 +19,27 @@ public class PeopleService {
     private final PeopleRepository peopleRepository;
     private final ModelMapper modelMapper;
 
-    public Optional<Person> findByUsername(String username) {
-        return peopleRepository.findByUsername(username);
+    public Optional<PersonDto> findById(int id) {
+        return peopleRepository.findById(id).map(this::convertToPersonDto);
     }
 
-    public List<PersonDTO> findAll() {
+    public Optional<PersonDto> findByUsername(String username) {
+        return peopleRepository.findByUsername(username).map(this::convertToPersonDto);
+    }
+
+    public List<PersonDto> findAll() {
         return peopleRepository.findAll().stream()
-                .map(this::convertToPersonDTO)
+                .map(this::convertToPersonDto)
                 .collect(Collectors.toList());
     }
 
-    public List<PersonDTO> findAllByCreatedAtDesc() {
+    public List<PersonDto> findAllByCreatedAtDesc() {
         return peopleRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(this::convertToPersonDTO)
+                .map(this::convertToPersonDto)
                 .collect(Collectors.toList());
     }
 
-    private PersonDTO convertToPersonDTO(Person person) {
-        return modelMapper.map(person, PersonDTO.class);
+    public PersonDto convertToPersonDto(Person person) {
+        return modelMapper.map(person, PersonDto.class);
     }
 }

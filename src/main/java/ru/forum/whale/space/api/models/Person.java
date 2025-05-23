@@ -8,25 +8,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(name = "person")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Person {
+public class Person implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @NotBlank
-    @Size(max = 20)
+    @NotBlank(message = "Имя пользователя не должно быть пустым")
+    @Size(max = 20, message = "Имя пользователя не должно содержать более 20 символов")
     @Column(name = "username")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Пароль не должен быть пустым")
     @Column(name = "password")
     private String password;
 

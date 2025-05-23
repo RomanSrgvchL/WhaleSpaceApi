@@ -31,16 +31,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register",
-                                "/people", "people/createdAtDesc", "/error").permitAll()
+                                "/people", "/people/createdAtDesc", "/error").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(authEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpStatus.NO_CONTENT.value());
-                        }));
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.setStatus(HttpStatus.NO_CONTENT.value())));
 
         return http.build();
     }

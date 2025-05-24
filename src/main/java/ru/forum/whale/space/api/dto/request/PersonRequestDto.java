@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UsernameRequestDto {
+public class PersonRequestDto {
     @NotBlank(message = "Имя пользователя не должно быть пустым")
     @Size(max = 20, message = "Имя пользователя не должно содержать более 20 символов")
     String username;

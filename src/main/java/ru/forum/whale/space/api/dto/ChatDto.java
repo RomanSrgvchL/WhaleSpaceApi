@@ -13,9 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatDto {
     @NotNull
-    private int id;
-
-    private List<MessageDto> messages;
+    private Integer id;
 
     @NotNull
     private PersonDto user1;
@@ -25,4 +23,6 @@ public class ChatDto {
 
     @NotNull
     private LocalDateTime createdAt;
+
+    private List<MessageDto> messages;
 }

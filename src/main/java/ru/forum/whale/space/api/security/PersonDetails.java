@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.forum.whale.space.api.models.Person;
+import ru.forum.whale.space.api.model.Person;
 
 import java.util.Collection;
 import java.util.Collections;

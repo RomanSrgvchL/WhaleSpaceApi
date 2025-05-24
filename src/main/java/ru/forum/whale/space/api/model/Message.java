@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.models;
+package ru.forum.whale.space.api.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +19,7 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @NotNull
     @ManyToOne
@@ -32,7 +32,7 @@ public class Message {
     private Person sender;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
-    @Size(max = 200, message="Длина сообщения не должна превышать 200 символов")
+    @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")
     @Column(name = "content")
     private String content;
 

@@ -11,13 +11,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class MessageRequestDto {
-    @NotNull
+    @NotNull(message = "Не указан id чата")
     private Integer chatId;
 
-    @NotNull
+    @NotNull(message = "Не указан id отправителя")
     private Integer senderId;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
-    @Size(max = 200, message="Длина сообщения не должна превышать 200 символов")
+    @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")
     private String content;
 }

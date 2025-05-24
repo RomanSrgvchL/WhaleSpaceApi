@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.controllers;
+package ru.forum.whale.space.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -6,9 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.PersonDto;
-import ru.forum.whale.space.api.dto.request.UsernameRequestDto;
+import ru.forum.whale.space.api.dto.request.PersonRequestDto;
+import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.security.PersonDetails;
-import ru.forum.whale.space.api.services.PeopleService;
+import ru.forum.whale.space.api.service.PersonService;
 
 import java.util.Iterator;
 import java.util.List;
@@ -18,17 +19,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/people")
 @RequiredArgsConstructor
-public class PeopleController {
-    private final PeopleService peopleService;
+public class PersonController {
+    private final PersonService personService;
 
     @GetMapping
     public ResponseEntity<List<PersonDto>> getAllPeople() {
-        return getAllPeople(peopleService.findAll());
+        return getAllPeople(personService.findAll());
     }
 
     @GetMapping("/createdAtDesc")
     public ResponseEntity<List<PersonDto>> getPeopleByCreatedAtDesc() {
-        return getAllPeople(peopleService.findAllByCreatedAtDesc());
+        return getAllPeople(personService.findAllByCreatedAtDesc());
     }
 
     private ResponseEntity<List<PersonDto>> getAllPeople(List<PersonDto> people) {
@@ -40,20 +41,22 @@ public class PeopleController {
                 break;
             }
         }
-        return ResponseEntity.ok(people);
+        return ResponseEntity.status(HttpStatus.OK).body(people);
     }
 
     @GetMapping("/yourself")
     public ResponseEntity<PersonDto> getYourself() {
         PersonDetails personDetails = (PersonDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-        return new ResponseEntity<>(peopleService.convertToPersonDto(personDetails.getPerson()), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(personService.convertToPersonDto(personDetails.getPerson()));
     }
 
     @PostMapping("/byName")
-    public ResponseEntity<PersonDto> getByName(@RequestBody UsernameRequestDto usernameRequestDto) {
-        Optional<PersonDto> personDto = peopleService.findByUsername(usernameRequestDto.getUsername());
-        return personDto.map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<PersonDto> getByName(@RequestBody PersonRequestDto personRequestDto) {
+        Optional<PersonDto> personDto = personService.findByUsername(personRequestDto.getUsername());
+        if (personDto.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(personDto.get());
+        }
+        throw new ResourceNotFoundException("Пользователь не найден");
     }
 }

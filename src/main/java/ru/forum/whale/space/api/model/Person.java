@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.models;
+package ru.forum.whale.space.api.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +24,7 @@ public class Person implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Имя пользователя не должно быть пустым")
     @Size(max = 20, message = "Имя пользователя не должно содержать более 20 символов")

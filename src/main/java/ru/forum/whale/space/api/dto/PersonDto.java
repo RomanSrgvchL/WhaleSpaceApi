@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PersonDto {
     @NotNull
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Имя пользователя не должно быть пустым")
     @Size(max = 20, message = "Имя пользователя не должно содержать более 20 символов")

@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.controllers;
+package ru.forum.whale.space.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,6 @@ public class HomeController {
     @GetMapping("/home")
     public ResponseEntity<Map<String, String>> home() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return new ResponseEntity<>(Map.of("username", username), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("username", username));
     }
 }

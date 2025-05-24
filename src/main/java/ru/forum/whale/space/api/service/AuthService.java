@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.services;
+package ru.forum.whale.space.api.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.request.UserRequestDto;
 import ru.forum.whale.space.api.dto.response.UserResponseDto;
-import ru.forum.whale.space.api.models.Person;
-import ru.forum.whale.space.api.repositories.PeopleRepository;
+import ru.forum.whale.space.api.model.Person;
+import ru.forum.whale.space.api.repository.PersonRepository;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
-    private final PeopleRepository peopleRepository;
+    private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final ModelMapper modelMapper;
@@ -45,7 +45,7 @@ public class AuthService {
         HttpSession newSession = request.getSession(true);
         newSession.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
-        return new UserResponseDto(true, "Вход выполнен успешно");
+        return new UserResponseDto(true, "Вход выполнен успешно!");
     }
 
     @Transactional
@@ -56,9 +56,9 @@ public class AuthService {
         person.setCreatedAt(LocalDateTime.now());
         person.setRole("ROLE_USER");
 
-        peopleRepository.save(person);
+        personRepository.save(person);
 
-        return new UserResponseDto(true, "Регистрация прошла успешно");
+        return new UserResponseDto(true, "Регистрация прошла успешно!");
     }
 
     public Person convertToPerson(UserRequestDto userRequestDto) {

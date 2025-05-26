@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:17.5-bookworm
+    container_name: postgres-datasource
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:8.0.1-bookworm
+    container_name: redis-sessions
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  backend:
+    image: whale-space-api:latest
+    container_name: whale-space-api
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app-network
+
+  frontend:
+    image: whale-space-frontend:latest
+    container_name: whale-space-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

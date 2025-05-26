@@ -1,5 +1,7 @@
 /.idea/
 /target/
-/src/main/resources/dev.env
+/.env
+/dev.env
 /src/main/resources/init.sql
 /HELP.md
+/notes.txt

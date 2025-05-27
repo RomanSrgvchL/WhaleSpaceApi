@@ -24,7 +24,7 @@ public class WebSocketMessageController {
     private final Validator validator;
 
     @MessageMapping("/sendMessage")
-    public void sendMessage(MessageRequestDto messageRequestDto, Principal principal) {
+    public void send(MessageRequestDto messageRequestDto, Principal principal) {
         int chatId = messageRequestDto.getChatId();
 
         Set<ConstraintViolation<MessageRequestDto>> violations = validator.validate(messageRequestDto);
@@ -51,7 +51,7 @@ public class WebSocketMessageController {
             return;
         }
 
-        response = new MessageResponseDto(false, "Несуществующий чат или отправитель");
+        response = new MessageResponseDto(false, "Чат или отправитель не найдены");
         messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", response);
     }
 }

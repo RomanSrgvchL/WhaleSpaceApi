@@ -6,20 +6,20 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.forum.whale.space.api.model.Person;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class MessageDto {
+public class ReplyDto {
     @NotNull
-    private PersonDto sender;
+    private Person sender;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
     @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")
     private String content;
 
-    @NotNull
     private LocalDateTime createdAt;
 }

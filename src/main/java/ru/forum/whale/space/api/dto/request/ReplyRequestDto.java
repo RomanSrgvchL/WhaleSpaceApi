@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.dto;
+package ru.forum.whale.space.api.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,19 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
-public class MessageDto {
-    @NotNull
-    private PersonDto sender;
+public class ReplyRequestDto {
+    @NotNull(message = "Не указан id обсуждения")
+    private Integer discussionId;
+
+    @NotNull(message = "Не указан id отправителя")
+    private Integer senderId;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
     @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")
     private String content;
-
-    @NotNull
-    private LocalDateTime createdAt;
 }

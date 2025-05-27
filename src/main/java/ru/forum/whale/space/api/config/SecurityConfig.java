@@ -31,7 +31,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register",
-                                "/people", "/people/createdAtDesc").permitAll()
+                                "/people", "/people/createdAtDesc",
+                                "/discussions", "/discussions/createdAtDesc")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(authEntryPoint))

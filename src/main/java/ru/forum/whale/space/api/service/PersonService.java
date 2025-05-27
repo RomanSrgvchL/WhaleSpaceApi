@@ -19,10 +19,6 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
 
-    public Optional<PersonDto> findById(int id) {
-        return personRepository.findById(id).map(this::convertToPersonDto);
-    }
-
     public Optional<PersonDto> findByUsername(String username) {
         return personRepository.findByUsername(username).map(this::convertToPersonDto);
     }

@@ -51,10 +51,6 @@ public class ChatService {
         throw new InvalidInputDataException("Невозможно найти чат: один или оба указанных пользователя не найдены");
     }
 
-    public ChatDto convertToChatDto(Chat chat) {
-        return modelMapper.map(chat, ChatDto.class);
-    }
-
     @Transactional
     public Integer save(int userId1, int userId2) {
         int minUserId = Math.min(userId1, userId2);
@@ -68,5 +64,9 @@ public class ChatService {
             return chat.getId() ;
         }
         throw new InvalidInputDataException("Невозможно создать чат: один или оба указанных пользователя не найдены");
+    }
+
+    public ChatDto convertToChatDto(Chat chat) {
+        return modelMapper.map(chat, ChatDto.class);
     }
 }

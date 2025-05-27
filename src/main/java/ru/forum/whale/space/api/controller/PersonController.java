@@ -23,16 +23,16 @@ public class PersonController {
     private final PersonService personService;
 
     @GetMapping
-    public ResponseEntity<List<PersonDto>> getAllPeople() {
-        return getAllPeople(personService.findAll());
+    public ResponseEntity<List<PersonDto>> getAll() {
+        return getAll(personService.findAll());
     }
 
     @GetMapping("/createdAtDesc")
-    public ResponseEntity<List<PersonDto>> getPeopleByCreatedAtDesc() {
-        return getAllPeople(personService.findAllByCreatedAtDesc());
+    public ResponseEntity<List<PersonDto>> getAllByCreatedAtDesc() {
+        return getAll(personService.findAllByCreatedAtDesc());
     }
 
-    private ResponseEntity<List<PersonDto>> getAllPeople(List<PersonDto> people) {
+    private ResponseEntity<List<PersonDto>> getAll(List<PersonDto> people) {
         Iterator<PersonDto> iterator = people.iterator();
         while (iterator.hasNext()) {
             if (Objects.equals(iterator.next().getUsername(),

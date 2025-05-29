@@ -3,12 +3,14 @@ package ru.forum.whale.space.api.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.ChatDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.service.ChatService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,6 +18,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
+
+    @GetMapping
+    public ResponseEntity<List<ChatDto>> getAll() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<ChatDto> chats = chatService.findAllWithMessagesForUser(username);
+        return ResponseEntity.status(HttpStatus.OK).body(chats);
+    }
+
+    @GetMapping("/createdAtDesc")
+    public ResponseEntity<List<ChatDto>> getAllByCreatedAtDesc() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<ChatDto> chats = chatService.findAllByCreatedAtDescWithMessagesForUser(username);
+        return ResponseEntity.status(HttpStatus.OK).body(chats);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ChatDto> getById(@PathVariable int id) {

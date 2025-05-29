@@ -26,7 +26,7 @@ services:
       - app-network
 
   backend:
-    image: whale-space-api:latest
+    image: noir777/whale-space-api:latest
     container_name: whale-space-api
     env_file:
       - .env
@@ -40,7 +40,7 @@ services:
       - app-network
 
   frontend:
-    image: whale-space-frontend:latest
+    image: noir777/whale-space-frontend:latest
     container_name: whale-space-frontend
     restart: unless-stopped
     ports:

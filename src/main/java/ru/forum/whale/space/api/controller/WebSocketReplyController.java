@@ -35,8 +35,8 @@ public class WebSocketReplyController {
             ErrorUtil.recordErrors(errors, violations);
 
             ReplyResponseDto errorResponse = new ReplyResponseDto(false, errors.toString());
-
             messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", errorResponse);
+
             return;
         }
 

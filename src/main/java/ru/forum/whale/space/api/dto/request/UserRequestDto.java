@@ -15,5 +15,6 @@ public class UserRequestDto {
     String username;
 
     @NotBlank(message = "Пароль не должен быть пустым")
+    @Size(max = 100, message = "Пароль не должен содержать более 100 символов")
     String password;
 }

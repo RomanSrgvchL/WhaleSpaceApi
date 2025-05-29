@@ -1,12 +1,12 @@
 package ru.forum.whale.space.api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.ChatDto;
 import ru.forum.whale.space.api.exception.InvalidInputDataException;
+import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Chat;
 import ru.forum.whale.space.api.model.Message;
 import ru.forum.whale.space.api.model.Person;
@@ -15,7 +15,9 @@ import ru.forum.whale.space.api.repository.PersonRepository;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,10 +27,29 @@ public class ChatService {
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
 
+    public List<ChatDto> findAllWithMessagesForUser(String username) {
+        Person person = personRepository.findByUsername(username).orElse(null);
+        if (person == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
+        return chatRepository.findAllWithMessages(person.getId()).stream()
+                .map(this::convertToChatDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ChatDto> findAllByCreatedAtDescWithMessagesForUser(String username) {
+        Person person = personRepository.findByUsername(username).orElse(null);
+        if (person == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
+        return chatRepository.findAllByCreatedAtDescWithMessages(person.getId()).stream()
+                .map(this::convertToChatDto)
+                .collect(Collectors.toList());
+    }
+
     public Optional<ChatDto> findById(int id) {
-        Chat chat = chatRepository.findById(id).orElse(null);
+        Chat chat = chatRepository.findByIdWithMessages(id).orElse(null);
         if (chat != null) {
-            Hibernate.initialize(chat.getMessages());
             chat.getMessages().sort(Comparator.comparing(Message::getCreatedAt));
             return Optional.ofNullable(convertToChatDto(chat));
         }
@@ -61,7 +82,7 @@ public class ChatService {
         chat.setCreatedAt(LocalDateTime.now());
         if (chat.getUser1() != null && chat.getUser2() != null) {
             chatRepository.save(chat);
-            return chat.getId() ;
+            return chat.getId();
         }
         throw new InvalidInputDataException("Невозможно создать чат: один или оба указанных пользователя не найдены");
     }

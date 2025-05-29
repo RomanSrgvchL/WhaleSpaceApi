@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                         .logoutUrl("/auth/logout")
                         .logoutSuccessHandler((request, response, authentication) ->
                                 response.setStatus(HttpStatus.NO_CONTENT.value())));

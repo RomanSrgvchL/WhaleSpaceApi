@@ -1,7 +1,6 @@
 package ru.forum.whale.space.api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,9 +29,8 @@ public class DiscussionService {
     private final ModelMapper modelMapper;
 
     public Optional<DiscussionDto> findById(int id) {
-        Discussion discussion = discussionRepository.findById(id).orElse(null);
+        Discussion discussion = discussionRepository.findByIdWithReplies(id).orElse(null);
         if (discussion != null) {
-            Hibernate.initialize(discussion.getReplies());
             discussion.getReplies().sort(Comparator.comparing(Reply::getCreatedAt));
             return Optional.ofNullable(convertToDiscussionDto(discussion));
         }
@@ -75,5 +73,10 @@ public class DiscussionService {
 
     public DiscussionDto convertToDiscussionDto(Discussion discussion) {
         return modelMapper.map(discussion, DiscussionDto.class);
+    }
+
+    @Transactional
+    public void deleteByTitle(String title) {
+        discussionRepository.deleteByTitle(title);
     }
 }

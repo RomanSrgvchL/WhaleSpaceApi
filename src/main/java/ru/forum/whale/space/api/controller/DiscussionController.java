@@ -67,7 +67,27 @@ public class DiscussionController {
 
         discussionService.save(discussionRequestDto);
 
-        UserResponseDto userResponseDto = new UserResponseDto(true, "Обсуждение успешно создано!");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+        UserResponseDto response = new UserResponseDto(true, "Обсуждение успешно создано!");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<UserResponseDto> deleteByTitle(@Valid @RequestBody
+                                                         DiscussionRequestDto discussionRequestDto,
+                                                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ErrorUtil.buildMessageAndThrowValidationException(bindingResult);
+        }
+
+        Optional<DiscussionDto> discussionDto = discussionService.findByTitle(discussionRequestDto.getTitle());
+
+        if (discussionDto.isEmpty()) {
+            throw new ResourceNotFoundException("Обсуждение не найдено");
+        }
+
+        discussionService.deleteByTitle(discussionRequestDto.getTitle());
+
+        UserResponseDto response = new UserResponseDto(true, "Обсуждение успешно удалено");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

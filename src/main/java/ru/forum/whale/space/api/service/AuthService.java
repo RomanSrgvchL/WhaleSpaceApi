@@ -3,7 +3,6 @@ package ru.forum.whale.space.api.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.request.UserRequestDto;
 import ru.forum.whale.space.api.dto.response.UserResponseDto;
+import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.model.Person;
 import ru.forum.whale.space.api.repository.PersonRepository;
 
@@ -26,7 +26,6 @@ public class AuthService {
     private final PersonRepository personRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final ModelMapper modelMapper;
 
     public UserResponseDto login(UserRequestDto userRequestDto, HttpServletRequest request) {
         var authRequest = new UsernamePasswordAuthenticationToken(userRequestDto.getUsername(),
@@ -50,18 +49,19 @@ public class AuthService {
 
     @Transactional
     public UserResponseDto register(UserRequestDto userRequestDto) {
-        Person person = convertToPerson(userRequestDto);
+        if (personRepository.findByUsername(userRequestDto.getUsername()).isPresent()) {
+            throw new ResourceAlreadyExistsException("Это имя уже занято");
+        }
 
-        person.setPassword(passwordEncoder.encode(person.getPassword()));
-        person.setCreatedAt(LocalDateTime.now());
-        person.setRole("ROLE_USER");
+        Person person = Person.builder()
+                .username(userRequestDto.getUsername())
+                .password(passwordEncoder.encode(userRequestDto.getPassword()))
+                .createdAt(LocalDateTime.now())
+                .role("ROLE_USER")
+                .build();
 
         personRepository.save(person);
 
         return new UserResponseDto(true, "Регистрация прошла успешно!");
-    }
-
-    public Person convertToPerson(UserRequestDto userRequestDto) {
-        return modelMapper.map(userRequestDto, Person.class);
     }
 }

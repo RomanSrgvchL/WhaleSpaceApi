@@ -24,27 +24,27 @@ public class ReplyService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public Optional<ReplyDto> saveAndReturn(ReplyRequestDto replyRequestDto) {
-        Reply reply = convertToReply(replyRequestDto);
+    public Optional<ReplyDto> save(ReplyRequestDto replyRequestDto) {
         Optional<Person> person = personRepository.findById(replyRequestDto.getSenderId());
         Optional<Discussion> discussion = discussionRepository.findById(replyRequestDto.getDiscussionId());
+
         if (person.isPresent() && discussion.isPresent()) {
-            reply.setSender(person.get());
-            reply.setDiscussion(discussion.get());
-            reply.setCreatedAt(LocalDateTime.now());
+            Reply reply = Reply.builder()
+                    .content(replyRequestDto.getContent())
+                    .sender(person.get())
+                    .discussion(discussion.get())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
             replyRepository.save(reply);
+
             return Optional.of(convertToReplyDto(reply));
         }
+
         return Optional.empty();
     }
 
-    public Reply convertToReply(ReplyRequestDto replyRequestDto) {
-        Reply reply = new Reply();
-        reply.setContent(replyRequestDto.getContent());
-        return reply;
-    }
-
-    public ReplyDto convertToReplyDto(Reply reply) {
+    private ReplyDto convertToReplyDto(Reply reply) {
         return modelMapper.map(reply, ReplyDto.class);
     }
 }

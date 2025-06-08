@@ -16,9 +16,9 @@ public interface ChatRepository extends JpaRepository<Chat, Integer> {
     Optional<Chat> findByIdWithMessages(@Param("chatId") Integer chatId);
 
     @Query("FROM Chat c LEFT JOIN FETCH c.messages WHERE c.user1.id = :personId OR c.user2.id = :personId")
-    List<Chat> findAllWithMessages(@Param("personId") Integer personId);
+    List<Chat> findAllByUsernameWithMessages(@Param("personId") Integer personId);
 
     @Query("FROM Chat c LEFT JOIN FETCH c.messages WHERE c.user1.id = :personId OR c.user2.id = :personId " +
             "ORDER BY c.createdAt DESC")
-    List<Chat> findAllByCreatedAtDescWithMessages(@Param("personId") Integer personId);
+    List<Chat> findAllByUsernameOrderByCreatedAtDescWithMessages(@Param("personId") Integer personId);
 }

@@ -5,7 +5,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.ChatDto;
-import ru.forum.whale.space.api.exception.InvalidInputDataException;
+import ru.forum.whale.space.api.exception.IllegalOperationException;
+import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Chat;
 import ru.forum.whale.space.api.model.Message;
@@ -16,7 +17,9 @@ import ru.forum.whale.space.api.repository.PersonRepository;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,67 +30,87 @@ public class ChatService {
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
 
-    public List<ChatDto> findAllWithMessagesForUser(String username) {
-        Person person = personRepository.findByUsername(username).orElse(null);
-        if (person == null) {
-            throw new ResourceNotFoundException("Пользователь не найден");
-        }
-        return chatRepository.findAllWithMessages(person.getId()).stream()
-                .map(this::convertToChatDto)
-                .collect(Collectors.toList());
+    public List<ChatDto> findAllByUsernameWithMessages(String username) {
+        return findAllByUsername(username, chatRepository::findAllByUsernameWithMessages);
     }
 
-    public List<ChatDto> findAllByCreatedAtDescWithMessagesForUser(String username) {
-        Person person = personRepository.findByUsername(username).orElse(null);
-        if (person == null) {
-            throw new ResourceNotFoundException("Пользователь не найден");
-        }
-        return chatRepository.findAllByCreatedAtDescWithMessages(person.getId()).stream()
-                .map(this::convertToChatDto)
-                .collect(Collectors.toList());
+    public List<ChatDto> findAllByUsernameOrderByCreatedAtDescWithMessages(String username) {
+        return findAllByUsername(username, chatRepository::findAllByUsernameOrderByCreatedAtDescWithMessages);
     }
 
-    public Optional<ChatDto> findById(int id) {
+    private List<ChatDto> findAllByUsername(String username, Function<Integer, List<Chat>> fetcher) {
+        Person person = personRepository.findByUsername(username).orElse(null);
+
+        if (person != null) {
+            return fetcher.apply(person.getId()).stream()
+                    .map(this::convertToChatDto)
+                    .collect(Collectors.toList());
+        }
+
+        throw new ResourceNotFoundException("Пользователь не найден");
+    }
+
+    public ChatDto findById(int id) {
         Chat chat = chatRepository.findByIdWithMessages(id).orElse(null);
+
         if (chat != null) {
             chat.getMessages().sort(Comparator.comparing(Message::getCreatedAt));
-            return Optional.ofNullable(convertToChatDto(chat));
+            return convertToChatDto(chat);
         }
-        return Optional.empty();
+
+        throw new ResourceNotFoundException("Чат с указанным ID не найден");
     }
 
-    public Optional<Integer> findChatIdByUsers(int userId1, int userId2) {
-        int minUserId = Math.min(userId1, userId2);
-        int maxUserId = Math.max(userId1, userId2);
+    public ChatDto findBetweenUsers(int user1Id, int user2Id) {
+        int minUserId = Math.min(user1Id, user2Id);
+        int maxUserId = Math.max(user1Id, user2Id);
+
         Person person1 = personRepository.findById(minUserId).orElse(null);
         Person person2 = personRepository.findById(maxUserId).orElse(null);
+
         if (person1 != null && person2 != null) {
-            Chat chat = chatRepository.findByUser1AndUser2(person1, person2).orElse(null);
-            if (chat == null) {
-                return Optional.empty();
-            } else {
-                return Optional.of(chat.getId());
+            Optional<Chat> chat = chatRepository.findByUser1AndUser2(person1, person2);
+
+            if (chat.isEmpty()) {
+                throw new ResourceNotFoundException("Чат между указанными пользователями не найден");
             }
+
+            return convertToChatDto(chat.get());
         }
-        throw new InvalidInputDataException("Невозможно найти чат: один или оба указанных пользователя не найдены");
+
+        throw new ResourceNotFoundException("Один или оба указанных пользователя не найдены");
     }
 
     @Transactional
-    public Integer save(int userId1, int userId2) {
+    public ChatDto save(int userId1, int userId2) {
         int minUserId = Math.min(userId1, userId2);
         int maxUserId = Math.max(userId1, userId2);
-        Chat chat = new Chat();
-        chat.setUser1(personRepository.findById(minUserId).orElse(null));
-        chat.setUser2(personRepository.findById(maxUserId).orElse(null));
-        chat.setCreatedAt(LocalDateTime.now());
-        if (chat.getUser1() != null && chat.getUser2() != null) {
-            chatRepository.save(chat);
-            return chat.getId();
+
+        Person user1 = personRepository.findById(minUserId).orElse(null);
+        Person user2 = personRepository.findById(maxUserId).orElse(null);
+
+        if (user1 != null && user2 != null) {
+            if (chatRepository.findByUser1AndUser2(user1, user2).isPresent()) {
+                throw new ResourceAlreadyExistsException("Чат между указанными пользователями уже существует");
+            }
+
+            if (Objects.equals(user1.getId(), user2.getId())) {
+                throw new IllegalOperationException("Нельзя создать чат с самим собой");
+            }
+
+            Chat chat = Chat.builder()
+                    .user1(user1)
+                    .user2(user2)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            return convertToChatDto(chatRepository.save(chat));
         }
-        throw new InvalidInputDataException("Невозможно создать чат: один или оба указанных пользователя не найдены");
+
+        throw new ResourceNotFoundException("Один или оба указанных пользователя не найдены");
     }
 
-    public ChatDto convertToChatDto(Chat chat) {
+    private ChatDto convertToChatDto(Chat chat) {
         return modelMapper.map(chat, ChatDto.class);
     }
 }

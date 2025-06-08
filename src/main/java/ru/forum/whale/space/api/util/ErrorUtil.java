@@ -1,8 +1,8 @@
 package ru.forum.whale.space.api.util;
 
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidationException;
 import org.springframework.validation.BindingResult;
-import ru.forum.whale.space.api.exception.CustomValidationException;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -12,7 +12,21 @@ import java.util.stream.Collectors;
 public final class ErrorUtil {
     private ErrorUtil() {}
 
-    public static void recordErrors(StringBuilder errors, BindingResult bindingResult) {
+    public static void ifHasErrorsBuildMessageAndThrowValidationException(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            StringBuilder errors = new StringBuilder();
+            ErrorUtil.recordErrors(errors, bindingResult);
+            throw new ValidationException(errors.toString());
+        }
+    }
+
+    public static <T> String buildMessage(Set<ConstraintViolation<T>> violation) {
+        StringBuilder errors = new StringBuilder();
+        recordErrors(errors, violation);
+        return errors.toString();
+    }
+
+    private static void recordErrors(StringBuilder errors, BindingResult bindingResult) {
         bindingResult.getFieldErrors().forEach(
                 error -> errors
                         .append(error.getDefaultMessage())
@@ -21,7 +35,7 @@ public final class ErrorUtil {
         sortErrorsByLength(errors);
     }
 
-    public static <T> void recordErrors(StringBuilder errors, Set<ConstraintViolation<T>> violations) {
+    private static <T> void recordErrors(StringBuilder errors, Set<ConstraintViolation<T>> violations) {
         for (ConstraintViolation<T> violation : violations) {
             errors.append(violation.getMessage()).append("\n");
         }
@@ -36,11 +50,5 @@ public final class ErrorUtil {
 
         errors.setLength(0);
         errors.append(sortedErrors);
-    }
-
-    public static void buildMessageAndThrowValidationException(BindingResult bindingResult) {
-        StringBuilder errors = new StringBuilder();
-        ErrorUtil.recordErrors(errors, bindingResult);
-        throw new CustomValidationException(errors.toString());
     }
 }

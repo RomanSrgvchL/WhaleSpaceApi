@@ -1,63 +1,62 @@
 package ru.forum.whale.space.api.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.ChatDto;
-import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
-import ru.forum.whale.space.api.exception.ResourceNotFoundException;
+import ru.forum.whale.space.api.dto.request.ChatRequestDto;
 import ru.forum.whale.space.api.service.ChatService;
+import ru.forum.whale.space.api.util.ErrorUtil;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/chats")
 @RequiredArgsConstructor
+@Tag(name = "Чаты", description = "Операции с чатами")
 public class ChatController {
     private final ChatService chatService;
 
     @GetMapping
-    public ResponseEntity<List<ChatDto>> getAll() {
+    public ResponseEntity<List<ChatDto>> getAll(@RequestParam(value = "sortBy", defaultValue = "") String sortBy) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<ChatDto> chats = chatService.findAllWithMessagesForUser(username);
-        return ResponseEntity.status(HttpStatus.OK).body(chats);
-    }
 
-    @GetMapping("/createdAtDesc")
-    public ResponseEntity<List<ChatDto>> getAllByCreatedAtDesc() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<ChatDto> chats = chatService.findAllByCreatedAtDescWithMessagesForUser(username);
+        List<ChatDto> chats;
+
+        if (Objects.equals(sortBy, "createdAtDesc")) {
+            chats = chatService.findAllByUsernameOrderByCreatedAtDescWithMessages(username);
+        } else {
+            chats = chatService.findAllByUsernameWithMessages(username);
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(chats);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ChatDto> getById(@PathVariable int id) {
-        Optional<ChatDto> chatDto = chatService.findById(id);
-        if (chatDto.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(chatDto.get());
-        }
-        throw new ResourceNotFoundException("Чат с указанным id не найден");
+        ChatDto chatDto = chatService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }
 
-    @GetMapping("/byUsers/{userId1}-{userId2}")
-    public ResponseEntity<Integer> getChatIdByUsers(@PathVariable int userId1, @PathVariable int userId2) {
-        Optional<Integer> chatId = chatService.findChatIdByUsers(userId1, userId2);
-        if (chatId.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(chatId.get());
-        }
-        throw new ResourceNotFoundException("Чат между указанными пользователями не найден");
+    @GetMapping("/betweenUsers")
+    public ResponseEntity<ChatDto> getBetweenUsers(@RequestParam("user1Id") int user1Id,
+                                                   @RequestParam("user2Id") int user2Id) {
+        ChatDto chatDto = chatService.findBetweenUsers(user1Id, user2Id);
+        return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }
 
-    @PostMapping("/create/{userId1}-{userId2}")
-    public ResponseEntity<Integer> create(@PathVariable int userId1, @PathVariable int userId2) {
-        Optional<Integer> chatId = chatService.findChatIdByUsers(userId1, userId2);
-        if (chatId.isEmpty()) {
-            Integer createdChatId = chatService.save(userId1, userId2);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdChatId);
-        }
-        throw new ResourceAlreadyExistsException("Чат между указанными пользователями уже существует");
+    @PostMapping
+    public ResponseEntity<ChatDto> create(@RequestBody @Valid ChatRequestDto chatRequestDto,
+                                                  BindingResult bindingResult) {
+        ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
+
+        ChatDto chatDto = chatService.save(chatRequestDto.getUser1Id(), chatRequestDto.getUser2Id());
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatDto);
     }
 }

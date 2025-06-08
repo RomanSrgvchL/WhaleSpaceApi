@@ -9,12 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DiscussionRepository extends JpaRepository<Discussion, Integer> {
+    List<Discussion> findAllByOrderByCreatedAtDesc();
+
     Optional<Discussion> findByTitle(String title);
 
     @Query("From Discussion d LEFT JOIN FETCH d.replies WHERE d.id = :discussionId")
     Optional<Discussion> findByIdWithReplies(@Param("discussionId") Integer discussionId);
-
-    List<Discussion> findAllByOrderByCreatedAtDesc();
-
-    void deleteByTitle(String title);
 }

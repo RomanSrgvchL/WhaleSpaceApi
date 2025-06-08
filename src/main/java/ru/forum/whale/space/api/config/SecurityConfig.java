@@ -3,6 +3,7 @@ package ru.forum.whale.space.api.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -31,8 +32,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register",
-                                "/people", "/people/createdAtDesc",
-                                "/discussions", "/discussions/createdAtDesc")
+                                "/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/people", "/discussions")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling
@@ -58,9 +60,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
+                "http://localhost",
                 "http://localhost:63342",
-                "http://localhost:63343",
-                "http://localhost"
+                "http://localhost:63343"
         ));
 
         configuration.addAllowedMethod("*");

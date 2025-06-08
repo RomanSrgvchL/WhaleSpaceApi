@@ -25,29 +25,24 @@ public class WebSocketMessageController {
 
     @MessageMapping("/sendMessage")
     public void send(MessageRequestDto messageRequestDto, Principal principal) {
-        int chatId = messageRequestDto.getChatId();
-
         Set<ConstraintViolation<MessageRequestDto>> violations = validator.validate(messageRequestDto);
 
         if (!violations.isEmpty()) {
-            StringBuilder errors = new StringBuilder();
-
-            ErrorUtil.recordErrors(errors, violations);
-
-            MessageResponseDto errorResponse = new MessageResponseDto(false, errors.toString());
+            MessageResponseDto errorResponse = new MessageResponseDto(false,
+                    ErrorUtil.buildMessage(violations));
             messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", errorResponse);
 
             return;
         }
 
-        Optional<MessageDto> savedMessageRequestDto = messageService.saveAndReturn(messageRequestDto);
+        Optional<MessageDto> savedMessageRequestDto = messageService.save(messageRequestDto);
 
         MessageResponseDto response;
 
         if (savedMessageRequestDto.isPresent()) {
             response = new MessageResponseDto(true, "Сообщение отправлено успешно!",
                     savedMessageRequestDto.get());
-            messagingTemplate.convertAndSend("/chat/newMessage/" + chatId, response);
+            messagingTemplate.convertAndSend("/chat/newMessage/" + messageRequestDto.getChatId(), response);
             return;
         }
 

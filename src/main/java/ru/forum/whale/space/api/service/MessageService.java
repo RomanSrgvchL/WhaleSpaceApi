@@ -26,27 +26,27 @@ public class MessageService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public Optional<MessageDto> saveAndReturn(MessageRequestDto messageRequestDto) {
-        Message message = convertToMessage(messageRequestDto);
+    public Optional<MessageDto> save(MessageRequestDto messageRequestDto) {
         Optional<Person> person = personRepository.findById(messageRequestDto.getSenderId());
         Optional<Chat> chat = chatRepository.findById(messageRequestDto.getChatId());
+
         if (person.isPresent() && chat.isPresent()) {
-            message.setSender(person.get());
-            message.setChat(chat.get());
-            message.setCreatedAt(LocalDateTime.now());
+            Message message = Message.builder()
+                    .content(messageRequestDto.getContent())
+                    .sender(person.get())
+                    .chat(chat.get())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
             messageRepository.save(message);
+
             return Optional.of(convertToMessageDto(message));
         }
+
         return Optional.empty();
     }
 
-    public Message convertToMessage(MessageRequestDto messageRequestDto) {
-        Message message = new Message();
-        message.setContent(messageRequestDto.getContent());
-        return message;
-    }
-
-    public MessageDto convertToMessageDto(Message message) {
+    private MessageDto convertToMessageDto(Message message) {
         return modelMapper.map(message, MessageDto.class);
     }
 }

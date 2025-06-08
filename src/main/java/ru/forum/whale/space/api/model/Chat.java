@@ -2,9 +2,7 @@ package ru.forum.whale.space.api.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +11,9 @@ import java.util.List;
 @Table(name = "chat")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

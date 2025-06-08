@@ -25,29 +25,25 @@ public class WebSocketReplyController {
 
     @MessageMapping("/sendReply")
     public void send(ReplyRequestDto replyRequestDto, Principal principal) {
-        int discussionId = replyRequestDto.getDiscussionId();
-
         Set<ConstraintViolation<ReplyRequestDto>> violations = validator.validate(replyRequestDto);
 
         if (!violations.isEmpty()) {
-            StringBuilder errors = new StringBuilder();
-
-            ErrorUtil.recordErrors(errors, violations);
-
-            ReplyResponseDto errorResponse = new ReplyResponseDto(false, errors.toString());
+            ReplyResponseDto errorResponse = new ReplyResponseDto(false,
+                    ErrorUtil.buildMessage(violations));
             messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", errorResponse);
 
             return;
         }
 
-        Optional<ReplyDto> savedReplyRequestDto = replyService.saveAndReturn(replyRequestDto);
+        Optional<ReplyDto> savedReplyRequestDto = replyService.save(replyRequestDto);
 
         ReplyResponseDto response;
 
         if (savedReplyRequestDto.isPresent()) {
             response = new ReplyResponseDto(true, "Сообщение отправлено успешно!",
                     savedReplyRequestDto.get());
-            messagingTemplate.convertAndSend("/discussion/newReply/" + discussionId, response);
+            messagingTemplate.convertAndSend("/discussion/newReply/" + replyRequestDto.getDiscussionId(),
+                    response);
             return;
         }
 

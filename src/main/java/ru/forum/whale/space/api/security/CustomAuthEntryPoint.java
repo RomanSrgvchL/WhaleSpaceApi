@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class AuthEntryPoint implements AuthenticationEntryPoint {
+public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
     private static final String BAD_CREDENTIALS = "Неверное имя пользователя или пароль";
     private static final String UNAUTHORIZED = "Пользователь не аутентифицирован";

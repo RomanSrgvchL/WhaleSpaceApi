@@ -1,0 +1,32 @@
+package ru.forum.whale.space.api.security;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.stereotype.Component;
+import ru.forum.whale.space.api.dto.response.UserResponseDto;
+
+import java.io.IOException;
+
+@Component
+@RequiredArgsConstructor
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+    private final ObjectMapper objectMapper;
+    private static final String FORBIDDEN = "Недостаточно прав";
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException {
+        UserResponseDto userResponseDto = new UserResponseDto(false, FORBIDDEN);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+
+        objectMapper.writeValue(response.getWriter(), userResponseDto);
+    }
+}

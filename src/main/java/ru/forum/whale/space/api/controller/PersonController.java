@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.PersonDto;
-import ru.forum.whale.space.api.dto.request.PersonRequestDto;
 import ru.forum.whale.space.api.service.PersonService;
 
 import java.util.Iterator;
@@ -44,14 +43,14 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.OK).body(people);
     }
 
-    @GetMapping("/yourself")
-    public ResponseEntity<PersonDto> getYourself() {
+    @GetMapping("/me")
+    public ResponseEntity<PersonDto> getMe() {
         return ResponseEntity.status(HttpStatus.OK).body(personService.findYourself());
     }
 
-    @PostMapping("/byName")
-    public ResponseEntity<PersonDto> getByName(@RequestBody PersonRequestDto personRequestDto) {
-        PersonDto personDto = personService.findByUsername(personRequestDto.getUsername());
+    @GetMapping("/username/{username}")
+    public ResponseEntity<PersonDto> getByName(@PathVariable("username") String name) {
+        PersonDto personDto = personService.findByUsername(name);
         return ResponseEntity.status(HttpStatus.OK).body(personDto);
     }
 }

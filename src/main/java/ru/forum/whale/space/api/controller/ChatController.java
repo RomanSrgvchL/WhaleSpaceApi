@@ -44,7 +44,7 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }
 
-    @GetMapping("/betweenUsers")
+    @GetMapping("/between")
     public ResponseEntity<ChatDto> getBetweenUsers(@RequestParam("user1Id") int user1Id,
                                                    @RequestParam("user2Id") int user2Id) {
         ChatDto chatDto = chatService.findBetweenUsers(user1Id, user2Id);

@@ -2,6 +2,7 @@ package ru.forum.whale.space.api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.ChatDto;
@@ -13,6 +14,7 @@ import ru.forum.whale.space.api.model.Message;
 import ru.forum.whale.space.api.model.Person;
 import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.PersonRepository;
+import ru.forum.whale.space.api.security.PersonDetails;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -54,6 +56,8 @@ public class ChatService {
         Chat chat = chatRepository.findByIdWithMessages(id).orElse(null);
 
         if (chat != null) {
+            selfChatCheck(chat.getUser1().getId(), chat.getUser2().getId());
+
             chat.getMessages().sort(Comparator.comparing(Message::getCreatedAt));
             return convertToChatDto(chat);
         }
@@ -62,6 +66,8 @@ public class ChatService {
     }
 
     public ChatDto findBetweenUsers(int user1Id, int user2Id) {
+        selfChatCheck(user1Id, user2Id);
+
         int minUserId = Math.min(user1Id, user2Id);
         int maxUserId = Math.max(user1Id, user2Id);
 
@@ -82,9 +88,11 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatDto save(int userId1, int userId2) {
-        int minUserId = Math.min(userId1, userId2);
-        int maxUserId = Math.max(userId1, userId2);
+    public ChatDto save(int user1Id, int user2Id) {
+        selfChatCheck(user1Id, user2Id);
+
+        int minUserId = Math.min(user1Id, user2Id);
+        int maxUserId = Math.max(user1Id, user2Id);
 
         Person user1 = personRepository.findById(minUserId).orElse(null);
         Person user2 = personRepository.findById(maxUserId).orElse(null);
@@ -108,6 +116,15 @@ public class ChatService {
         }
 
         throw new ResourceNotFoundException("Один или оба указанных пользователя не найдены");
+    }
+
+    private void selfChatCheck(int user1Id, int user2Id) {
+        int userId = ((PersonDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal()).getPerson().getId();
+
+        if (userId != user1Id && userId != user2Id) {
+            throw new IllegalOperationException("Доступ к чужому чату запрещён");
+        }
     }
 
     private ChatDto convertToChatDto(Chat chat) {

@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register",
+                        .requestMatchers("/auth/login", "/auth/register", "/error",
                                 "/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/people", "/discussions")
@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
-                        .invalidateHttpSession(true)
+                        .invalidateHttpSession(false)
                         .clearAuthentication(true)
                         .logoutUrl("/auth/logout")
                         .logoutSuccessHandler((request, response, authentication) ->

@@ -1,9 +1,8 @@
 package ru.forum.whale.space.api.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,14 +30,9 @@ public class DiscussionService {
     private final DiscussionRepository discussionRepository;
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
-    private final EntityManager entityManager;
 
-    public List<DiscussionWithoutRepliesDto> findAll() {
-        return convertToDiscussionDtoList(discussionRepository.findAll());
-    }
-
-    public List<DiscussionWithoutRepliesDto> findAllByCreatedAtDesc() {
-        return convertToDiscussionDtoList(discussionRepository.findAllByOrderByCreatedAtDesc());
+    public List<DiscussionWithoutRepliesDto> findAll(Sort sort) {
+        return convertToDiscussionDtoList(discussionRepository.findAll(sort));
     }
 
     public DiscussionDto findById(int id) {
@@ -90,8 +84,6 @@ public class DiscussionService {
     }
 
     private DiscussionWithoutRepliesDto convertToDiscussionWithoutRepliesDto(Discussion discussion) {
-        Session session = entityManager.unwrap(Session.class);
-        session.detach(discussion);
         return modelMapper.map(discussion, DiscussionWithoutRepliesDto.class);
     }
 

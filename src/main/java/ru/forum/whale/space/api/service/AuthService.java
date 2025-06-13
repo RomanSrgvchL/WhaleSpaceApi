@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.request.UserRequestDto;
@@ -42,7 +43,7 @@ public class AuthService {
         }
 
         HttpSession newSession = request.getSession(true);
-        newSession.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+        newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
         return new UserResponseDto(true, "Вход выполнен успешно!");
     }

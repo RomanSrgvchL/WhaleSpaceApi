@@ -16,7 +16,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     private final ObjectMapper objectMapper;
-    private static final String FORBIDDEN = "Недостаточно прав";
+    private static final String FORBIDDEN = "Недостаточно прав для выполнения данной операции";
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,

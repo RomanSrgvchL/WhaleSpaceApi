@@ -7,10 +7,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.forum.whale.space.api.dto.response.UserResponseDto;
-import ru.forum.whale.space.api.exception.IllegalOperationException;
-import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
-import ru.forum.whale.space.api.exception.ResourceNotFoundException;
+import ru.forum.whale.space.api.exception.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,5 +49,30 @@ public class GlobalExceptionHandler {
             MissingServletRequestParameterException e) {
         UserResponseDto response = new UserResponseDto(false, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(GeneralMinioException.class)
+    public ResponseEntity<UserResponseDto> handleGeneralMinioException(GeneralMinioException e) {
+        UserResponseDto response = new UserResponseDto(false, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(AvatarUploadException.class)
+    public ResponseEntity<UserResponseDto> handleAvatarUploadException(AvatarUploadException e) {
+        UserResponseDto response = new UserResponseDto(false, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(AvatarDeleteException.class)
+    public ResponseEntity<UserResponseDto> handleAvatarDeleteException(AvatarDeleteException e) {
+        UserResponseDto response = new UserResponseDto(false, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<UserResponseDto> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        UserResponseDto response = new UserResponseDto(false,
+                "Размер файла не должен превышать 3 МБ");
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
     }
 }

@@ -2,6 +2,6 @@
 /target/
 /.env
 /dev.env
-/src/main/resources/init.sql
+/src/main/resources/scratch.sql
 /HELP.md
 /notes.txt

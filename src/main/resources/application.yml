@@ -4,7 +4,6 @@ server:
 
   servlet:
     context-path: /api/v1
-
     session:
       cookie:
         max-age: 14d
@@ -25,6 +24,8 @@ spring:
 
   jpa:
     open-in-view: false
+    hibernate:
+        ddl-auto: none
 
   session:
     timeout: 7d
@@ -34,12 +35,23 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       database: ${REDIS_DATABASE}
-
       repositories:
         enabled: false
+
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 5MB
 
 springdoc:
   api-docs:
     path: /api-docs
+
   swagger-ui:
     path: /swagger-ui.html
+
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  avatar-bucket: ${AVATAR_BUCKET}

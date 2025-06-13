@@ -1,10 +1,11 @@
 create table person
 (
-    id         int primary key generated always as identity,
-    username   text      not null unique check (char_length(username) between 1 and 20),
-    password   text      not null,
-    created_at timestamp not null,
-    role       text      not null
+    id               int primary key generated always as identity,
+    username         text      not null unique check (char_length(username) between 1 and 20),
+    password         text      not null check (char_length(password) <= 100),
+    created_at       timestamp not null,
+    role             text      not null,
+    avatar_file_name text
 );
 
 create table chat
@@ -21,7 +22,7 @@ create table message
     id         int primary key generated always as identity,
     chat_id    int       not null references chat (id) on delete cascade,
     content    text      not null check (char_length(content) between 1 and 200),
-    sender_id  int       not null references person (id) on delete cascade ,
+    sender_id  int       not null references person (id) on delete cascade,
     created_at timestamp not null
 );
 
@@ -38,6 +39,6 @@ create table reply
     id            int primary key generated always as identity,
     discussion_id int       not null references discussion (id) on delete cascade,
     content       text      not null check (char_length(content) between 1 and 200),
-    sender_id     int       not null references person (id) on delete cascade ,
+    sender_id     int       not null references person (id) on delete cascade,
     created_at    timestamp not null
 );

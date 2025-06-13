@@ -25,4 +25,6 @@ public class PersonDto {
 
     @NotNull
     private String role;
+
+    private String avatarFileName;
 }

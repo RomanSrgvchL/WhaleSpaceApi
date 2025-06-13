@@ -56,7 +56,7 @@ public class ChatService {
         Chat chat = chatRepository.findByIdWithMessages(id).orElse(null);
 
         if (chat != null) {
-            selfChatCheck(chat.getUser1().getId(), chat.getUser2().getId());
+            assertCurrentUserInChat(chat.getUser1().getId(), chat.getUser2().getId());
 
             chat.getMessages().sort(Comparator.comparing(Message::getCreatedAt));
             return convertToChatDto(chat);
@@ -66,7 +66,7 @@ public class ChatService {
     }
 
     public ChatDto findBetweenUsers(int user1Id, int user2Id) {
-        selfChatCheck(user1Id, user2Id);
+        assertCurrentUserInChat(user1Id, user2Id);
 
         int minUserId = Math.min(user1Id, user2Id);
         int maxUserId = Math.max(user1Id, user2Id);
@@ -89,7 +89,7 @@ public class ChatService {
 
     @Transactional
     public ChatDto save(int user1Id, int user2Id) {
-        selfChatCheck(user1Id, user2Id);
+        assertCurrentUserInChat(user1Id, user2Id);
 
         int minUserId = Math.min(user1Id, user2Id);
         int maxUserId = Math.max(user1Id, user2Id);
@@ -118,16 +118,16 @@ public class ChatService {
         throw new ResourceNotFoundException("Один или оба указанных пользователя не найдены");
     }
 
-    private void selfChatCheck(int user1Id, int user2Id) {
+    private ChatDto convertToChatDto(Chat chat) {
+        return modelMapper.map(chat, ChatDto.class);
+    }
+
+    private void assertCurrentUserInChat(int user1Id, int user2Id) {
         int userId = ((PersonDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal()).getPerson().getId();
 
         if (userId != user1Id && userId != user2Id) {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");
         }
-    }
-
-    private ChatDto convertToChatDto(Chat chat) {
-        return modelMapper.map(chat, ChatDto.class);
     }
 }

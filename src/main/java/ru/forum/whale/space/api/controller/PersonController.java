@@ -2,54 +2,60 @@ package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.PersonDto;
 import ru.forum.whale.space.api.dto.response.AvatarResponseDto;
+import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.dto.response.UserResponseDto;
 import ru.forum.whale.space.api.service.PersonService;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/people")
 @RequiredArgsConstructor
 @Tag(name = "Пользователи", description = "Операции с пользователями")
 public class PersonController {
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("username", "createdAt");
     private final PersonService personService;
 
     @GetMapping
-    public ResponseEntity<List<PersonDto>> getAll(@RequestParam(value = "sort", defaultValue = "-") String sort,
-                                                  @RequestParam(value = "order", defaultValue = "-") String order) {
-        List<PersonDto> people;
+    public ResponseEntity<PageResponseDto<PersonDto>> getAll(
+            @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
+            @RequestParam(value = "order", defaultValue = "desc") String order,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "6") int size) {
+        if (page < 0 || size <= 0) {
+            throw new ValidationException("Неверные значения параметров, допустимо: page ≥ 0, size > 0");
+        }
 
-        if (Objects.equals(sort, "username") || Objects.equals(sort, "createdAt")) {
-            if (Objects.equals(order, "asc")) {
-                people = personService.findAll(Sort.by(sort).ascending());
-            } else {
-                people = personService.findAll(Sort.by(sort).descending());
-            }
+        Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Page<PersonDto> peoplePage;
+
+        if (ALLOWED_SORT_FIELDS.contains(sort)) {
+            peoplePage = personService.findAll(Sort.by(direction, sort), page, size);
         } else {
-            people = personService.findAll(Sort.by("createdAt").descending());
+            peoplePage = personService.findAll(Sort.by(direction, "createdAt"), page, size);
         }
 
-        Iterator<PersonDto> iterator = people.iterator();
-        while (iterator.hasNext()) {
-            if (Objects.equals(iterator.next().getUsername(),
-                    SecurityContextHolder.getContext().getAuthentication().getName())) {
-                iterator.remove();
-                break;
-            }
-        }
+        PageResponseDto<PersonDto> pageResponseDto = PageResponseDto.<PersonDto>builder()
+                .content(peoplePage.getContent())
+                .page(page)
+                .size(size)
+                .totalPages(peoplePage.getTotalPages())
+                .totalElements(peoplePage.getTotalElements())
+                .isLast(peoplePage.isLast())
+                .build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(people);
+        return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
     }
 
     @GetMapping("/me")

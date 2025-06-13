@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -19,10 +21,8 @@ import ru.forum.whale.space.api.model.Person;
 import ru.forum.whale.space.api.repository.PersonRepository;
 import ru.forum.whale.space.api.security.PersonDetails;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -55,10 +55,9 @@ public class PersonService {
         }
     }
 
-    public List<PersonDto> findAll(Sort sort) {
-        return personRepository.findAll(sort).stream()
-                .map(this::convertToPersonDto)
-                .collect(Collectors.toList());
+    public Page<PersonDto> findAll(Sort sort, int page, int size) {
+        Page<Person> peoplePage = personRepository.findAll(PageRequest.of(page, size, sort));
+        return peoplePage.map(this::convertToPersonDto);
     }
 
     public PersonDto findByUsername(String username) {

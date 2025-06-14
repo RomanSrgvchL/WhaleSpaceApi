@@ -6,6 +6,8 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.ChatDto;
+import ru.forum.whale.space.api.dto.ChatWithLastMessageDto;
+import ru.forum.whale.space.api.dto.MessageDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
@@ -19,8 +21,6 @@ import ru.forum.whale.space.api.util.SessionUtil;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,30 +30,29 @@ public class ChatService {
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
 
-    public List<ChatDto> findAllByUsernameWithMessages(String username) {
-        return findAllByUsername(username, chatRepository::findAllByUsernameWithMessages);
-    }
+    public List<ChatWithLastMessageDto> findAll() {
+        return chatRepository.findAllByUserIdWithMessages(SessionUtil.getCurrentUserId())
+                .stream()
+                .filter(chat -> !chat.getMessages().isEmpty())
+                .map(chat -> {
+                    ChatWithLastMessageDto dto = modelMapper.map(chat, ChatWithLastMessageDto.class);
 
-    public List<ChatDto> findAllByUsernameOrderByCreatedAtDescWithMessages(String username) {
-        return findAllByUsername(username, chatRepository::findAllByUsernameOrderByCreatedAtDescWithMessages);
-    }
+                    chat.getMessages().stream()
+                            .max(Comparator.comparing(Message::getCreatedAt))
+                            .ifPresent(msg -> dto.setLastMessage(modelMapper.map(msg, MessageDto.class)));
 
-    private List<ChatDto> findAllByUsername(String username, Function<Integer, List<Chat>> fetcher) {
-        Person person = personRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
-
-        return fetcher.apply(person.getId()).stream()
-                .map(this::convertToChatDto)
-                .collect(Collectors.toList());
+                    return dto;
+                })
+                .toList();
     }
 
     public ChatDto findById(int id) {
         Chat chat = chatRepository.findByIdWithMessages(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Чат с указанным ID не найден"));
 
-        int userId = SessionUtil.getCurrentUser().getId();
+        int currentUserId = SessionUtil.getCurrentUserId();
 
-        if (userId != chat.getUser1().getId() && userId != chat.getUser2().getId()) {
+        if (currentUserId != chat.getUser1().getId() && currentUserId != chat.getUser2().getId()) {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");
         }
 

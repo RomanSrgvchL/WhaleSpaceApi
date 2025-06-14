@@ -10,7 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class ErrorUtil {
-    private ErrorUtil() {}
+    private ErrorUtil() {
+    }
 
     public static void ifHasErrorsBuildMessageAndThrowValidationException(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

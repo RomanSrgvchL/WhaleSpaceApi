@@ -9,9 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ChatRequestDto {
-    @NotNull(message = "Не указан ID первого пользователя")
-    private Integer user1Id;
-
-    @NotNull(message = "Не указан ID второго пользователя")
-    private Integer user2Id;
+    @NotNull(message = "Не указан ID собеседника")
+    private Integer partnerId;
 }

@@ -47,7 +47,6 @@ public final class ErrorUtil {
                 .filter(str -> !str.isBlank())
                 .sorted(Comparator.comparingInt(String::length))
                 .collect(Collectors.joining("\n"));
-
         errors.setLength(0);
         errors.append(sortedErrors);
     }

@@ -19,9 +19,8 @@ import ru.forum.whale.space.api.dto.PersonDto;
 import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.model.Person;
 import ru.forum.whale.space.api.repository.PersonRepository;
-import ru.forum.whale.space.api.security.PersonDetails;
+import ru.forum.whale.space.api.util.SessionUtil;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -61,19 +60,13 @@ public class PersonService {
     }
 
     public PersonDto findByUsername(String username) {
-        Optional<Person> person = personRepository.findByUsername(username);
-
-        if (person.isEmpty()) {
-            throw new ResourceNotFoundException("Пользователь не найден");
-        }
-
-        return convertToPersonDto(person.get());
+        Person person = personRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        return convertToPersonDto(person);
     }
 
     public PersonDto findYourself() {
-        PersonDetails personDetails = (PersonDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        return convertToPersonDto(personDetails.getPerson());
+        return convertToPersonDto(SessionUtil.getCurrentUser());
     }
 
     private PersonDto convertToPersonDto(Person person) {
@@ -104,9 +97,7 @@ public class PersonService {
 
     @Transactional
     public String uploadAvatar(MultipartFile file, HttpServletRequest request) {
-        PersonDetails personDetails = ((PersonDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal());
-        Person person = personDetails.getPerson();
+        Person currentUser = SessionUtil.getCurrentUser();
 
         String contentType = file.getContentType();
         if (!"image/jpeg".equals(contentType) && !"image/png".equals(contentType)) {
@@ -114,7 +105,7 @@ public class PersonService {
         }
 
         try {
-            String avatarFileName = "avatar-" + person.getId();
+            String avatarFileName = "avatar-" + currentUser.getId();
 
             minioClient.putObject(
                     PutObjectArgs.builder()
@@ -125,8 +116,8 @@ public class PersonService {
                             .build()
             );
 
-            person.setAvatarFileName(avatarFileName);
-            personRepository.save(person);
+            currentUser.setAvatarFileName(avatarFileName);
+            personRepository.save(currentUser);
 
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     SecurityContextHolder.getContext());
@@ -139,11 +130,9 @@ public class PersonService {
 
     @Transactional
     public void deleteAvatar(HttpServletRequest request) {
-        PersonDetails personDetails = ((PersonDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal());
-        Person person = personDetails.getPerson();
+        Person currentUser = SessionUtil.getCurrentUser();
 
-        String avatarFileName = person.getAvatarFileName();
+        String avatarFileName = currentUser.getAvatarFileName();
 
         if (avatarFileName == null) {
             throw new IllegalOperationException("Ошибка при удалении: аватар не установлен");
@@ -157,8 +146,8 @@ public class PersonService {
                             .build()
             );
 
-            person.setAvatarFileName(null);
-            personRepository.save(person);
+            currentUser.setAvatarFileName(null);
+            personRepository.save(currentUser);
 
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     SecurityContextHolder.getContext());

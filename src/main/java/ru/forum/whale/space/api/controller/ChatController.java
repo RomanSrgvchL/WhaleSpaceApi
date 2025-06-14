@@ -44,10 +44,9 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }
 
-    @GetMapping("/between")
-    public ResponseEntity<ChatDto> getBetweenUsers(@RequestParam("user1Id") int user1Id,
-                                                   @RequestParam("user2Id") int user2Id) {
-        ChatDto chatDto = chatService.findBetweenUsers(user1Id, user2Id);
+    @GetMapping("/with/{partnerId}")
+    public ResponseEntity<ChatDto> getWithUser(@PathVariable("partnerId") int partnerId) {
+        ChatDto chatDto = chatService.findWithUser(partnerId);
         return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }
 
@@ -56,7 +55,7 @@ public class ChatController {
                                                   BindingResult bindingResult) {
         ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
 
-        ChatDto chatDto = chatService.save(chatRequestDto.getUser1Id(), chatRequestDto.getUser2Id());
+        ChatDto chatDto = chatService.save(chatRequestDto.getPartnerId());
         return ResponseEntity.status(HttpStatus.CREATED).body(chatDto);
     }
 }

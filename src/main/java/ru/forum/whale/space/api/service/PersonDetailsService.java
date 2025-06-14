@@ -10,8 +10,6 @@ import ru.forum.whale.space.api.model.Person;
 import ru.forum.whale.space.api.repository.PersonRepository;
 import ru.forum.whale.space.api.security.PersonDetails;
 
-import java.util.Optional;
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -20,12 +18,9 @@ public class PersonDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Person> person = personRepository.findByUsername(username);
+        Person person = personRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
-        if (person.isEmpty()) {
-            throw new UsernameNotFoundException("Пользователь не найден");
-        }
-
-        return new PersonDetails(person.get());
+        return new PersonDetails(person);
     }
 }

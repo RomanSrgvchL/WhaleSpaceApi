@@ -38,10 +38,8 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/people", "/people/avatar/*", "/discussions")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/discussions")
-                        .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/discussions/{id}")
-                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/discussions").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/discussions/{id}").hasRole("ADMIN")
                         .anyRequest().hasAnyRole("USER", "ADMIN"))
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(authEntryPoint)

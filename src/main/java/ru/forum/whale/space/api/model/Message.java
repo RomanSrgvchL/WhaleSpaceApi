@@ -9,7 +9,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "message")
+@Table(name = "messages")
 @Getter
 @Setter
 @Builder
@@ -29,7 +29,7 @@ public class Message {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "id")
-    private Person sender;
+    private User sender;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
     @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")

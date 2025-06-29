@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "chat")
+@Table(name = "chats")
 @Getter
 @Setter
 @Builder
@@ -23,12 +23,12 @@ public class Chat {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user1_id")
-    private Person user1;
+    private User user1;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user2_id")
-    private Person user2;
+    private User user2;
 
     @NotNull
     @Column(name = "created_at")

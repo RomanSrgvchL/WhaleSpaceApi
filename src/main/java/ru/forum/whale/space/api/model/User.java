@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "person")
+@Table(name = "users")
 @Getter
 @Setter
 @Builder

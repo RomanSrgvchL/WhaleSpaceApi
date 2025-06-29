@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "discussion")
+@Table(name = "discussions")
 @Getter
 @Setter
 @Builder
@@ -30,7 +30,7 @@ public class Discussion {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "creator_id")
-    private Person creator;
+    private User creator;
 
     @NotNull
     @Column(name = "created_at")

@@ -8,10 +8,10 @@ import ru.forum.whale.space.api.dto.MessageDto;
 import ru.forum.whale.space.api.dto.request.MessageRequestDto;
 import ru.forum.whale.space.api.model.Chat;
 import ru.forum.whale.space.api.model.Message;
-import ru.forum.whale.space.api.model.Person;
+import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.MessageRepository;
-import ru.forum.whale.space.api.repository.PersonRepository;
+import ru.forum.whale.space.api.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -21,19 +21,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
-    private final PersonRepository personRepository;
+    private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
 
     @Transactional
     public Optional<MessageDto> save(MessageRequestDto messageRequestDto) {
-        Optional<Person> person = personRepository.findById(messageRequestDto.getSenderId());
+        Optional<User> user = userRepository.findById(messageRequestDto.getSenderId());
         Optional<Chat> chat = chatRepository.findById(messageRequestDto.getChatId());
 
-        if (person.isPresent() && chat.isPresent()) {
+        if (user.isPresent() && chat.isPresent()) {
             Message message = Message.builder()
                     .content(messageRequestDto.getContent())
-                    .sender(person.get())
+                    .sender(user.get())
                     .chat(chat.get())
                     .createdAt(LocalDateTime.now())
                     .build();

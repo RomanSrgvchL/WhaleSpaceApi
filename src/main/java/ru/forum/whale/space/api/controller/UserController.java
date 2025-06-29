@@ -10,24 +10,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.forum.whale.space.api.dto.PersonDto;
+import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.response.AvatarResponseDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.dto.response.UserResponseDto;
-import ru.forum.whale.space.api.service.PersonService;
+import ru.forum.whale.space.api.service.UserService;
 
 import java.util.Set;
 
 @RestController
-@RequestMapping("/people")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Tag(name = "Пользователи", description = "Операции с пользователями")
-public class PersonController {
+public class UserController {
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("username", "createdAt");
-    private final PersonService personService;
+    private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<PageResponseDto<PersonDto>> getAll(
+    public ResponseEntity<PageResponseDto<UserDto>> getAll(
             @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
             @RequestParam(value = "order", defaultValue = "desc") String order,
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -38,40 +38,40 @@ public class PersonController {
 
         Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        Page<PersonDto> peoplePage;
+        Page<UserDto> usersPage;
 
         if (ALLOWED_SORT_FIELDS.contains(sort)) {
-            peoplePage = personService.findAll(Sort.by(direction, sort), page, size);
+            usersPage = userService.findAll(Sort.by(direction, sort), page, size);
         } else {
-            peoplePage = personService.findAll(Sort.by(direction, "createdAt"), page, size);
+            usersPage = userService.findAll(Sort.by(direction, "createdAt"), page, size);
         }
 
-        PageResponseDto<PersonDto> pageResponseDto = PageResponseDto.<PersonDto>builder()
-                .content(peoplePage.getContent())
+        PageResponseDto<UserDto> pageResponseDto = PageResponseDto.<UserDto>builder()
+                .content(usersPage.getContent())
                 .page(page)
                 .size(size)
-                .totalPages(peoplePage.getTotalPages())
-                .totalElements(peoplePage.getTotalElements())
-                .isLast(peoplePage.isLast())
+                .totalPages(usersPage.getTotalPages())
+                .totalElements(usersPage.getTotalElements())
+                .isLast(usersPage.isLast())
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<PersonDto> getMe() {
-        return ResponseEntity.status(HttpStatus.OK).body(personService.findYourself());
+    public ResponseEntity<UserDto> getMe() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findYourself());
     }
 
     @GetMapping("/username/{username}")
-    public ResponseEntity<PersonDto> getByName(@PathVariable("username") String name) {
-        PersonDto personDto = personService.findByUsername(name);
-        return ResponseEntity.status(HttpStatus.OK).body(personDto);
+    public ResponseEntity<UserDto> getByName(@PathVariable("username") String name) {
+        UserDto userDto = userService.findByUsername(name);
+        return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
     @GetMapping("/avatar/{filename}")
     public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable String filename) {
-        String avatarUrl = personService.generateAvatarUrl(filename);
+        String avatarUrl = userService.generateAvatarUrl(filename);
 
         AvatarResponseDto avatarResponseDto = new AvatarResponseDto(true,
                 "Временная ссылка на аватар успешно сгенерирована!", avatarUrl);
@@ -81,7 +81,7 @@ public class PersonController {
     @PostMapping("/avatar")
     public ResponseEntity<AvatarResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file,
                                                           HttpServletRequest request) {
-        String avatarFileName = personService.uploadAvatar(file, request);
+        String avatarFileName = userService.uploadAvatar(file, request);
 
         AvatarResponseDto avatarResponseDto = new AvatarResponseDto(true, "Аватар успешно загружен!",
                 avatarFileName);
@@ -90,7 +90,7 @@ public class PersonController {
 
     @DeleteMapping("/avatar")
     public ResponseEntity<UserResponseDto> deleteAvatar(HttpServletRequest request) {
-        personService.deleteAvatar(request);
+        userService.deleteAvatar(request);
 
         UserResponseDto userResponseDto = new UserResponseDto(true, "Аватар успешно удалён!");
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);

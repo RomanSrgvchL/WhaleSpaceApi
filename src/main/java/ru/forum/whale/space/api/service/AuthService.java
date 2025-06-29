@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.request.UserRequestDto;
 import ru.forum.whale.space.api.dto.response.UserResponseDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
-import ru.forum.whale.space.api.model.Person;
-import ru.forum.whale.space.api.repository.PersonRepository;
+import ru.forum.whale.space.api.model.User;
+import ru.forum.whale.space.api.repository.UserRepository;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
-    private final PersonRepository personRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -50,18 +50,18 @@ public class AuthService {
 
     @Transactional
     public UserResponseDto register(UserRequestDto userRequestDto) {
-        if (personRepository.findByUsername(userRequestDto.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(userRequestDto.getUsername()).isPresent()) {
             throw new ResourceAlreadyExistsException("Это имя уже занято");
         }
 
-        Person person = Person.builder()
+        User user = User.builder()
                 .username(userRequestDto.getUsername())
                 .password(passwordEncoder.encode(userRequestDto.getPassword()))
                 .createdAt(LocalDateTime.now())
                 .role("ROLE_USER")
                 .build();
 
-        personRepository.save(person);
+        userRepository.save(user);
 
         return new UserResponseDto(true, "Регистрация прошла успешно!");
     }

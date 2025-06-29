@@ -63,17 +63,17 @@ public class DiscussionService {
         discussionRepository.deleteById(id);
     }
 
-    private List<DiscussionWithoutRepliesDto> convertToDiscussionDtoList(List<Discussion> discussions) {
-        return discussions.stream()
-                .map(this::convertToDiscussionWithoutRepliesDto)
-                .collect(Collectors.toList());
+    private DiscussionDto convertToDiscussionDto(Discussion discussion) {
+        return modelMapper.map(discussion, DiscussionDto.class);
     }
 
     private DiscussionWithoutRepliesDto convertToDiscussionWithoutRepliesDto(Discussion discussion) {
         return modelMapper.map(discussion, DiscussionWithoutRepliesDto.class);
     }
 
-    private DiscussionDto convertToDiscussionDto(Discussion discussion) {
-        return modelMapper.map(discussion, DiscussionDto.class);
+    private List<DiscussionWithoutRepliesDto> convertToDiscussionDtoList(List<Discussion> discussions) {
+        return discussions.stream()
+                .map(this::convertToDiscussionWithoutRepliesDto)
+                .collect(Collectors.toList());
     }
 }

@@ -5,28 +5,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.forum.whale.space.api.model.Person;
+import ru.forum.whale.space.api.model.User;
 
 import java.util.Collection;
 import java.util.Collections;
 
 @Getter
 @RequiredArgsConstructor
-public class PersonDetails implements UserDetails {
-    private final Person person;
+public class CustomUserDetails implements UserDetails {
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(person.getRole()));
+        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
     }
 
     @Override
     public String getPassword() {
-        return person.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return person.getUsername();
+        return user.getUsername();
     }
 }

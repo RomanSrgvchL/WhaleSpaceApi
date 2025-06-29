@@ -15,10 +15,10 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.forum.whale.space.api.dto.PersonDto;
+import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.exception.*;
-import ru.forum.whale.space.api.model.Person;
-import ru.forum.whale.space.api.repository.PersonRepository;
+import ru.forum.whale.space.api.model.User;
+import ru.forum.whale.space.api.repository.UserRepository;
 import ru.forum.whale.space.api.util.SessionUtil;
 
 import java.util.concurrent.TimeUnit;
@@ -26,8 +26,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PersonService {
-    private final PersonRepository personRepository;
+public class UserService {
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final MinioClient minioClient;
 
@@ -54,23 +54,19 @@ public class PersonService {
         }
     }
 
-    public Page<PersonDto> findAll(Sort sort, int page, int size) {
-        Page<Person> peoplePage = personRepository.findAll(PageRequest.of(page, size, sort));
-        return peoplePage.map(this::convertToPersonDto);
+    public Page<UserDto> findAll(Sort sort, int page, int size) {
+        Page<User> usersPage = userRepository.findAll(PageRequest.of(page, size, sort));
+        return usersPage.map(this::convertToUserDto);
     }
 
-    public PersonDto findByUsername(String username) {
-        Person person = personRepository.findByUsername(username)
+    public UserDto findByUsername(String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
-        return convertToPersonDto(person);
+        return convertToUserDto(user);
     }
 
-    public PersonDto findYourself() {
-        return convertToPersonDto(SessionUtil.getCurrentUser());
-    }
-
-    private PersonDto convertToPersonDto(Person person) {
-        return modelMapper.map(person, PersonDto.class);
+    public UserDto findYourself() {
+        return convertToUserDto(SessionUtil.getCurrentUser());
     }
 
     public String generateAvatarUrl(String filename) {
@@ -97,7 +93,7 @@ public class PersonService {
 
     @Transactional
     public String uploadAvatar(MultipartFile file, HttpServletRequest request) {
-        Person currentUser = SessionUtil.getCurrentUser();
+        User currentUser = SessionUtil.getCurrentUser();
 
         String contentType = file.getContentType();
         if (!"image/jpeg".equals(contentType) && !"image/png".equals(contentType)) {
@@ -117,7 +113,7 @@ public class PersonService {
             );
 
             currentUser.setAvatarFileName(avatarFileName);
-            personRepository.save(currentUser);
+            userRepository.save(currentUser);
 
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     SecurityContextHolder.getContext());
@@ -130,7 +126,7 @@ public class PersonService {
 
     @Transactional
     public void deleteAvatar(HttpServletRequest request) {
-        Person currentUser = SessionUtil.getCurrentUser();
+        User currentUser = SessionUtil.getCurrentUser();
 
         String avatarFileName = currentUser.getAvatarFileName();
 
@@ -147,12 +143,16 @@ public class PersonService {
             );
 
             currentUser.setAvatarFileName(null);
-            personRepository.save(currentUser);
+            userRepository.save(currentUser);
 
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     SecurityContextHolder.getContext());
         } catch (Exception e) {
             throw new AvatarDeleteException("Не удалось удалить аватар: " + e.getMessage());
         }
+    }
+
+    private UserDto convertToUserDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 }

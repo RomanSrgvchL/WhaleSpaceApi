@@ -21,7 +21,7 @@ public class DiscussionWithoutRepliesDto {
     private String title;
 
     @NotNull
-    private PersonDto creator;
+    private UserDto creator;
 
     @NotNull
     private LocalDateTime createdAt;

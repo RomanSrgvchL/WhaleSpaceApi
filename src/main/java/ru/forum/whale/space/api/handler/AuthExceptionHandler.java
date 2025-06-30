@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.security;
+package ru.forum.whale.space.api.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
+public class AuthExceptionHandler implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
     private static final String BAD_CREDENTIALS = "Неверное имя пользователя или пароль";
     private static final String UNAUTHORIZED = "Пользователь не аутентифицирован";

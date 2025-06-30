@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.security;
+package ru.forum.whale.space.api.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
     private final ObjectMapper objectMapper;
     private static final String FORBIDDEN = "Недостаточно прав для выполнения данной операции";
 

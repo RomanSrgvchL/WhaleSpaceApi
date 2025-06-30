@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.DiscussionDto;
 import ru.forum.whale.space.api.dto.DiscussionWithoutRepliesDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
-import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.service.DiscussionService;
 import ru.forum.whale.space.api.util.ErrorUtil;
 
@@ -59,10 +58,8 @@ public class DiscussionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> delete(@PathVariable("id") int id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") int id) {
         discussionService.deleteById(id);
-
-        ResponseDto response = ResponseDto.buildSuccess("Обсуждение успешно удалено!");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

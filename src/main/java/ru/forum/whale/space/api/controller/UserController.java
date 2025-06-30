@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.response.AvatarResponseDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
-import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.service.UserService;
 
 import java.util.Set;
@@ -89,10 +88,8 @@ public class UserController {
     }
 
     @DeleteMapping("/avatar")
-    public ResponseEntity<ResponseDto> deleteAvatar(HttpServletRequest request) {
+    public ResponseEntity<Void> deleteAvatar(HttpServletRequest request) {
         userService.deleteAvatar(request);
-
-        ResponseDto responseDto = ResponseDto.buildSuccess("Аватар успешно удалён!");
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -28,10 +28,8 @@ public class WebSocketReplyController {
         Set<ConstraintViolation<ReplyRequestDto>> violations = validator.validate(replyRequestDto);
 
         if (!violations.isEmpty()) {
-            ReplyResponseDto errorResponse = new ReplyResponseDto(false,
-                    ErrorUtil.buildMessage(violations));
+            ReplyResponseDto errorResponse = ReplyResponseDto.buildFailure(ErrorUtil.buildMessage(violations));
             messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", errorResponse);
-
             return;
         }
 
@@ -40,14 +38,14 @@ public class WebSocketReplyController {
         ReplyResponseDto response;
 
         if (savedReplyRequestDto.isPresent()) {
-            response = new ReplyResponseDto(true, "Сообщение отправлено успешно!",
+            response = ReplyResponseDto.buildSuccess("Сообщение отправлено успешно!",
                     savedReplyRequestDto.get());
             messagingTemplate.convertAndSend("/discussion/newReply/" + replyRequestDto.getDiscussionId(),
                     response);
             return;
         }
 
-        response = new ReplyResponseDto(false, "Обсуждение или отправитель не найдены");
+        response = ReplyResponseDto.buildFailure("Обсуждение или отправитель не найдены");
         messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", response);
     }
 }

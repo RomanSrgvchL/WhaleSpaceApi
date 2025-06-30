@@ -11,10 +11,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ReplyRequestDto {
-    @NotNull(message = "Не указан id обсуждения")
+    @NotNull(message = "Не указан ID обсуждения")
     private Integer discussionId;
 
-    @NotNull(message = "Не указан id отправителя")
+    @NotNull(message = "Не указан ID отправителя")
     private Integer senderId;
 
     @NotBlank(message = "Сообщение не должно быть пустым")

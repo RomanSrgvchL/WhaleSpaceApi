@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
-import ru.forum.whale.space.api.dto.response.UserResponseDto;
+import ru.forum.whale.space.api.dto.response.ResponseDto;
 
 import java.io.IOException;
 
@@ -21,12 +21,12 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        UserResponseDto userResponseDto = new UserResponseDto(false, FORBIDDEN);
+        ResponseDto responseDto = ResponseDto.buildFailure(FORBIDDEN);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpStatus.FORBIDDEN.value());
 
-        objectMapper.writeValue(response.getWriter(), userResponseDto);
+        objectMapper.writeValue(response.getWriter(), responseDto);
     }
 }

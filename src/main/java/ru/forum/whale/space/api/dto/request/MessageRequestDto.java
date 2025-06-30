@@ -11,10 +11,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class MessageRequestDto {
-    @NotNull(message = "Не указан id чата")
+    @NotNull(message = "Не указан ID чата")
     private Integer chatId;
 
-    @NotNull(message = "Не указан id отправителя")
+    @NotNull(message = "Не указан ID отправителя")
     private Integer senderId;
 
     @NotBlank(message = "Сообщение не должно быть пустым")

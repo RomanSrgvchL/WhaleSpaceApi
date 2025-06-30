@@ -28,7 +28,9 @@ public class DiscussionService {
     private final ModelMapper modelMapper;
 
     public List<DiscussionWithoutRepliesDto> findAll(Sort sort) {
-        return convertToDiscussionDtoList(discussionRepository.findAll(sort));
+        return discussionRepository.findAll(sort).stream()
+                .map(this::convertToDiscussionWithoutRepliesDto)
+                .collect(Collectors.toList());
     }
 
     public DiscussionDto findById(int id) {
@@ -40,7 +42,7 @@ public class DiscussionService {
     }
 
     @Transactional
-    public void save(DiscussionRequestDto discussionRequestDto) {
+    public DiscussionDto save(DiscussionRequestDto discussionRequestDto) {
         if (discussionRepository.findByTitle(discussionRequestDto.getTitle()).isPresent()) {
             throw new ResourceAlreadyExistsException("Обсуждение с таким названием уже сущесвтует");
         }
@@ -51,7 +53,7 @@ public class DiscussionService {
                 .creator(SessionUtil.getCurrentUser())
                 .build();
 
-        discussionRepository.save(discussion);
+        return convertToDiscussionDto(discussionRepository.save(discussion));
     }
 
     @Transactional
@@ -69,11 +71,5 @@ public class DiscussionService {
 
     private DiscussionWithoutRepliesDto convertToDiscussionWithoutRepliesDto(Discussion discussion) {
         return modelMapper.map(discussion, DiscussionWithoutRepliesDto.class);
-    }
-
-    private List<DiscussionWithoutRepliesDto> convertToDiscussionDtoList(List<Discussion> discussions) {
-        return discussions.stream()
-                .map(this::convertToDiscussionWithoutRepliesDto)
-                .collect(Collectors.toList());
     }
 }

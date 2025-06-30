@@ -9,7 +9,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
+public class ResponseDto {
     private boolean success;
     private String message;
+
+    public static ResponseDto buildFailure(String message) {
+        return new ResponseDto(false, message);
+    }
+
+    public static ResponseDto buildSuccess(String message) {
+        return new ResponseDto(true, message);
+    }
 }

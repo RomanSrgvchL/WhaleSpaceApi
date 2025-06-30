@@ -28,10 +28,8 @@ public class WebSocketMessageController {
         Set<ConstraintViolation<MessageRequestDto>> violations = validator.validate(messageRequestDto);
 
         if (!violations.isEmpty()) {
-            MessageResponseDto errorResponse = new MessageResponseDto(false,
-                    ErrorUtil.buildMessage(violations));
+            MessageResponseDto errorResponse = MessageResponseDto.buildFailure(ErrorUtil.buildMessage(violations));
             messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", errorResponse);
-
             return;
         }
 
@@ -40,13 +38,13 @@ public class WebSocketMessageController {
         MessageResponseDto response;
 
         if (savedMessageRequestDto.isPresent()) {
-            response = new MessageResponseDto(true, "Сообщение отправлено успешно!",
+            response = MessageResponseDto.buildSuccess("Сообщение отправлено успешно!",
                     savedMessageRequestDto.get());
             messagingTemplate.convertAndSend("/chat/newMessage/" + messageRequestDto.getChatId(), response);
             return;
         }
 
-        response = new MessageResponseDto(false, "Чат или отправитель не найдены");
+        response = MessageResponseDto.buildFailure("Чат или отправитель не найдены");
         messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/errors", response);
     }
 }

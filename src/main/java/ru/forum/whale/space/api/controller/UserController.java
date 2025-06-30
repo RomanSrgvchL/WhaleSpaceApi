@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.response.AvatarResponseDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
-import ru.forum.whale.space.api.dto.response.UserResponseDto;
+import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.service.UserService;
 
 import java.util.Set;
@@ -73,7 +73,7 @@ public class UserController {
     public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable String filename) {
         String avatarUrl = userService.generateAvatarUrl(filename);
 
-        AvatarResponseDto avatarResponseDto = new AvatarResponseDto(true,
+        AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess(
                 "Временная ссылка на аватар успешно сгенерирована!", avatarUrl);
         return ResponseEntity.status(HttpStatus.OK).body(avatarResponseDto);
     }
@@ -83,16 +83,16 @@ public class UserController {
                                                           HttpServletRequest request) {
         String avatarFileName = userService.uploadAvatar(file, request);
 
-        AvatarResponseDto avatarResponseDto = new AvatarResponseDto(true, "Аватар успешно загружен!",
+        AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess("Аватар успешно загружен!",
                 avatarFileName);
         return ResponseEntity.status(HttpStatus.CREATED).body(avatarResponseDto);
     }
 
     @DeleteMapping("/avatar")
-    public ResponseEntity<UserResponseDto> deleteAvatar(HttpServletRequest request) {
+    public ResponseEntity<ResponseDto> deleteAvatar(HttpServletRequest request) {
         userService.deleteAvatar(request);
 
-        UserResponseDto userResponseDto = new UserResponseDto(true, "Аватар успешно удалён!");
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+        ResponseDto responseDto = ResponseDto.buildSuccess("Аватар успешно удалён!");
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

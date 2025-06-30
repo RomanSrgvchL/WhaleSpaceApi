@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.request.UserRequestDto;
-import ru.forum.whale.space.api.dto.response.UserResponseDto;
+import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.service.AuthService;
 import ru.forum.whale.space.api.util.ErrorUtil;
 
@@ -21,26 +21,26 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/check")
-    public ResponseEntity<UserResponseDto> checkLoginStatus() {
-        UserResponseDto userResponseDto = new UserResponseDto(true, "Пользователь аутентифицирован");
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+    public ResponseEntity<ResponseDto> checkLoginStatus() {
+        ResponseDto response = ResponseDto.buildSuccess("Пользователь аутентифицирован");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto> performLogin(@RequestBody @Valid UserRequestDto userRequestDto,
-                                                        BindingResult bindingResult, HttpServletRequest request) {
+    public ResponseEntity<ResponseDto> performLogin(@RequestBody @Valid UserRequestDto userRequestDto,
+                                                    BindingResult bindingResult, HttpServletRequest request) {
         ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
 
-        UserResponseDto userResponseDto = authService.login(userRequestDto, request);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+        ResponseDto response = authService.login(userRequestDto, request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> performRegistration(@RequestBody @Valid UserRequestDto userRequestDto,
-                                                               BindingResult bindingResult) {
+    public ResponseEntity<ResponseDto> performRegistration(@RequestBody @Valid UserRequestDto userRequestDto,
+                                                           BindingResult bindingResult) {
         ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
 
-        UserResponseDto userResponseDto = authService.register(userRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+        ResponseDto response = authService.register(userRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

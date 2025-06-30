@@ -13,7 +13,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.request.UserRequestDto;
-import ru.forum.whale.space.api.dto.response.UserResponseDto;
+import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
@@ -28,7 +28,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public UserResponseDto login(UserRequestDto userRequestDto, HttpServletRequest request) {
+    public ResponseDto login(UserRequestDto userRequestDto, HttpServletRequest request) {
         var authRequest = new UsernamePasswordAuthenticationToken(userRequestDto.getUsername(),
                 userRequestDto.getPassword());
 
@@ -45,11 +45,11 @@ public class AuthService {
         HttpSession newSession = request.getSession(true);
         newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
-        return new UserResponseDto(true, "Вход выполнен успешно!");
+        return ResponseDto.buildSuccess("Вход выполнен успешно!");
     }
 
     @Transactional
-    public UserResponseDto register(UserRequestDto userRequestDto) {
+    public ResponseDto register(UserRequestDto userRequestDto) {
         if (userRepository.findByUsername(userRequestDto.getUsername()).isPresent()) {
             throw new ResourceAlreadyExistsException("Это имя уже занято");
         }
@@ -63,6 +63,6 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return new UserResponseDto(true, "Регистрация прошла успешно!");
+        return ResponseDto.buildSuccess("Регистрация прошла успешно!");
     }
 }

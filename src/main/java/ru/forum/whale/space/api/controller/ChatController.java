@@ -24,8 +24,8 @@ public class ChatController {
 
     @GetMapping
     public ResponseEntity<List<ChatWithLastMessageDto>> getAll() {
-        List<ChatWithLastMessageDto> chats = chatService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(chats);
+        List<ChatWithLastMessageDto> chatDtos = chatService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(chatDtos);
     }
 
     @GetMapping("/{id}")

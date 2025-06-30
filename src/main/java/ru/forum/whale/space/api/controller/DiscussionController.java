@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.DiscussionDto;
 import ru.forum.whale.space.api.dto.DiscussionWithoutRepliesDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
-import ru.forum.whale.space.api.dto.response.UserResponseDto;
+import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.service.DiscussionService;
 import ru.forum.whale.space.api.util.ErrorUtil;
 
@@ -32,15 +32,15 @@ public class DiscussionController {
             @RequestParam(value = "order", defaultValue = "desc") String order) {
         Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        List<DiscussionWithoutRepliesDto> discussions;
+        List<DiscussionWithoutRepliesDto> discussionDtos;
 
         if (ALLOWED_SORT_FIELDS.contains(sort)) {
-            discussions = discussionService.findAll(Sort.by(direction, sort));
+            discussionDtos = discussionService.findAll(Sort.by(direction, sort));
         } else {
-            discussions = discussionService.findAll(Sort.by(direction, "createdAt"));
+            discussionDtos = discussionService.findAll(Sort.by(direction, "createdAt"));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(discussions);
+        return ResponseEntity.status(HttpStatus.OK).body(discussionDtos);
     }
 
     @GetMapping("/{id}")
@@ -50,21 +50,19 @@ public class DiscussionController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> create(@RequestBody @Valid DiscussionRequestDto discussionRequestDto,
-                                                  BindingResult bindingResult) {
+    public ResponseEntity<DiscussionDto> create(@RequestBody @Valid DiscussionRequestDto discussionRequestDto,
+                                                BindingResult bindingResult) {
         ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
 
-        discussionService.save(discussionRequestDto);
-
-        UserResponseDto response = new UserResponseDto(true, "Обсуждение успешно создано!");
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        DiscussionDto discussionDto = discussionService.save(discussionRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(discussionDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserResponseDto> delete(@PathVariable("id") int id) {
+    public ResponseEntity<ResponseDto> delete(@PathVariable("id") int id) {
         discussionService.deleteById(id);
 
-        UserResponseDto response = new UserResponseDto(true, "Обсуждение успешно удалено!");
+        ResponseDto response = ResponseDto.buildSuccess("Обсуждение успешно удалено!");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

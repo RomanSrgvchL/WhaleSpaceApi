@@ -19,7 +19,6 @@ import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
-import ru.forum.whale.space.api.util.SessionUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final SessionUtilService sessionUtilService;
     private final ModelMapper modelMapper;
     private final MinioClient minioClient;
 
@@ -66,7 +66,7 @@ public class UserService {
     }
 
     public UserDto findYourself() {
-        return convertToUserDto(SessionUtil.getCurrentUser());
+        return convertToUserDto(sessionUtilService.findCurrentUser());
     }
 
     public String generateAvatarUrl(String filename) {
@@ -93,7 +93,7 @@ public class UserService {
 
     @Transactional
     public String uploadAvatar(MultipartFile file, HttpServletRequest request) {
-        User currentUser = SessionUtil.getCurrentUser();
+        User currentUser = sessionUtilService.findCurrentUser();
 
         String contentType = file.getContentType();
         if (!"image/jpeg".equals(contentType) && !"image/png".equals(contentType)) {
@@ -126,7 +126,7 @@ public class UserService {
 
     @Transactional
     public void deleteAvatar(HttpServletRequest request) {
-        User currentUser = SessionUtil.getCurrentUser();
+        User currentUser = sessionUtilService.findCurrentUser();
 
         String avatarFileName = currentUser.getAvatarFileName();
 

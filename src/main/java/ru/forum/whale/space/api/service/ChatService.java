@@ -30,6 +30,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final SessionUtilService sessionUtilService;
 
     public List<ChatWithLastMessageDto> findAll() {
         return chatRepository.findAllByUserIdWithMessages(SessionUtil.getCurrentUserId())
@@ -96,7 +97,7 @@ public class ChatService {
     }
 
     private Pair<User, User> resolveParticipants(long partnerId, String sameUserMsg) {
-        User currentUser = SessionUtil.getCurrentUser();
+        User currentUser = sessionUtilService.findCurrentUser();
         long currentUserId = currentUser.getId();
 
         if (currentUserId == partnerId) {

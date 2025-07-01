@@ -1,10 +1,7 @@
 package ru.forum.whale.space.api.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.io.Serial;
@@ -60,7 +57,7 @@ public class User implements Serializable {
     @Column(name = "gender")
     private Gender gender;
 
-    @NotBlank(message = "Био не должен быть пустым")
+    @Pattern(regexp = "^(?!\\s*$).+", message = "Био не должен быть пустым")
     @Size(max = 120, message = "Био не должен содержать более 120 символов")
     @Column(name = "bio")
     private String bio;

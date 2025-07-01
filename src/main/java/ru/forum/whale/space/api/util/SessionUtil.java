@@ -1,7 +1,6 @@
 package ru.forum.whale.space.api.util;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.security.CustomUserDetails;
 
 public final class SessionUtil {
@@ -9,11 +8,6 @@ public final class SessionUtil {
     }
 
     public static long getCurrentUserId() {
-        return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-                .getUser().getId();
-    }
-
-    public static User getCurrentUser() {
-        return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
 }

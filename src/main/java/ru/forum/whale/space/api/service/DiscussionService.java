@@ -13,7 +13,6 @@ import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Discussion;
 import ru.forum.whale.space.api.model.Reply;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
-import ru.forum.whale.space.api.util.SessionUtil;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DiscussionService {
     private final DiscussionRepository discussionRepository;
+    private final SessionUtilService sessionUtilService;
     private final ModelMapper modelMapper;
 
     public List<DiscussionWithoutRepliesDto> findAll(Sort sort) {
@@ -50,7 +50,7 @@ public class DiscussionService {
         Discussion discussion = Discussion.builder()
                 .title(discussionRequestDto.getTitle())
                 .createdAt(LocalDateTime.now())
-                .creator(SessionUtil.getCurrentUser())
+                .creator(sessionUtilService.findCurrentUser())
                 .build();
 
         return convertToDiscussionDto(discussionRepository.save(discussion));

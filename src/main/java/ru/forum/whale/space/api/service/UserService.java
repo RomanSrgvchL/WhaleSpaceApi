@@ -3,15 +3,12 @@ package ru.forum.whale.space.api.service;
 import io.minio.*;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,7 +89,7 @@ public class UserService {
     }
 
     @Transactional
-    public String uploadAvatar(MultipartFile file, HttpServletRequest request) {
+    public String uploadAvatar(MultipartFile file) {
         User currentUser = sessionUtilService.findCurrentUser();
 
         String contentType = file.getContentType();
@@ -115,9 +112,6 @@ public class UserService {
             currentUser.setAvatarFileName(avatarFileName);
             userRepository.save(currentUser);
 
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                    SecurityContextHolder.getContext());
-
             return avatarFileName;
         } catch (Exception e) {
             throw new AvatarUploadException("Не удалось загрузить аватар: " + e.getMessage());
@@ -125,7 +119,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteAvatar(HttpServletRequest request) {
+    public void deleteAvatar() {
         User currentUser = sessionUtilService.findCurrentUser();
 
         String avatarFileName = currentUser.getAvatarFileName();
@@ -144,9 +138,6 @@ public class UserService {
 
             currentUser.setAvatarFileName(null);
             userRepository.save(currentUser);
-
-            request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                    SecurityContextHolder.getContext());
         } catch (Exception e) {
             throw new AvatarDeleteException("Не удалось удалить аватар: " + e.getMessage());
         }

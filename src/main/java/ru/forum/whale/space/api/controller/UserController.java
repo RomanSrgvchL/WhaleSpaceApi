@@ -1,7 +1,6 @@
 package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -78,9 +77,8 @@ public class UserController {
     }
 
     @PostMapping("/avatar")
-    public ResponseEntity<AvatarResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file,
-                                                          HttpServletRequest request) {
-        String avatarFileName = userService.uploadAvatar(file, request);
+    public ResponseEntity<AvatarResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        String avatarFileName = userService.uploadAvatar(file);
 
         AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess("Аватар успешно загружен!",
                 avatarFileName);
@@ -88,8 +86,8 @@ public class UserController {
     }
 
     @DeleteMapping("/avatar")
-    public ResponseEntity<Void> deleteAvatar(HttpServletRequest request) {
-        userService.deleteAvatar(request);
+    public ResponseEntity<Void> deleteAvatar() {
+        userService.deleteAvatar();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

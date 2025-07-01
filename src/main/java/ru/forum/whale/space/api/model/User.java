@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -51,4 +52,16 @@ public class User implements Serializable {
 
     @Column(name = "avatar_file_name")
     private String avatarFileName;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
+    private Gender gender;
+
+    @NotBlank(message = "Био не должен быть пустым")
+    @Size(max = 120, message = "Био не должен содержать более 120 символов")
+    @Column(name = "bio")
+    private String bio;
 }

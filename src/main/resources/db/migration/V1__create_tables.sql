@@ -2,10 +2,13 @@ create table users
 (
     id               bigint primary key generated always as identity,
     username         text      not null unique check (char_length(username) between 1 and 20),
-    password         text      not null check (char_length(password) <= 100),
+    password         text      not null check (char_length(password) between 1 and 100),
     created_at       timestamp not null,
     role             text      not null,
-    avatar_file_name text
+    avatar_file_name text,
+    birth_date       date,
+    gender           text,
+    bio              text check (char_length(bio) between 1 and 120)
 );
 
 create table chats

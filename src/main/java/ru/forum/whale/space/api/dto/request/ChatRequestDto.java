@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChatRequestDto {
     @NotNull(message = "Не указан ID собеседника")
-    private Integer partnerId;
+    private Long partnerId;
 }

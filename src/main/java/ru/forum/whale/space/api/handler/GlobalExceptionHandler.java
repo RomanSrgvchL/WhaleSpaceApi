@@ -1,6 +1,7 @@
 package ru.forum.whale.space.api.handler;
 
 import jakarta.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.*;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
@@ -53,18 +55,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(GeneralMinioException.class)
     public ResponseEntity<ResponseDto> handleGeneralMinioException(GeneralMinioException e) {
+        log.error(e.getMessage());
         ResponseDto response = ResponseDto.buildFailure(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(AvatarUploadException.class)
     public ResponseEntity<ResponseDto> handleAvatarUploadException(AvatarUploadException e) {
+        log.error(e.getMessage());
         ResponseDto response = ResponseDto.buildFailure(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(AvatarDeleteException.class)
     public ResponseEntity<ResponseDto> handleAvatarDeleteException(AvatarDeleteException e) {
+        log.error(e.getMessage());
         ResponseDto response = ResponseDto.buildFailure(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
@@ -75,3 +80,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
     }
 }
+    

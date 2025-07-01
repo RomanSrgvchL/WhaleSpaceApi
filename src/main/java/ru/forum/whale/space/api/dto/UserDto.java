@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserDto {
     @NotNull
-    private Integer id;
+    private Long id;
 
     @Pattern(
             regexp = "^(?!.*[;\\\\/?&#]).*$",

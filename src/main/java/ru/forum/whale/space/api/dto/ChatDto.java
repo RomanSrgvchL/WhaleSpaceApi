@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ChatDto {
     @NotNull
-    private Integer id;
+    private Long id;
 
     @NotNull
     private UserDto user1;

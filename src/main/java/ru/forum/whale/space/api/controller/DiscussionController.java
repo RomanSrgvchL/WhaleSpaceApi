@@ -43,7 +43,7 @@ public class DiscussionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DiscussionDto> getById(@PathVariable int id) {
+    public ResponseEntity<DiscussionDto> getById(@PathVariable long id) {
         DiscussionDto discussionDto = discussionService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(discussionDto);
     }
@@ -58,7 +58,7 @@ public class DiscussionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") int id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         discussionService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

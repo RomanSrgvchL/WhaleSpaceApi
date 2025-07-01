@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class DiscussionDto {
     @NotNull
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Тема не должна быть пустой")
     @Size(min = 5, max = 100, message = "Длина темы должна быть в диапазоне от 5 до 100 символов")

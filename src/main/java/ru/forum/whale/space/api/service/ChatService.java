@@ -49,11 +49,11 @@ public class ChatService {
                 .reversed();
     }
 
-    public ChatDto findById(int id) {
+    public ChatDto findById(long id) {
         Chat chat = chatRepository.findByIdWithMessages(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Чат с указанным ID не найден"));
 
-        int currentUserId = SessionUtil.getCurrentUserId();
+        long currentUserId = SessionUtil.getCurrentUserId();
 
         if (currentUserId != chat.getUser1().getId() && currentUserId != chat.getUser2().getId()) {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");
@@ -63,7 +63,7 @@ public class ChatService {
         return convertToChatDto(chat);
     }
 
-    public ChatDto findWithUser(int partnerId) {
+    public ChatDto findWithUser(long partnerId) {
         Pair<User, User> users = resolveParticipants(partnerId, "Нельзя получить чат с самим собой");
 
         User first = users.getFirst();
@@ -76,7 +76,7 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatDto save(int partnerId) {
+    public ChatDto save(long partnerId) {
         Pair<User, User> users = resolveParticipants(partnerId, "Нельзя создать чат с самим собой");
 
         User first = users.getFirst();
@@ -95,9 +95,9 @@ public class ChatService {
         return convertToChatDto(chatRepository.save(chat));
     }
 
-    private Pair<User, User> resolveParticipants(int partnerId, String sameUserMsg) {
+    private Pair<User, User> resolveParticipants(long partnerId, String sameUserMsg) {
         User currentUser = SessionUtil.getCurrentUser();
-        int currentUserId = currentUser.getId();
+        long currentUserId = currentUser.getId();
 
         if (currentUserId == partnerId) {
             throw new IllegalOperationException(sameUserMsg);

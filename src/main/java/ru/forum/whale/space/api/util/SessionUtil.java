@@ -8,7 +8,7 @@ public final class SessionUtil {
     private SessionUtil() {
     }
 
-    public static int getCurrentUserId() {
+    public static long getCurrentUserId() {
         return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .getUser().getId();
     }

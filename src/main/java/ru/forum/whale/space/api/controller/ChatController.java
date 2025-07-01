@@ -29,13 +29,13 @@ public class ChatController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ChatDto> getById(@PathVariable int id) {
+    public ResponseEntity<ChatDto> getById(@PathVariable long id) {
         ChatDto chatDto = chatService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }
 
     @GetMapping("/with/{partnerId}")
-    public ResponseEntity<ChatDto> getWithUser(@PathVariable("partnerId") int partnerId) {
+    public ResponseEntity<ChatDto> getWithUser(@PathVariable("partnerId") long partnerId) {
         ChatDto chatDto = chatService.findWithUser(partnerId);
         return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }

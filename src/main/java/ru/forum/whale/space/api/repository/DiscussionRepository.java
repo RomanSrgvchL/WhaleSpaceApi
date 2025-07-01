@@ -7,9 +7,9 @@ import ru.forum.whale.space.api.model.Discussion;
 
 import java.util.Optional;
 
-public interface DiscussionRepository extends JpaRepository<Discussion, Integer> {
+public interface DiscussionRepository extends JpaRepository<Discussion, Long> {
     Optional<Discussion> findByTitle(String title);
 
     @Query("From Discussion d LEFT JOIN FETCH d.replies WHERE d.id = :discussionId")
-    Optional<Discussion> findByIdWithReplies(@Param("discussionId") Integer discussionId);
+    Optional<Discussion> findByIdWithReplies(@Param("discussionId") Long discussionId);
 }

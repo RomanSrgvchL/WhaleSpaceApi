@@ -33,7 +33,7 @@ public class DiscussionService {
                 .collect(Collectors.toList());
     }
 
-    public DiscussionDto findById(int id) {
+    public DiscussionDto findById(long id) {
         Discussion discussion = discussionRepository.findByIdWithReplies(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Обсуждение с указанным ID не найдено"));
 
@@ -57,7 +57,7 @@ public class DiscussionService {
     }
 
     @Transactional
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         if (discussionRepository.findById(id).isEmpty()) {
             throw new ResourceNotFoundException("Обсуждение с указанным ID не найдено");
         }

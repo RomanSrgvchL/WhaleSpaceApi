@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ChatWithLastMessageDto {
     @NotNull
-    private Integer id;
+    private Long id;
 
     @NotNull
     private UserDto user1;

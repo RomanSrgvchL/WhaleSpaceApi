@@ -12,10 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ReplyRequestDto {
     @NotNull(message = "Не указан ID обсуждения")
-    private Integer discussionId;
+    private Long discussionId;
 
     @NotNull(message = "Не указан ID отправителя")
-    private Integer senderId;
+    private Long senderId;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
     @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")

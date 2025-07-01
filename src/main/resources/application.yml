@@ -1,7 +1,6 @@
 server:
   address: ${SERVER_HOST}
   port: ${SERVER_PORT}
-
   servlet:
     context-path: /api/v1
     session:

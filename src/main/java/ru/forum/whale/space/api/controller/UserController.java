@@ -65,6 +65,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findYourself());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getByName(@PathVariable("id") Long id) {
+        UserDto userDto = userService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+    }
+
     @GetMapping("/username/{username}")
     public ResponseEntity<UserDto> getByName(@PathVariable("username") String name) {
         UserDto userDto = userService.findByUsername(name);

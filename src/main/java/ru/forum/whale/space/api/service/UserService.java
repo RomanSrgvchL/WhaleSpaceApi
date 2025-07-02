@@ -26,6 +26,12 @@ public class UserService {
         return usersPage.map(this::convertToUserDto);
     }
 
+    public UserDto findById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        return convertToUserDto(user);
+    }
+
     public UserDto findByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));

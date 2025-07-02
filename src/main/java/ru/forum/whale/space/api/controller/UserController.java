@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.response.AvatarResponseDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
+import ru.forum.whale.space.api.service.UserAvatarService;
 import ru.forum.whale.space.api.service.UserService;
 
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.Set;
 public class UserController {
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("username", "createdAt");
     private final UserService userService;
+    private final UserAvatarService userAvatarService;
 
     @GetMapping
     public ResponseEntity<PageResponseDto<UserDto>> getAll(
@@ -36,13 +38,11 @@ public class UserController {
 
         Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        Page<UserDto> usersPage;
-
-        if (ALLOWED_SORT_FIELDS.contains(sort)) {
-            usersPage = userService.findAll(Sort.by(direction, sort), page, size);
-        } else {
-            usersPage = userService.findAll(Sort.by(direction, "createdAt"), page, size);
+        if (!ALLOWED_SORT_FIELDS.contains(sort)) {
+            sort = "createdAt";
         }
+
+        Page<UserDto> usersPage = userService.findAll(Sort.by(direction, sort), page, size);
 
         PageResponseDto<UserDto> pageResponseDto = PageResponseDto.<UserDto>builder()
                 .content(usersPage.getContent())
@@ -69,7 +69,7 @@ public class UserController {
 
     @GetMapping("/avatar/{filename}")
     public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable String filename) {
-        String avatarUrl = userService.generateAvatarUrl(filename);
+        String avatarUrl = userAvatarService.generateAvatarUrl(filename);
 
         AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess(
                 "Временная ссылка на аватар успешно сгенерирована!", avatarUrl);
@@ -78,7 +78,7 @@ public class UserController {
 
     @PostMapping("/avatar")
     public ResponseEntity<AvatarResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file) {
-        String avatarFileName = userService.uploadAvatar(file);
+        String avatarFileName = userAvatarService.uploadAvatar(file);
 
         AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess("Аватар успешно загружен!",
                 avatarFileName);
@@ -87,7 +87,7 @@ public class UserController {
 
     @DeleteMapping("/avatar")
     public ResponseEntity<Void> deleteAvatar() {
-        userService.deleteAvatar();
+        userAvatarService.deleteAvatar();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

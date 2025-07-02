@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.forum.whale.space.api.dto.request.UserRequestDto;
+import ru.forum.whale.space.api.dto.request.UserAuthRequestDto;
 import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.model.User;
@@ -28,9 +28,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public ResponseDto login(UserRequestDto userRequestDto, HttpServletRequest request) {
-        var authRequest = new UsernamePasswordAuthenticationToken(userRequestDto.getUsername(),
-                userRequestDto.getPassword());
+    public ResponseDto login(UserAuthRequestDto userAuthRequestDto, HttpServletRequest request) {
+        var authRequest = new UsernamePasswordAuthenticationToken(userAuthRequestDto.getUsername(),
+                userAuthRequestDto.getPassword());
 
         Authentication authentication = authenticationManager.authenticate(authRequest);
 
@@ -49,14 +49,14 @@ public class AuthService {
     }
 
     @Transactional
-    public ResponseDto register(UserRequestDto userRequestDto) {
-        if (userRepository.findByUsername(userRequestDto.getUsername()).isPresent()) {
+    public ResponseDto register(UserAuthRequestDto userAuthRequestDto) {
+        if (userRepository.findByUsername(userAuthRequestDto.getUsername()).isPresent()) {
             throw new ResourceAlreadyExistsException("Это имя уже занято");
         }
 
         User user = User.builder()
-                .username(userRequestDto.getUsername())
-                .password(passwordEncoder.encode(userRequestDto.getPassword()))
+                .username(userAuthRequestDto.getUsername())
+                .password(passwordEncoder.encode(userAuthRequestDto.getPassword()))
                 .createdAt(LocalDateTime.now())
                 .role("ROLE_USER")
                 .build();

@@ -31,13 +31,11 @@ public class DiscussionController {
             @RequestParam(value = "order", defaultValue = "desc") String order) {
         Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        List<DiscussionWithoutRepliesDto> discussionDtos;
-
-        if (ALLOWED_SORT_FIELDS.contains(sort)) {
-            discussionDtos = discussionService.findAll(Sort.by(direction, sort));
-        } else {
-            discussionDtos = discussionService.findAll(Sort.by(direction, "createdAt"));
+        if (!ALLOWED_SORT_FIELDS.contains(sort)) {
+            sort = "createdAt";
         }
+
+        List<DiscussionWithoutRepliesDto> discussionDtos = discussionService.findAll(Sort.by(direction, sort));
 
         return ResponseEntity.status(HttpStatus.OK).body(discussionDtos);
     }

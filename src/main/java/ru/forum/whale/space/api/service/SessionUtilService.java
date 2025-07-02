@@ -9,8 +9,8 @@ import ru.forum.whale.space.api.repository.UserRepository;
 import ru.forum.whale.space.api.util.SessionUtil;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class SessionUtilService {
     private final UserRepository userRepository;
 

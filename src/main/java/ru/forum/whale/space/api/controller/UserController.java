@@ -1,19 +1,23 @@
 package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.UserDto;
+import ru.forum.whale.space.api.dto.UserProfileDto;
 import ru.forum.whale.space.api.dto.response.AvatarResponseDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.service.UserAvatarService;
 import ru.forum.whale.space.api.service.UserService;
+import ru.forum.whale.space.api.util.ErrorUtil;
 
 import java.util.Set;
 
@@ -83,6 +87,14 @@ public class UserController {
         AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess("Аватар успешно загружен!",
                 avatarFileName);
         return ResponseEntity.status(HttpStatus.CREATED).body(avatarResponseDto);
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<UserProfileDto> update(@RequestBody @Valid UserProfileDto userProfileDto,
+                                                 BindingResult bindingResult) {
+        ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
+        UserProfileDto updatedUser = userService.update(userProfileDto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @DeleteMapping("/avatar")

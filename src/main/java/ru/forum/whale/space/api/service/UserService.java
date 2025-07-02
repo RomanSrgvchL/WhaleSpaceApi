@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.UserDto;
+import ru.forum.whale.space.api.dto.UserProfileDto;
 import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
@@ -35,7 +36,22 @@ public class UserService {
         return convertToUserDto(sessionUtilService.findCurrentUser());
     }
 
+    @Transactional
+    public UserProfileDto update(UserProfileDto userProfileDto) {
+        User currentUser = sessionUtilService.findCurrentUser();
+        mergeIntoUser(userProfileDto, currentUser);
+        return convertToUserProfileDto(currentUser);
+    }
+
+    private void mergeIntoUser(UserProfileDto userProfileDto, User user) {
+        modelMapper.map(userProfileDto, user);
+    }
+
     private UserDto convertToUserDto(User user) {
         return modelMapper.map(user, UserDto.class);
+    }
+
+    private UserProfileDto convertToUserProfileDto(User user) {
+        return modelMapper.map(user, UserProfileDto.class);
     }
 }

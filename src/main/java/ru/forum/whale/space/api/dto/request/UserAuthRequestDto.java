@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserRequestDto {
+public class UserAuthRequestDto {
     @Pattern(
             regexp = "^(?!.*[;\\\\/?&#]).*$",
             message = "Имя пользователя не должно содержать символы ; \\ / ? & #"

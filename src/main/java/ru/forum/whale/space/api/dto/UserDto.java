@@ -42,7 +42,6 @@ public class UserDto {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Pattern(regexp = "^(?!\\s*$).+", message = "Био не должен быть пустым")
     @Size(max = 120, message = "Био не должен содержать более 120 символов")
     private String bio;
 }

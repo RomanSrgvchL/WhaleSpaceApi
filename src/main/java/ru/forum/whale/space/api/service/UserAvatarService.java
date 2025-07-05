@@ -12,6 +12,11 @@ import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -21,6 +26,8 @@ public class UserAvatarService {
     private final UserRepository userRepository;
     private final MinioClient minioClient;
     private final SessionUtilService sessionUtilService;
+    private static final int MIN_AVATAR_WIDTH = 400;
+    private static final int MIN_AVATAR_HEIGHT = 400;
 
     @Value("${minio.avatar-bucket}")
     private String avatarBucket;
@@ -76,6 +83,23 @@ public class UserAvatarService {
             throw new IllegalOperationException("Файл должен быть формата PNG или JPG/JPEG");
         }
 
+        byte[] imageBytes;
+        try (InputStream inputStream = file.getInputStream()) {
+            imageBytes = inputStream.readAllBytes();
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageBytes));
+            if (image == null) {
+                throw new IllegalOperationException("Невалидный файл изображения");
+            }
+
+            if (image.getWidth() < MIN_AVATAR_WIDTH || image.getHeight() < MIN_AVATAR_HEIGHT) {
+                throw new IllegalOperationException(String.format("Минимальный размер изображения — %dx%d пикселей",
+                        MIN_AVATAR_WIDTH, MIN_AVATAR_HEIGHT));
+            }
+        } catch (IOException e) {
+            throw new AvatarUploadException("Ошибка чтения файла: " + e.getMessage());
+        }
+
         try {
             String avatarFileName = "avatar-" + currentUser.getId();
 
@@ -83,7 +107,7 @@ public class UserAvatarService {
                     PutObjectArgs.builder()
                             .bucket(avatarBucket)
                             .object(avatarFileName)
-                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .stream(new ByteArrayInputStream(imageBytes), file.getSize(), -1)
                             .contentType(contentType)
                             .build()
             );

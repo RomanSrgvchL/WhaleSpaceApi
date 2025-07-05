@@ -6,47 +6,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.ChatMsgDto;
 import ru.forum.whale.space.api.dto.request.ChatMsgRequestDto;
+import ru.forum.whale.space.api.exception.IllegalOperationException;
+import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Chat;
 import ru.forum.whale.space.api.model.ChatMsg;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.ChatMsgRepository;
-import ru.forum.whale.space.api.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChatMsgService {
     private final ChatMsgRepository chatMsgRepository;
-    private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
+    private final SessionUtilService sessionUtilService;
 
     @Transactional
-    public Optional<ChatMsgDto> save(ChatMsgRequestDto chatMsgRequestDto) {
-        Optional<User> user = userRepository.findById(chatMsgRequestDto.getSenderId());
-        Optional<Chat> chat = chatRepository.findById(chatMsgRequestDto.getChatId());
+    public ChatMsgDto save(ChatMsgRequestDto chatMsgRequestDto) {
+        User currentUser = sessionUtilService.findCurrentUser();
+        long currentUserId = currentUser.getId();
 
-        if (user.isPresent() && chat.isPresent()) {
-            ChatMsg chatMsg = ChatMsg.builder()
-                    .content(chatMsgRequestDto.getContent())
-                    .sender(user.get())
-                    .chat(chat.get())
-                    .createdAt(LocalDateTime.now())
-                    .build();
+        Chat chat = chatRepository.findById(chatMsgRequestDto.getChatId())
+                .orElseThrow(() -> new ResourceNotFoundException("Чат не найден"));
 
-            chatMsgRepository.save(chatMsg);
-
-            return Optional.of(convertToMessageDto(chatMsg));
+        if (currentUserId != chat.getUser1().getId() && currentUserId != chat.getUser2().getId()) {
+            throw new IllegalOperationException("Доступ к чужому чату запрещён");
         }
 
-        return Optional.empty();
+        ChatMsg chatMsg = ChatMsg.builder()
+                .content(chatMsgRequestDto.getContent())
+                .sender(currentUser)
+                .chat(chat)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        return convertToChatMsgDto(chatMsgRepository.save(chatMsg));
     }
 
-    private ChatMsgDto convertToMessageDto(ChatMsg chatMsg) {
+    private ChatMsgDto convertToChatMsgDto(ChatMsg chatMsg) {
         return modelMapper.map(chatMsg, ChatMsgDto.class);
     }
 }

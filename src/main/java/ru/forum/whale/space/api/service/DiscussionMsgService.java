@@ -6,42 +6,37 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.DiscussionMsgDto;
 import ru.forum.whale.space.api.dto.request.DiscussionMsgRequestDto;
+import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
-import ru.forum.whale.space.api.repository.UserRepository;
 import ru.forum.whale.space.api.repository.DiscussionMsgRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class DiscussionMsgService {
     private final DiscussionMsgRepository discussionMsgRepository;
-    private final UserRepository userRepository;
     private final DiscussionRepository discussionRepository;
     private final ModelMapper modelMapper;
+    private final SessionUtilService sessionUtilService;
 
     @Transactional
-    public Optional<DiscussionMsgDto> save(DiscussionMsgRequestDto discussionMsgRequestDto) {
-        Optional<User> user = userRepository.findById(discussionMsgRequestDto.getSenderId());
-        Optional<Discussion> discussion = discussionRepository.findById(discussionMsgRequestDto.getDiscussionId());
+    public DiscussionMsgDto save(DiscussionMsgRequestDto discussionMsgRequestDto) {
+        User currentUser = sessionUtilService.findCurrentUser();
 
-        if (user.isPresent() && discussion.isPresent()) {
-            DiscussionMsg discussionMsg = DiscussionMsg.builder()
-                    .content(discussionMsgRequestDto.getContent())
-                    .sender(user.get())
-                    .discussion(discussion.get())
-                    .createdAt(LocalDateTime.now())
-                    .build();
+        Discussion discussion = discussionRepository.findById(discussionMsgRequestDto.getDiscussionId())
+                .orElseThrow(() -> new ResourceNotFoundException("Обсуждение не найдено"));
 
-            discussionMsgRepository.save(discussionMsg);
+        DiscussionMsg discussionMsg = DiscussionMsg.builder()
+                .content(discussionMsgRequestDto.getContent())
+                .sender(currentUser)
+                .discussion(discussion)
+                .createdAt(LocalDateTime.now())
+                .build();
 
-            return Optional.of(convertToDiscussionMsgDto(discussionMsg));
-        }
-
-        return Optional.empty();
+        return convertToDiscussionMsgDto(discussionMsgRepository.save(discussionMsg));
     }
 
     private DiscussionMsgDto convertToDiscussionMsgDto(DiscussionMsg discussionMsg) {

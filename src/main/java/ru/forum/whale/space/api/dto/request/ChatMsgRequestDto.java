@@ -14,9 +14,6 @@ public class ChatMsgRequestDto {
     @NotNull(message = "Не указан ID чата")
     private Long chatId;
 
-    @NotNull(message = "Не указан ID отправителя")
-    private Long senderId;
-
     @NotBlank(message = "Сообщение не должно быть пустым")
     @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")
     private String content;

@@ -10,9 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MessageRequestDto {
-    @NotNull(message = "Не указан ID чата")
-    private Long chatId;
+public class DiscussionMsgRequestDto {
+    @NotNull(message = "Не указан ID обсуждения")
+    private Long discussionId;
 
     @NotNull(message = "Не указан ID отправителя")
     private Long senderId;

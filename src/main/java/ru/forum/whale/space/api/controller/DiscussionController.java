@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.DiscussionDto;
-import ru.forum.whale.space.api.dto.DiscussionWithoutRepliesDto;
+import ru.forum.whale.space.api.dto.DiscussionMetaDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
 import ru.forum.whale.space.api.service.DiscussionService;
 import ru.forum.whale.space.api.util.ErrorUtil;
@@ -26,7 +26,7 @@ public class DiscussionController {
     private final DiscussionService discussionService;
 
     @GetMapping
-    public ResponseEntity<List<DiscussionWithoutRepliesDto>> getAll(
+    public ResponseEntity<List<DiscussionMetaDto>> getAll(
             @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
             @RequestParam(value = "order", defaultValue = "desc") String order) {
         Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -35,7 +35,7 @@ public class DiscussionController {
             sort = "createdAt";
         }
 
-        List<DiscussionWithoutRepliesDto> discussionDtos = discussionService.findAll(Sort.by(direction, sort));
+        List<DiscussionMetaDto> discussionDtos = discussionService.findAll(Sort.by(direction, sort));
 
         return ResponseEntity.status(HttpStatus.OK).body(discussionDtos);
     }

@@ -6,12 +6,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.DiscussionDto;
-import ru.forum.whale.space.api.dto.DiscussionWithoutRepliesDto;
+import ru.forum.whale.space.api.dto.DiscussionMetaDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Discussion;
-import ru.forum.whale.space.api.model.Reply;
+import ru.forum.whale.space.api.model.DiscussionMsg;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
 
 import java.time.LocalDateTime;
@@ -27,17 +27,17 @@ public class DiscussionService {
     private final SessionUtilService sessionUtilService;
     private final ModelMapper modelMapper;
 
-    public List<DiscussionWithoutRepliesDto> findAll(Sort sort) {
+    public List<DiscussionMetaDto> findAll(Sort sort) {
         return discussionRepository.findAll(sort).stream()
-                .map(this::convertToDiscussionWithoutRepliesDto)
+                .map(this::convertToDiscussionMetaDto)
                 .collect(Collectors.toList());
     }
 
     public DiscussionDto findById(long id) {
-        Discussion discussion = discussionRepository.findByIdWithReplies(id)
+        Discussion discussion = discussionRepository.findByIdWithMessages(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Обсуждение с указанным ID не найдено"));
 
-        discussion.getReplies().sort(Comparator.comparing(Reply::getCreatedAt));
+        discussion.getMessages().sort(Comparator.comparing(DiscussionMsg::getCreatedAt));
         return convertToDiscussionDto(discussion);
     }
 
@@ -69,7 +69,7 @@ public class DiscussionService {
         return modelMapper.map(discussion, DiscussionDto.class);
     }
 
-    private DiscussionWithoutRepliesDto convertToDiscussionWithoutRepliesDto(Discussion discussion) {
-        return modelMapper.map(discussion, DiscussionWithoutRepliesDto.class);
+    private DiscussionMetaDto convertToDiscussionMetaDto(Discussion discussion) {
+        return modelMapper.map(discussion, DiscussionMetaDto.class);
     }
 }

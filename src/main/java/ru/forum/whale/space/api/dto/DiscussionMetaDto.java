@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DiscussionWithoutRepliesDto {
+public class DiscussionMetaDto {
     @NotNull
     private Long id;
 

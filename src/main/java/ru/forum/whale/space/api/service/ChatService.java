@@ -6,13 +6,13 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.ChatDto;
-import ru.forum.whale.space.api.dto.ChatWithLastMessageDto;
-import ru.forum.whale.space.api.dto.MessageDto;
+import ru.forum.whale.space.api.dto.ChatWithLastMsgDto;
+import ru.forum.whale.space.api.dto.ChatMsgDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Chat;
-import ru.forum.whale.space.api.model.Message;
+import ru.forum.whale.space.api.model.ChatMsg;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.UserRepository;
@@ -32,16 +32,16 @@ public class ChatService {
     private final ModelMapper modelMapper;
     private final SessionUtilService sessionUtilService;
 
-    public List<ChatWithLastMessageDto> findAll() {
+    public List<ChatWithLastMsgDto> findAll() {
         return chatRepository.findAllByUserIdWithMessages(SessionUtil.getCurrentUserId())
                 .stream()
                 .filter(chat -> !chat.getMessages().isEmpty())
                 .map(chat -> {
-                    ChatWithLastMessageDto chatDto = modelMapper.map(chat, ChatWithLastMessageDto.class);
+                    ChatWithLastMsgDto chatDto = modelMapper.map(chat, ChatWithLastMsgDto.class);
 
                     chat.getMessages().stream()
-                            .max(Comparator.comparing(Message::getCreatedAt))
-                            .ifPresent(message -> chatDto.setLastMessage(modelMapper.map(message, MessageDto.class)));
+                            .max(Comparator.comparing(ChatMsg::getCreatedAt))
+                            .ifPresent(chatMsg -> chatDto.setLastMessage(modelMapper.map(chatMsg, ChatMsgDto.class)));
 
                     return chatDto;
                 })
@@ -60,7 +60,7 @@ public class ChatService {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");
         }
 
-        chat.getMessages().sort(Comparator.comparing(Message::getCreatedAt));
+        chat.getMessages().sort(Comparator.comparing(ChatMsg::getCreatedAt));
         return convertToChatDto(chat);
     }
 

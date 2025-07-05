@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ReplyDto {
+public class DiscussionMsgDto {
     @NotNull
     private UserDto sender;
 

@@ -24,5 +24,5 @@ public class ChatDto {
     @NotNull
     private LocalDateTime createdAt;
 
-    private List<MessageDto> messages;
+    private List<ChatMsgDto> messages;
 }

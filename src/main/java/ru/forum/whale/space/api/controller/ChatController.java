@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.ChatDto;
-import ru.forum.whale.space.api.dto.ChatWithLastMessageDto;
+import ru.forum.whale.space.api.dto.ChatWithLastMsgDto;
 import ru.forum.whale.space.api.dto.request.ChatRequestDto;
 import ru.forum.whale.space.api.service.ChatService;
 import ru.forum.whale.space.api.util.ErrorUtil;
@@ -23,8 +23,8 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping
-    public ResponseEntity<List<ChatWithLastMessageDto>> getAll() {
-        List<ChatWithLastMessageDto> chatDtos = chatService.findAll();
+    public ResponseEntity<List<ChatWithLastMsgDto>> getAll() {
+        List<ChatWithLastMsgDto> chatDtos = chatService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(chatDtos);
     }
 

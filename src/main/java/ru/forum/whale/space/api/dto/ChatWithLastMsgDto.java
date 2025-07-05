@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatWithLastMessageDto {
+public class ChatWithLastMsgDto {
     @NotNull
     private Long id;
 
@@ -23,5 +23,5 @@ public class ChatWithLastMessageDto {
     @NotNull
     private LocalDateTime createdAt;
 
-    private MessageDto lastMessage;
+    private ChatMsgDto lastMessage;
 }

@@ -27,5 +27,5 @@ public class DiscussionDto {
     @NotNull
     private LocalDateTime createdAt;
 
-    private List<ReplyDto> replies;
+    private List<DiscussionMsgDto> messages;
 }

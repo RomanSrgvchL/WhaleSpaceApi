@@ -37,5 +37,5 @@ public class Discussion {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "discussion")
-    private List<Reply> replies;
+    private List<DiscussionMsg> messages;
 }

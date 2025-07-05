@@ -20,7 +20,7 @@ create table chats
     unique (user1_id, user2_id)
 );
 
-create table messages
+create table chat_messages
 (
     id         bigint primary key generated always as identity,
     chat_id    bigint    not null references chats (id) on delete cascade,
@@ -37,7 +37,7 @@ create table discussions
     created_at timestamp not null
 );
 
-create table replies
+create table discussion_messages
 (
     id            bigint primary key generated always as identity,
     discussion_id bigint    not null references discussions (id) on delete cascade,

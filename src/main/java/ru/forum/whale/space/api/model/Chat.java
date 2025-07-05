@@ -35,5 +35,5 @@ public class Chat {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chat")
-    private List<Message> messages;
+    private List<ChatMsg> messages;
 }

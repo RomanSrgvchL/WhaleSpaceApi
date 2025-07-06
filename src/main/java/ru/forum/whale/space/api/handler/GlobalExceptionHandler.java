@@ -79,5 +79,11 @@ public class GlobalExceptionHandler {
         ResponseDto response = ResponseDto.buildFailure("Размер файла не должен превышать 3 МБ");
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
     }
+
+    @ExceptionHandler(exception = {CannotDeleteException.class})
+    public ResponseEntity<ResponseDto> handleForbiddenException(Exception e) {
+        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
 }
     

@@ -70,6 +70,7 @@ public class PostService {
     private PostCreatedResponseDto buildPostCreatedResponse(Post post) {
         PostCreatedResponseDto response = mapper.map(post, PostCreatedResponseDto.class);
         response.setAuthorId(post.getAuthor().getId());
+        response.setSuccess(true);
         response.setMessage("Пост успешно создан!");
         return response;
     }

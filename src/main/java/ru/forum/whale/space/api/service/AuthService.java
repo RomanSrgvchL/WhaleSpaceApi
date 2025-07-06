@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.request.UserAuthRequestDto;
 import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
+import ru.forum.whale.space.api.model.Role;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
 
@@ -58,7 +59,7 @@ public class AuthService {
                 .username(userAuthRequestDto.getUsername())
                 .password(passwordEncoder.encode(userAuthRequestDto.getPassword()))
                 .createdAt(LocalDateTime.now())
-                .role("ROLE_USER")
+                .role(Role.USER)
                 .build();
 
         userRepository.save(user);

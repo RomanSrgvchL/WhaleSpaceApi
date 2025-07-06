@@ -45,7 +45,8 @@ public class User implements Serializable {
 
     @NotNull
     @Column(name = "role")
-    private String role;
+    @Enumerated
+    private Role role;
 
     @Column(name = "avatar_file_name")
     private String avatarFileName;

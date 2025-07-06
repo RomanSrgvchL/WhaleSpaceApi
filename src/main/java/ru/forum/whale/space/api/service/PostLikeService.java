@@ -42,6 +42,7 @@ public class PostLikeService {
         return like;
     }
 
+    @Transactional
     public void unlikePost(Long postId) {
         Post post = findPostOrElseThrow(postId);
 

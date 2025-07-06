@@ -14,7 +14,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +30,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "posts")
 public class Post {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,11 +45,11 @@ public class Post {
     private User author;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostLike> likes;
+    private Set<PostLike> likes;
 
     @OrderBy("createdAt DESC")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

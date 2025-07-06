@@ -1,17 +1,25 @@
 package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.forum.whale.space.api.dto.PostDetailedDto;
 import ru.forum.whale.space.api.dto.PostDto;
+import ru.forum.whale.space.api.dto.request.PostCreateRequestDto;
+import ru.forum.whale.space.api.dto.response.PostCreatedResponseDto;
 import ru.forum.whale.space.api.service.PostService;
+import ru.forum.whale.space.api.util.ErrorUtil;
 
 @RestController
 @RequestMapping("/posts")
@@ -30,6 +38,17 @@ public class PostController {
     public ResponseEntity<PostDetailedDto> getPost(@PathVariable Long id) {
         PostDetailedDto post = postService.findPost(id);
         return ResponseEntity.ok(post);
+    }
+
+    @PostMapping
+    public ResponseEntity<PostCreatedResponseDto> createPost(
+            @RequestBody @Valid PostCreateRequestDto postCreateRequestDto,
+            BindingResult bindingResult) {
+        ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
+
+        PostCreatedResponseDto post = postService.createPost(postCreateRequestDto);
+        return ResponseEntity.created(URI.create("/posts/%d".formatted(post.getId())))
+                .body(post);
     }
 
     @DeleteMapping("/{id:\\d+}")

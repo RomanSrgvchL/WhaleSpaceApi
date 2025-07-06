@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.CommentDto;
 import ru.forum.whale.space.api.dto.PostDetailedDto;
 import ru.forum.whale.space.api.dto.PostDto;
+import ru.forum.whale.space.api.dto.request.PostCreateRequestDto;
+import ru.forum.whale.space.api.dto.response.PostCreatedResponseDto;
 import ru.forum.whale.space.api.exception.CannotDeleteException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Post;
@@ -38,7 +40,7 @@ public class PostService {
         Post post = postRepository.findDetailedById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Такого поста не существует"));
 
-        boolean isAdmin = Role.ADMIN.getPrefixRole().equals(currentUser.getRole().getPrefixRole());
+        boolean isAdmin = Role.ADMIN.getPrefixRole().equals(currentUser.getRole());
         boolean isAuthor = currentUser.getId().equals(post.getAuthor().getId());
 
         if (isAdmin || isAuthor) {
@@ -52,6 +54,24 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Такого поста не существует"));
         return this.convertToPostDetailedDto(post);
+    }
+
+    @Transactional
+    public PostCreatedResponseDto createPost(PostCreateRequestDto requestDto) {
+        User author = sessionUtilService.findCurrentUser();
+
+        Post mappedPost = mapper.map(requestDto, Post.class);
+        mappedPost.setAuthor(author);
+        Post savedPost = postRepository.save(mappedPost);
+
+        return buildPostCreatedResponse(savedPost);
+    }
+
+    private PostCreatedResponseDto buildPostCreatedResponse(Post post) {
+        PostCreatedResponseDto response = mapper.map(post, PostCreatedResponseDto.class);
+        response.setAuthorId(post.getAuthor().getId());
+        response.setMessage("Пост успешно создан!");
+        return response;
     }
 
     //тут и в методе ниже сделал так, чтобы вместо null возвращались пустые коллекции
@@ -68,7 +88,7 @@ public class PostService {
         return postDto;
     }
 
-    public PostDetailedDto convertToPostDetailedDto(Post post) {
+    private PostDetailedDto convertToPostDetailedDto(Post post) {
         PostDetailedDto dto = mapper.map(post, PostDetailedDto.class);
         List<CommentDto> commentDtos = post.getComments().stream()
                 .map(comment -> {

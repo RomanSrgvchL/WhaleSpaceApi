@@ -48,7 +48,7 @@ public class PostLikeService {
         User currentUser = sessionUtilService.findCurrentUser();
         Optional<PostLike> maybeLike = postLikeRepository.findByAuthorAndPost(currentUser, post);
         if (maybeLike.isEmpty()) {
-            throw new ResourceNotFoundException("Нет лайка, чтобы его удалить");
+            return;
         }
 
         PostLike postLike = maybeLike.get();

@@ -2,6 +2,7 @@ package ru.forum.whale.space.api.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -37,8 +38,12 @@ public class PostService {
     @Transactional
     public void deletePost(Long id) {
         User currentUser = sessionUtilService.findCurrentUser();
-        Post post = postRepository.findDetailedById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Такого поста не существует"));
+        Optional<Post> maybePost = postRepository.findDetailedById(id);
+        if (maybePost.isEmpty()) {
+            return;
+        }
+
+        Post post = maybePost.get();
 
         boolean isAdmin = Role.ADMIN.getPrefixRole().equals(currentUser.getRole());
         boolean isAuthor = currentUser.getId().equals(post.getAuthor().getId());
@@ -69,7 +74,6 @@ public class PostService {
 
     private PostCreatedResponseDto buildPostCreatedResponse(Post post) {
         PostCreatedResponseDto response = mapper.map(post, PostCreatedResponseDto.class);
-        response.setAuthorId(post.getAuthor().getId());
         response.setSuccess(true);
         response.setMessage("Пост успешно создан!");
         return response;
@@ -81,7 +85,7 @@ public class PostService {
         postDto.setCommentCount(post.getComments().size());
         postDto.setLikedIds(
                 Optional.ofNullable(post.getLikes())
-                        .orElse(List.of())
+                        .orElse(Set.of())
                         .stream()
                         .map(like -> like.getAuthor().getId())
                         .toList()
@@ -108,7 +112,7 @@ public class PostService {
 
         dto.setLikedIds(
                 Optional.ofNullable(post.getLikes())
-                        .orElse(List.of())
+                        .orElse(Set.of())
                         .stream()
                         .map(like -> like.getAuthor().getId())
                         .toList()

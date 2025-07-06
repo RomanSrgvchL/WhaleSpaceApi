@@ -10,5 +10,4 @@ import lombok.Setter;
 public class PostCreatedResponseDto extends ResponseDto {
     private long id;
     private String content;
-    private long authorId;
 }

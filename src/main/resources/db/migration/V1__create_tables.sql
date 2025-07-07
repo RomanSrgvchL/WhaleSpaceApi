@@ -29,6 +29,12 @@ create table chat_messages
     created_at timestamp not null
 );
 
+create table chat_message_image_file_names
+(
+    chat_message_id bigint not null references chat_messages (id) on delete cascade,
+    image_file_name text   not null
+);
+
 create table discussions
 (
     id         bigint primary key generated always as identity,
@@ -44,4 +50,10 @@ create table discussion_messages
     content       text      not null check (char_length(content) between 1 and 200),
     sender_id     bigint    not null references users (id) on delete cascade,
     created_at    timestamp not null
+);
+
+create table discussion_message_image_file_names
+(
+    discussion_message_id bigint not null references discussion_messages (id) on delete cascade,
+    image_file_name       text   not null
 );

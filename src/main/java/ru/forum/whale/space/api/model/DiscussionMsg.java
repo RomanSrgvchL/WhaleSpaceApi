@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "discussion_messages")
@@ -23,18 +24,25 @@ public class DiscussionMsg {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "discussion_id", referencedColumnName = "id")
+    @JoinColumn(name = "discussion_id")
     private Discussion discussion;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "sender_id", referencedColumnName = "id")
+    @JoinColumn(name = "sender_id")
     private User sender;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
     @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")
     @Column(name = "content")
     private String content;
+
+    @Size(max = 3, message = "В сообщении не может быть больше 3 изображений")
+    @ElementCollection
+    @CollectionTable(name = "discussion_message_image_file_names",
+            joinColumns = @JoinColumn(name = "discussion_message_id"))
+    @Column(name = "image_file_name")
+    private List<String> imageFileNames;
 
     @NotNull
     @Column(name = "created_at")

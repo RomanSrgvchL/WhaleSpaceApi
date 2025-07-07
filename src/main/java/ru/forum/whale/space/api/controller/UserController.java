@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/avatar/{filename}")
-    public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable String filename) {
+    public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable("filename") String filename) {
         String avatarUrl = userAvatarService.generateAvatarUrl(filename);
 
         AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess(

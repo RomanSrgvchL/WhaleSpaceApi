@@ -60,15 +60,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-    @ExceptionHandler(AvatarUploadException.class)
-    public ResponseEntity<ResponseDto> handleAvatarUploadException(AvatarUploadException e) {
+    @ExceptionHandler(MinioUploadException.class)
+    public ResponseEntity<ResponseDto> handleMinioUploadException(MinioUploadException e) {
         log.error(e.getMessage());
         ResponseDto response = ResponseDto.buildFailure(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-    @ExceptionHandler(AvatarDeleteException.class)
-    public ResponseEntity<ResponseDto> handleAvatarDeleteException(AvatarDeleteException e) {
+    @ExceptionHandler(MinioDeleteException.class)
+    public ResponseEntity<ResponseDto> handleAvatarDeleteException(MinioDeleteException e) {
         log.error(e.getMessage());
         ResponseDto response = ResponseDto.buildFailure(e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

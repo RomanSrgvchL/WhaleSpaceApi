@@ -36,7 +36,6 @@ public class DiscussionController {
         }
 
         List<DiscussionMetaDto> discussionDtos = discussionService.findAll(Sort.by(direction, sort));
-
         return ResponseEntity.status(HttpStatus.OK).body(discussionDtos);
     }
 
@@ -56,7 +55,7 @@ public class DiscussionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable long id) {
         discussionService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -12,7 +12,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostDetailedDto {
+public class PostWithCommentsDto {
+    @NotNull
+    private Long id;
+
     @NotNull
     private UserLiteDto author;
 
@@ -25,5 +28,5 @@ public class PostDetailedDto {
 
     private List<CommentDto> comments;
 
-    private List<Long> likedIds;
+    private List<Long> likedUserIds;
 }

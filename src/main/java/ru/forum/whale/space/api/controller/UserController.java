@@ -66,20 +66,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getByName(@PathVariable("id") Long id) {
+    public ResponseEntity<UserDto> getByName(@PathVariable Long id) {
         UserDto userDto = userService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
     @GetMapping("/username/{username}")
-    public ResponseEntity<UserDto> getByName(@PathVariable("username") String name) {
-        UserDto userDto = userService.findByUsername(name);
+    public ResponseEntity<UserDto> getByName(@PathVariable String username) {
+        UserDto userDto = userService.findByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
-    @GetMapping("/avatar/{filename}")
-    public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable("filename") String filename) {
-        String avatarUrl = userAvatarService.generateAvatarUrl(filename);
+    @GetMapping("/avatar/{fileName}")
+    public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable String fileName) {
+        String avatarUrl = userAvatarService.generateAvatarUrl(fileName);
 
         AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess(
                 "Временная ссылка на аватар успешно сгенерирована!", avatarUrl);

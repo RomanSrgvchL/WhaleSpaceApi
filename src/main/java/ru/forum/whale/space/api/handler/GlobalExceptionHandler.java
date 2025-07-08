@@ -80,10 +80,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
     }
 
-    @ExceptionHandler(exception = {CannotDeleteException.class})
-    public ResponseEntity<ResponseDto> handleForbiddenException(Exception e) {
+    @ExceptionHandler(CannotDeleteException.class)
+    public ResponseEntity<ResponseDto> handleCannotDeleteException(CannotDeleteException e) {
         ResponseDto response = ResponseDto.buildFailure(e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }
-    

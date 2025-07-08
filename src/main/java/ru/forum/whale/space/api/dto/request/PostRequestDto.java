@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostCreateRequestDto {
+public class PostRequestDto {
     @NotBlank(message = "Пост не должен быть пустым")
     @Size(max = 2000, message = "Длина поста не должна превышать 2000 символов")
     private String content;

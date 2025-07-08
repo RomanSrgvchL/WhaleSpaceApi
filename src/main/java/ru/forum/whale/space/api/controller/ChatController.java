@@ -35,14 +35,14 @@ public class ChatController {
     }
 
     @GetMapping("/with/{partnerId}")
-    public ResponseEntity<ChatDto> getWithUser(@PathVariable("partnerId") long partnerId) {
+    public ResponseEntity<ChatDto> getWithUser(@PathVariable long partnerId) {
         ChatDto chatDto = chatService.findWithUser(partnerId);
         return ResponseEntity.status(HttpStatus.OK).body(chatDto);
     }
 
     @PostMapping
     public ResponseEntity<ChatDto> create(@RequestBody @Valid ChatRequestDto chatRequestDto,
-                                                  BindingResult bindingResult) {
+                                          BindingResult bindingResult) {
         ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
 
         ChatDto chatDto = chatService.save(chatRequestDto.getPartnerId());

@@ -28,5 +28,5 @@ public class PostDto {
 
     private int commentCount;
 
-    private List<Long> likedIds;
+    private List<Long> likedUserIds;
 }

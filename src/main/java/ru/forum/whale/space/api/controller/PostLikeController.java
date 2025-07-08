@@ -11,20 +11,19 @@ import ru.forum.whale.space.api.service.PostLikeService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/posts/{postId:\\d+}/likes")
+@RequestMapping("/posts/{postId}/likes")
 public class PostLikeController {
-
     private final PostLikeService postLikeService;
 
     @PostMapping
-    public ResponseEntity<Void> likePost(@PathVariable Long postId) {
-        postLikeService.likePost(postId);
+    public ResponseEntity<Void> like(@PathVariable("postId") Long postId) {
+        postLikeService.like(postId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> unlikePost(@PathVariable Long postId) {
-        postLikeService.unlikePost(postId);
+    public ResponseEntity<Void> unlike(@PathVariable("postId") Long postId) {
+        postLikeService.unlike(postId);
         return ResponseEntity.noContent().build();
     }
 }

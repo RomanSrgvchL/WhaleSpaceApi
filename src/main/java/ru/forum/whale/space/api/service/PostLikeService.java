@@ -1,6 +1,5 @@
 package ru.forum.whale.space.api.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,51 +12,44 @@ import ru.forum.whale.space.api.repository.PostLikeRepository;
 import ru.forum.whale.space.api.repository.PostRepository;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PostLikeService {
-
     private final PostLikeRepository postLikeRepository;
     private final PostRepository postRepository;
     private final SessionUtilService sessionUtilService;
 
     @Transactional
-    public void likePost(Long postId) {
+    public void like(long postId) {
         Post post = findPostOrElseThrow(postId);
-
         User currentUser = sessionUtilService.findCurrentUser();
-        Optional<PostLike> maybeLike = postLikeRepository.findByAuthorAndPost(currentUser, post);
-        if (maybeLike.isPresent()) {
+
+        if (postLikeRepository.findByAuthorAndPost(currentUser, post).isPresent()) {
             throw new ResourceAlreadyExistsException("Вы уже ставили лайк на этот пост");
         }
 
-        PostLike like = buildPostLike(currentUser, post);
+        PostLike like = PostLike.builder()
+                .author(currentUser)
+                .post(post)
+                .build();
 
         postLikeRepository.save(like);
     }
 
-    private PostLike buildPostLike(User user, Post post) {
-        PostLike like = new PostLike();
-        like.setAuthor(user);
-        like.setPost(post);
-        return like;
-    }
-
     @Transactional
-    public void unlikePost(Long postId) {
+    public void unlike(long postId) {
         Post post = findPostOrElseThrow(postId);
 
         User currentUser = sessionUtilService.findCurrentUser();
-        Optional<PostLike> maybeLike = postLikeRepository.findByAuthorAndPost(currentUser, post);
-        if (maybeLike.isEmpty()) {
-            return;
-        }
 
-        PostLike postLike = maybeLike.get();
+        PostLike postLike = postLikeRepository.findByAuthorAndPost(currentUser, post)
+                .orElseThrow(() -> new ResourceNotFoundException("Лайк на посте с указанным ID не найден"));
+
         postLikeRepository.delete(postLike);
     }
 
-    private Post findPostOrElseThrow(Long postId) {
+    private Post findPostOrElseThrow(long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Пост с таким id не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Пост с указанным ID не найден"));
     }
 }

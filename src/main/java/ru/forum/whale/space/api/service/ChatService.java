@@ -45,9 +45,9 @@ public class ChatService {
 
                     return chatDto;
                 })
-                .sorted(Comparator.comparing(chatDto -> chatDto.getLastMessage().getCreatedAt()))
-                .collect(Collectors.toList())
-                .reversed();
+                .sorted(Comparator.comparing((ChatWithLastMsgDto chatDto) -> chatDto.getLastMessage()
+                                .getCreatedAt()).reversed())
+                .toList();
     }
 
     public ChatDto findById(long id) {

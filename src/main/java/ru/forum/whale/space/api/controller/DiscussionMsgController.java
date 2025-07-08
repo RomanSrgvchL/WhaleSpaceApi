@@ -26,8 +26,7 @@ public class DiscussionMsgController {
     public ResponseEntity<DiscussionMsgDto> create(
             @RequestParam(value = "files", required = false) List<MultipartFile> files,
             @ModelAttribute @Valid DiscussionMsgRequestDto discussionMsgRequestDto,
-            BindingResult bindingResult
-    ) {
+            BindingResult bindingResult) {
         ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
 
         DiscussionMsgDto discussionMsgDto = discussionMsgService.save(discussionMsgRequestDto, files);

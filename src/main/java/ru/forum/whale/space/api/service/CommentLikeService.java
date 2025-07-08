@@ -1,6 +1,5 @@
 package ru.forum.whale.space.api.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,51 +12,44 @@ import ru.forum.whale.space.api.repository.CommentLikeRepository;
 import ru.forum.whale.space.api.repository.CommentRepository;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CommentLikeService {
-
-    private final SessionUtilService sessionUtilService;
     private final CommentLikeRepository commentLikeRepository;
     private final CommentRepository commentRepository;
+    private final SessionUtilService sessionUtilService;
 
     @Transactional
-    public void likeComment(Long commentId) {
+    public void like(long commentId) {
         Comment comment = findCommentOrElseThrow(commentId);
         User currentUser = sessionUtilService.findCurrentUser();
 
-        Optional<CommentLike> maybeLike = commentLikeRepository.findByAuthorAndComment(currentUser, comment);
-        if (maybeLike.isPresent()) {
+        if (commentLikeRepository.findByAuthorAndComment(currentUser, comment).isPresent()) {
             throw new ResourceAlreadyExistsException("Вы уже ставили лайк на этот комментарий");
         }
 
-        CommentLike commentLike = buildCommentLike(currentUser, comment);
+        CommentLike commentLike = CommentLike.builder()
+                .comment(comment)
+                .author(currentUser)
+                .build();
 
         commentLikeRepository.save(commentLike);
     }
 
     @Transactional
-    public void unlikeComment(Long commentId) {
+    public void unlike(long commentId) {
         Comment comment = findCommentOrElseThrow(commentId);
 
         User currentUser = sessionUtilService.findCurrentUser();
-        Optional<CommentLike> maybeLike = commentLikeRepository.findByAuthorAndComment(currentUser, comment);
-        if (maybeLike.isEmpty()) {
-            return;
-        }
 
-        CommentLike postLike = maybeLike.get();
-        commentLikeRepository.delete(postLike);
+        CommentLike commentLike = commentLikeRepository.findByAuthorAndComment(currentUser, comment)
+                .orElseThrow(() -> new ResourceNotFoundException("Лайк на комментарии с указанным ID не найден"));
+
+        commentLikeRepository.delete(commentLike);
     }
 
-    private Comment findCommentOrElseThrow(Long commentId) {
+    private Comment findCommentOrElseThrow(long commentId) {
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Комментарий с таким id не найден"));
-    }
-
-    private CommentLike buildCommentLike(User author, Comment comment) {
-        CommentLike commentLike = new CommentLike();
-        commentLike.setComment(comment);
-        commentLike.setAuthor(author);
-        return commentLike;
+                .orElseThrow(() -> new ResourceNotFoundException("Комментарий с указанным ID не найден"));
     }
 }

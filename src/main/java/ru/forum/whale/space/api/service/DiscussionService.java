@@ -30,7 +30,7 @@ public class DiscussionService {
     public List<DiscussionMetaDto> findAll(Sort sort) {
         return discussionRepository.findAll(sort).stream()
                 .map(this::convertToDiscussionMetaDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public DiscussionDto findById(long id) {

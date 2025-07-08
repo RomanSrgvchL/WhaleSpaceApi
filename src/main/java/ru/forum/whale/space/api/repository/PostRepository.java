@@ -14,4 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = {"comments", "likes"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Post> findDetailedById(Long id);
+
+    @EntityGraph(attributePaths = {"comments", "likes"}, type = EntityGraph.EntityGraphType.LOAD)
+    List<Post> findAllByAuthorId(Long userId, Sort sort);
 }

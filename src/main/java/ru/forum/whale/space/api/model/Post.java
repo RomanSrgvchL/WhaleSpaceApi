@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -49,8 +49,8 @@ public class Post {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "post")
-    private List<PostLike> likes;
+    private Set<PostLike> likes;
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comments;
+    private Set<Comment> comments;
 }

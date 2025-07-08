@@ -45,6 +45,12 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
+    @GetMapping("user/{userId}")
+    public ResponseEntity<List<PostDto>> getByUserId(@PathVariable Long userId) {
+        List<PostDto> postDtos = postService.findByUserId(userId);
+        return ResponseEntity.ok(postDtos);
+    }
+
     @PostMapping
     public ResponseEntity<PostDto> create(
             @RequestBody @Valid PostRequestDto postRequestDto,

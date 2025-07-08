@@ -4,7 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +27,7 @@ public class PostWithCommentsDto {
     @NotNull
     private LocalDateTime createdAt;
 
-    private List<CommentDto> comments;
+    private Set<CommentDto> comments;
 
-    private List<Long> likedUserIds;
+    private Set<Long> likedUserIds;
 }

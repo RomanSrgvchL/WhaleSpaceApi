@@ -13,15 +13,19 @@ import ru.forum.whale.space.api.exception.CannotDeleteException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.PostRepository;
+import ru.forum.whale.space.api.repository.UserRepository;
 
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final SessionUtilService sessionUtilService;
     private final ModelMapper mapper;
 
@@ -33,9 +37,19 @@ public class PostService {
 
     public PostWithCommentsDto findById(long id) {
         Post post = postRepository.findDetailedById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Такого поста не существует"));
+                .orElseThrow(() -> new ResourceNotFoundException("Пост с указанным ID не найден"));
 
         return convertToPostWithCommentsDto(post);
+    }
+
+    public List<PostDto> findByUserId(long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("Пользователь с указанным ID не найден");
+        }
+
+        return postRepository.findAllByAuthorId(userId, Sort.by(Sort.Direction.ASC, "createdAt")).stream()
+                .map(this::convertToPostDto)
+                .toList();
     }
 
     @Transactional
@@ -95,12 +109,12 @@ public class PostService {
                     return commentDto;
                 })
                 .sorted(Comparator.comparing(CommentDto::getCreatedAt).reversed())
-                .toList()
+                .collect(Collectors.toCollection(LinkedHashSet::new))
         );
 
         postWithCommentsDto.setLikedUserIds(post.getLikes().stream()
                 .map(like -> like.getAuthor().getId())
-                .toList()
+                .collect(Collectors.toSet())
         );
 
         return postWithCommentsDto;

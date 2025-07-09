@@ -1,10 +1,13 @@
 package ru.forum.whale.space.api.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.CommentDto;
 import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.PostDto;
@@ -19,6 +22,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import ru.forum.whale.space.api.util.FileUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,17 @@ public class PostService {
     private final UserRepository userRepository;
     private final SessionUtilService sessionUtilService;
     private final ModelMapper mapper;
+    private final MinioService minioService;
+
+    private static final String FOLDER_PATTERN = "post-%d";
+
+    @Value("${minio.post-files-bucket}")
+    private String postsBucket;
+
+    @PostConstruct
+    private void initPostsBucket() {
+        minioService.initBucket(postsBucket);
+    }
 
     public List<PostDto> findAll(Sort sort) {
         return postRepository.findAllBy(sort).stream()
@@ -53,7 +68,9 @@ public class PostService {
     }
 
     @Transactional
-    public PostDto save(PostRequestDto postRequestDto) {
+    public PostDto save(PostRequestDto postRequestDto, List<MultipartFile> files) {
+        FileUtil.validateFiles(files);
+
         User author = sessionUtilService.findCurrentUser();
 
         Post post = Post.builder()
@@ -61,7 +78,15 @@ public class PostService {
                 .author(author)
                 .build();
 
-        return convertToPostDto(postRepository.save(post));
+        Post postWithoutFiles = postRepository.save(post);
+
+        String folder = FOLDER_PATTERN.formatted(postWithoutFiles.getId());
+
+        List<String> fileNames = minioService.uploadImages(postsBucket, files, folder);
+
+        postWithoutFiles.setImageFileNames(fileNames);
+
+        return convertToPostDto(postRepository.save(postWithoutFiles));
     }
 
     @Transactional
@@ -76,6 +101,7 @@ public class PostService {
 
         if (isAdmin || isAuthor) {
             postRepository.delete(post);
+            minioService.deleteUploadedFiles(postsBucket, post.getImageFileNames());
         } else {
             throw new CannotDeleteException("Вы не можете удалить данный пост");
         }

@@ -56,3 +56,4 @@ minio:
   user-avatars-bucket: user-avatars
   chat-messages-bucket: chat-messages
   discussion-messages-bucket: discussion-messages
+  post-files-bucket: posts

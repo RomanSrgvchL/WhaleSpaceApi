@@ -32,3 +32,10 @@ create table comments_likes
     created_at timestamp not null,
     unique (user_id, comment_id)
 );
+
+create table posts_image_file_names
+(
+    id              bigint primary key generated always as identity,
+    post_id         bigint not null references posts (id) on delete cascade,
+    image_file_name text   not null check (char_length(image_file_name) > 0)
+);

@@ -18,8 +18,8 @@ import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.ChatMsgRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import ru.forum.whale.space.api.util.FileUtil;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,6 +31,8 @@ public class ChatMsgService {
     private final MinioService minioService;
     private final SessionUtilService sessionUtilService;
 
+    private static final String FOLDER_PATTERN = "chat-%d";
+
     @Value("${minio.chat-messages-bucket}")
     private String chatMessagesBucket;
 
@@ -41,18 +43,7 @@ public class ChatMsgService {
 
     @Transactional
     public ChatMsgDto save(ChatMsgRequestDto chatMsgRequestDto, List<MultipartFile> files) {
-        if (files != null && !files.isEmpty()) {
-            if (files.size() > 3) {
-                throw new IllegalOperationException("Можно прикрепить не более 3 файлов");
-            } else {
-                for (var file : files) {
-                    String contentType = file.getContentType();
-                    if (!"image/jpeg".equals(contentType) && !"image/png".equals(contentType)) {
-                        throw new IllegalOperationException("Файлы должен быть формата PNG или JPG/JPEG");
-                    }
-                }
-            }
-        }
+        FileUtil.validateFiles(files);
 
         User currentUser = sessionUtilService.findCurrentUser();
         long currentUserId = currentUser.getId();
@@ -64,12 +55,9 @@ public class ChatMsgService {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");
         }
 
-        String folder = "chat-" + chat.getId();
+        String folder = FOLDER_PATTERN.formatted(chat.getId());
 
-        List<String> fileNames = new ArrayList<>();
-        if (files != null && !files.isEmpty()) {
-            fileNames = minioService.uploadMessageFiles(chatMessagesBucket, files, folder);
-        }
+        List<String> fileNames = minioService.uploadImages(chatMessagesBucket, files, folder);
 
         ChatMsg chatMsg = ChatMsg.builder()
                 .content(chatMsgRequestDto.getContent())

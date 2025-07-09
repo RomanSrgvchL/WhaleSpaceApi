@@ -1,6 +1,7 @@
 package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,9 +56,11 @@ public class ChatMsgService {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");
         }
 
-        String folder = FOLDER_PATTERN.formatted(chat.getId());
-
-        List<String> fileNames = minioService.uploadImages(chatMessagesBucket, files, folder);
+        List<String> fileNames = new ArrayList<>();
+        if (files != null && !files.isEmpty()) {
+            String folder = FOLDER_PATTERN.formatted(chat.getId());
+            fileNames = minioService.uploadImages(chatMessagesBucket, files, folder);
+        }
 
         ChatMsg chatMsg = ChatMsg.builder()
                 .content(chatMsgRequestDto.getContent())

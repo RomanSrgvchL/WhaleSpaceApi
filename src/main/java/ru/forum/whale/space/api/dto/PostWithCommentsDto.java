@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import lombok.Getter;
@@ -23,6 +24,9 @@ public class PostWithCommentsDto {
     @NotBlank(message = "Пост не должно быть пустым")
     @Size(max = 2000, message = "Длина поста не должна превышать 2000 символов")
     private String content;
+
+    @Size(max = 3, message = "В посте не может быть больше 3 изображений")
+    private List<String> imageFileNames;
 
     @NotNull
     private LocalDateTime createdAt;

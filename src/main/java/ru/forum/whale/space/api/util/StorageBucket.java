@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum StorageBucket {
     USER_AVATARS_BUCKET("user-avatars"),
     CHAT_MESSAGES_BUCKET("chat-messages"),
-    DISCUSSION_MESSAGES_BUCKET("discussion-messages");
+    DISCUSSION_MESSAGES_BUCKET("discussion-messages"),
+    POST_BUCKET("posts");
 
     private final String bucketName;
 

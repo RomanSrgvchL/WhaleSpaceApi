@@ -31,7 +31,7 @@ public class PostService {
 
     public List<PostDto> findAll(Sort sort) {
         return postRepository.findAllBy(sort).stream()
-                .map(this::convertToPostDto)
+                .map(this::buildPostDto)
                 .toList();
     }
 
@@ -39,7 +39,7 @@ public class PostService {
         Post post = postRepository.findDetailedById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Пост с указанным ID не найден"));
 
-        return convertToPostWithCommentsDto(post);
+        return buildPostWithCommentsDto(post);
     }
 
     public List<PostDto> findByUserId(long userId) {
@@ -48,7 +48,7 @@ public class PostService {
         }
 
         return postRepository.findAllByAuthorId(userId, Sort.by(Sort.Direction.ASC, "createdAt")).stream()
-                .map(this::convertToPostDto)
+                .map(this::buildPostDto)
                 .toList();
     }
 
@@ -82,7 +82,19 @@ public class PostService {
     }
 
     private PostDto convertToPostDto(Post post) {
-        PostDto postDto = mapper.map(post, PostDto.class);
+        return mapper.map(post, PostDto.class);
+    }
+
+    private PostWithCommentsDto convertToPostWithCommentsDto(Post post) {
+        return mapper.map(post, PostWithCommentsDto.class);
+    }
+
+    private CommentDto convertToCommentDto(Comment comment) {
+        return mapper.map(comment, CommentDto.class);
+    }
+
+    private PostDto buildPostDto(Post post) {
+        PostDto postDto = convertToPostDto(post);
 
         postDto.setCommentCount(post.getComments().size());
 
@@ -94,12 +106,12 @@ public class PostService {
         return postDto;
     }
 
-    private PostWithCommentsDto convertToPostWithCommentsDto(Post post) {
-        PostWithCommentsDto postWithCommentsDto = mapper.map(post, PostWithCommentsDto.class);
+    private PostWithCommentsDto buildPostWithCommentsDto(Post post) {
+        PostWithCommentsDto postWithCommentsDto = convertToPostWithCommentsDto(post);
 
         postWithCommentsDto.setComments(post.getComments().stream()
                 .map(comment -> {
-                    CommentDto commentDto = mapper.map(comment, CommentDto.class);
+                    CommentDto commentDto = convertToCommentDto(comment);
 
                     commentDto.setLikedUserIds(comment.getLikes().stream()
                             .map(like -> like.getAuthor().getId())

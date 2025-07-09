@@ -77,7 +77,7 @@ public class MinioService {
         return presignedUrls;
     }
 
-    public List<String> uploadMessageFiles(String bucketName, List<MultipartFile> files, String folder) {
+    public List<String> uploadImages(String bucketName, List<MultipartFile> files, String folder) {
         List<String> fileNames = new ArrayList<>();
         try {
             for (MultipartFile file : files) {

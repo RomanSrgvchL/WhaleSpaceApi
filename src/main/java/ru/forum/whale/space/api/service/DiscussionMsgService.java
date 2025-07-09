@@ -61,7 +61,7 @@ public class DiscussionMsgService {
 
         List<String> fileNames = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
-            fileNames = minioService.uploadMessageFiles(discussionMessagesBucket, files, folder);
+            fileNames = minioService.uploadImages(discussionMessagesBucket, files, folder);
         }
 
         DiscussionMsg discussionMsg = DiscussionMsg.builder()

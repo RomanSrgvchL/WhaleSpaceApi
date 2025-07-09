@@ -23,6 +23,9 @@ public class PostDto {
     @Size(max = 2000, message = "Длина поста не должна превышать 2000 символов")
     private String content;
 
+    @Size(max = 3, message = "В посте не может быть больше 3 изображений")
+    private List<String> imageFileNames;
+
     @NotNull
     private LocalDateTime createdAt;
 

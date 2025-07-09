@@ -1,6 +1,7 @@
 package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,9 +81,11 @@ public class PostService {
 
         Post postWithoutFiles = postRepository.save(post);
 
-        String folder = FOLDER_PATTERN.formatted(postWithoutFiles.getId());
-
-        List<String> fileNames = minioService.uploadImages(postsBucket, files, folder);
+        List<String> fileNames = new ArrayList<>();
+        if (files != null && !files.isEmpty()) {
+            String folder = FOLDER_PATTERN.formatted(post.getId());
+            fileNames = minioService.uploadImages(postsBucket, files, folder);
+        }
 
         postWithoutFiles.setImageFileNames(fileNames);
 

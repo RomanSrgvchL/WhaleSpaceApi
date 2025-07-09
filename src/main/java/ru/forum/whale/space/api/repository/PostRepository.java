@@ -7,8 +7,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.forum.whale.space.api.model.Post;
+import ru.forum.whale.space.api.model.User;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
+    @EntityGraph(attributePaths = {"comments", "likes"}, type = EntityGraph.EntityGraphType.LOAD)
+    List<Post> findAllByAuthorNot(User author, Sort sort);
+
     @EntityGraph(attributePaths = {"comments", "likes"}, type = EntityGraph.EntityGraphType.LOAD)
     List<Post> findAllBy(Sort sort);
 

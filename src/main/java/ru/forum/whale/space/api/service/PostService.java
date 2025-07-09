@@ -2,6 +2,7 @@ package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,13 @@ public class PostService {
     }
 
     public List<PostDto> findAll(Sort sort) {
+        Optional<User> maybeUser = sessionUtilService.findUserWithAnonymous();
+        if (maybeUser.isPresent()){
+            User currentUser = maybeUser.get();
+            return postRepository.findAllByAuthorNot(currentUser, sort).stream()
+                    .map(this::buildPostDto)
+                    .toList();
+        }
         return postRepository.findAllBy(sort).stream()
                 .map(this::buildPostDto)
                 .toList();

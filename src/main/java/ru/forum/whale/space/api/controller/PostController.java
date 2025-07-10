@@ -2,9 +2,11 @@ package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +31,12 @@ import ru.forum.whale.space.api.util.ErrorUtil;
 @RequiredArgsConstructor
 @Tag(name = "Посты", description = "Операции с постами")
 public class PostController {
-
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("createdAt");
     private final PostService postService;
 
     @GetMapping
     public ResponseEntity<List<PostDto>> getAll(@RequestParam(value = "sort", defaultValue = "createdAt") String sort,
-            @RequestParam(value = "order", defaultValue = "desc") String order) {
+                                                @RequestParam(value = "order", defaultValue = "desc") String order) {
         Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
         if (!ALLOWED_SORT_FIELDS.contains(sort)) {

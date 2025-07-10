@@ -71,7 +71,7 @@ public class PostService {
             throw new ResourceNotFoundException("Пользователь с указанным ID не найден");
         }
 
-        return postRepository.findAllByAuthorId(userId, Sort.by(Sort.Direction.ASC, "createdAt")).stream()
+        return postRepository.findAllByAuthorId(userId, Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(this::buildPostDto)
                 .toList();
     }

@@ -7,6 +7,7 @@ import ru.forum.whale.space.api.model.PostLike;
 import ru.forum.whale.space.api.model.User;
 
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
+    boolean existsByAuthorAndPost(User user, Post post);
 
     Optional<PostLike> findByAuthorAndPost(User user, Post post);
 }

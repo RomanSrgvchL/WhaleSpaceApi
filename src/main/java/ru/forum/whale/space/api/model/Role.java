@@ -5,11 +5,12 @@ import lombok.Getter;
 @Getter
 public enum Role {
     USER("ROLE_USER"),
-    ADMIN("ROLE_ADMIN");
+    ADMIN("ROLE_ADMIN"),
+    ANONYMOUS("ROLE_ANONYMOUS");
 
-    private final String prefixRole;
+    private final String roleName;
 
     Role(String role) {
-        prefixRole = role;
+        roleName = role;
     }
 }

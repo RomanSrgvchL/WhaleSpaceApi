@@ -16,10 +16,10 @@ public class ChatDto {
     private Long id;
 
     @NotNull
-    private UserDto user1;
+    private UserLiteDto user1;
 
     @NotNull
-    private UserDto user2;
+    private UserLiteDto user2;
 
     @NotNull
     private LocalDateTime createdAt;

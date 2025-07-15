@@ -1,12 +1,12 @@
 package ru.forum.whale.space.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.forum.whale.space.api.dto.response.UrlResponseDto;
 import ru.forum.whale.space.api.service.MinioService;
 import ru.forum.whale.space.api.util.StorageBucket;
 
@@ -19,22 +19,17 @@ public class FileController {
     private final MinioService minioService;
 
     @GetMapping("/presigned")
-    public ResponseEntity<String> getPresignedUrl(@RequestParam("filename") String filename,
-                                                  @RequestParam("bucket") StorageBucket bucket) {
-        String bucketName = bucket.getBucketName();
-
-        String presignedUrl = minioService.generatePresignedUrl(bucketName, filename);
-
-        return ResponseEntity.status(HttpStatus.OK).body(presignedUrl);
+    public ResponseEntity<UrlResponseDto> getPresignedUrl(@RequestParam("fileName") String fileName,
+                                                          @RequestParam("bucket") StorageBucket bucket) {
+        String filePresignedUrl = minioService.generatePresignedUrl(bucket.getBucketName(), fileName);
+        UrlResponseDto urlResponseDto = new UrlResponseDto(filePresignedUrl);
+        return ResponseEntity.ok(urlResponseDto);
     }
 
     @GetMapping("/presigned/batch")
-    public ResponseEntity<List<String>> getPresignedUrls(@RequestParam("filenames") List<String> filenames,
+    public ResponseEntity<List<String>> getPresignedUrls(@RequestParam("fileNames") List<String> fileNames,
                                                          @RequestParam("bucket") StorageBucket bucket) {
-        String bucketName = bucket.getBucketName();
-
-        List<String> presignedUrls = minioService.generatePresignedUrls(bucketName, filenames);
-
-        return ResponseEntity.status(HttpStatus.OK).body(presignedUrls);
+        List<String> presignedUrls = minioService.generatePresignedUrls(bucket.getBucketName(), fileNames);
+        return ResponseEntity.ok(presignedUrls);
     }
 }

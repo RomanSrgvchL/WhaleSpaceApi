@@ -6,6 +6,12 @@ create table posts
     created_at timestamp not null
 );
 
+create table post_image_file_names
+(
+    post_id         bigint not null references posts (id) on delete cascade,
+    image_file_name text   not null
+);
+
 create table post_likes
 (
     id         bigint primary key generated always as identity,
@@ -24,18 +30,11 @@ create table comments
     created_at timestamp not null
 );
 
-create table comments_likes
+create table comment_likes
 (
     id         bigint primary key generated always as identity,
     user_id    bigint    not null references users (id) on delete cascade,
     comment_id bigint    not null references comments (id) on delete cascade,
     created_at timestamp not null,
     unique (user_id, comment_id)
-);
-
-create table posts_image_file_names
-(
-    id              bigint primary key generated always as identity,
-    post_id         bigint not null references posts (id) on delete cascade,
-    image_file_name text   not null check (char_length(image_file_name) > 0)
 );

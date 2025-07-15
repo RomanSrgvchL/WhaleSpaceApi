@@ -18,10 +18,8 @@ import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.UserRepository;
 import ru.forum.whale.space.api.util.SessionUtil;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -83,14 +81,13 @@ public class ChatService {
         User first = users.getFirst();
         User second = users.getSecond();
 
-        if (chatRepository.findByUser1AndUser2(first, second).isPresent()) {
+        if (chatRepository.existsByUser1AndUser2(first, second)) {
             throw new ResourceAlreadyExistsException("Чат с указанным пользователем уже существует");
         }
 
         Chat chat = Chat.builder()
                 .user1(first)
                 .user2(second)
-                .createdAt(LocalDateTime.now())
                 .build();
 
         return convertToChatDto(chatRepository.save(chat));

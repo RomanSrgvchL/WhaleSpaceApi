@@ -8,16 +8,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.forum.whale.space.api.dto.response.FileNameResponseDto;
 import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.UserProfileDto;
-import ru.forum.whale.space.api.dto.response.AvatarResponseDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.service.UserAvatarService;
 import ru.forum.whale.space.api.service.UserService;
-import ru.forum.whale.space.api.util.ErrorUtil;
 
 import java.util.Set;
 
@@ -57,55 +55,42 @@ public class UserController {
                 .isLast(usersPage.isLast())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
+        return ResponseEntity.ok(pageResponseDto);
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> getMe() {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findYourself());
+        return ResponseEntity.ok(userService.findYourself());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getByName(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getByName(@PathVariable long id) {
         UserDto userDto = userService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+        return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("/username/{username}")
     public ResponseEntity<UserDto> getByName(@PathVariable String username) {
         UserDto userDto = userService.findByUsername(username);
-        return ResponseEntity.status(HttpStatus.OK).body(userDto);
-    }
-
-    @GetMapping("/avatar/{fileName}")
-    public ResponseEntity<AvatarResponseDto> getAvatarUrl(@PathVariable String fileName) {
-        String avatarUrl = userAvatarService.generateAvatarUrl(fileName);
-
-        AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess(
-                "Временная ссылка на аватар успешно сгенерирована!", avatarUrl);
-        return ResponseEntity.status(HttpStatus.OK).body(avatarResponseDto);
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/avatar")
-    public ResponseEntity<AvatarResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<FileNameResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file) {
         String avatarFileName = userAvatarService.uploadAvatar(file);
-
-        AvatarResponseDto avatarResponseDto = AvatarResponseDto.buildSuccess("Аватар успешно загружен!",
-                avatarFileName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(avatarResponseDto);
+        FileNameResponseDto fileNameResponseDto = new FileNameResponseDto(avatarFileName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(fileNameResponseDto);
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<UserProfileDto> update(@RequestBody @Valid UserProfileDto userProfileDto,
-                                                 BindingResult bindingResult) {
-        ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
+    public ResponseEntity<UserProfileDto> update(@RequestBody @Valid UserProfileDto userProfileDto) {
         UserProfileDto updatedUser = userService.update(userProfileDto);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/avatar")
     public ResponseEntity<Void> deleteAvatar() {
         userAvatarService.deleteAvatar();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }

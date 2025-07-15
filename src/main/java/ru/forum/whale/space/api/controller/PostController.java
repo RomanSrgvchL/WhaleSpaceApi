@@ -3,14 +3,13 @@ package ru.forum.whale.space.api.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,7 +23,6 @@ import ru.forum.whale.space.api.dto.PostDto;
 import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.request.PostRequestDto;
 import ru.forum.whale.space.api.service.PostService;
-import ru.forum.whale.space.api.util.ErrorUtil;
 
 @RestController
 @RequestMapping("/posts")
@@ -48,30 +46,26 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostWithCommentsDto> getById(@PathVariable("id") Long id) {
-        PostWithCommentsDto post = postService.findById(id);
-        return ResponseEntity.ok(post);
+    public ResponseEntity<PostWithCommentsDto> getById(@PathVariable long id) {
+        PostWithCommentsDto postWithCommentsDto = postService.findById(id);
+        return ResponseEntity.ok(postWithCommentsDto);
     }
 
     @GetMapping("user/{userId}")
-    public ResponseEntity<List<PostDto>> getByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<PostDto>> getByUserId(@PathVariable long userId) {
         List<PostDto> postDtos = postService.findByUserId(userId);
         return ResponseEntity.ok(postDtos);
     }
 
     @PostMapping
-    public ResponseEntity<PostDto> create(
-            @RequestParam(value = "files", required = false) List<MultipartFile> files,
-            @ModelAttribute @Valid PostRequestDto postRequestDto,
-            BindingResult bindingResult) {
-        ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
-
+    public ResponseEntity<PostDto> create(@RequestParam(value = "files", required = false) List<MultipartFile> files,
+                                          @ModelAttribute @Valid PostRequestDto postRequestDto) {
         PostDto postDto = postService.save(postRequestDto, files);
-        return ResponseEntity.created(URI.create("/posts/%d".formatted(postDto.getId()))).body(postDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(postDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable long id) {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

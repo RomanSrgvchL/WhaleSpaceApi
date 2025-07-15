@@ -3,17 +3,18 @@ package ru.forum.whale.space.api.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "chats")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "chats")
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +31,7 @@ public class Chat {
     @JoinColumn(name = "user2_id")
     private User user2;
 
-    @NotNull
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

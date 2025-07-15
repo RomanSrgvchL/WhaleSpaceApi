@@ -5,17 +5,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "discussion_messages")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "discussion_messages")
 public class DiscussionMsg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +45,7 @@ public class DiscussionMsg {
     @Column(name = "image_file_name")
     private List<String> imageFileNames;
 
-    @NotNull
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

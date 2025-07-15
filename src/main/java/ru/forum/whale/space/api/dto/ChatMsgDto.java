@@ -18,7 +18,7 @@ public class ChatMsgDto {
     private Long id;
 
     @NotNull
-    private UserDto sender;
+    private UserLiteDto sender;
 
     @NotBlank(message = "Сообщение не должно быть пустым")
     @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")

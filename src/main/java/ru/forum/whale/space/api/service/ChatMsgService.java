@@ -18,7 +18,6 @@ import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.ChatMsgRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import ru.forum.whale.space.api.util.FileUtil;
 
@@ -31,7 +30,6 @@ public class ChatMsgService {
     private final ModelMapper modelMapper;
     private final MinioService minioService;
     private final SessionUtilService sessionUtilService;
-
     private static final String FOLDER_PATTERN = "chat-%d";
 
     @Value("${minio.chat-messages-bucket}")
@@ -67,7 +65,6 @@ public class ChatMsgService {
                 .sender(currentUser)
                 .chat(chat)
                 .imageFileNames(List.copyOf(fileNames))
-                .createdAt(LocalDateTime.now())
                 .build();
 
         return convertToChatMsgDto(chatMsgRepository.save(chatMsg));

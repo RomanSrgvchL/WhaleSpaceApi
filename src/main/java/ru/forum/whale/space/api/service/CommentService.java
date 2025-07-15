@@ -47,7 +47,7 @@ public class CommentService {
 
         User currentUser = sessionUtilService.findCurrentUser();
 
-        boolean isAdmin = Role.ADMIN.getPrefixRole().equals(currentUser.getRole());
+        boolean isAdmin = Role.ADMIN.getRoleName().equals(currentUser.getRole());
         boolean isAuthor = currentUser.getId().equals(comment.getAuthor().getId());
 
         if (isAdmin || isAuthor) {

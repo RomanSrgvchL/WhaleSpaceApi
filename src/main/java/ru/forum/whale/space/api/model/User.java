@@ -3,19 +3,20 @@ package ru.forum.whale.space.api.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "users")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,7 +40,7 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @NotNull
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

@@ -2,7 +2,6 @@ package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,15 +26,14 @@ import java.util.stream.Collectors;
 import ru.forum.whale.space.api.util.FileUtil;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final SessionUtilService sessionUtilService;
     private final ModelMapper mapper;
     private final MinioService minioService;
-
     private static final String FOLDER_PATTERN = "post-%d";
 
     @Value("${minio.post-files-bucket}")
@@ -47,14 +45,10 @@ public class PostService {
     }
 
     public List<PostDto> findAll(Sort sort) {
-        Optional<User> maybeUser = sessionUtilService.findUserWithAnonymous();
-        if (maybeUser.isPresent()){
-            User currentUser = maybeUser.get();
-            return postRepository.findAllByAuthorNot(currentUser, sort).stream()
-                    .map(this::buildPostDto)
-                    .toList();
-        }
-        return postRepository.findAllBy(sort).stream()
+        return sessionUtilService.findAuthenticatedUser()
+                .map(currentUser -> postRepository.findAllByAuthorNot(currentUser, sort))
+                .orElseGet(() -> postRepository.findAllBy(sort))
+                .stream()
                 .map(this::buildPostDto)
                 .toList();
     }
@@ -107,12 +101,12 @@ public class PostService {
 
         User currentUser = sessionUtilService.findCurrentUser();
 
-        boolean isAdmin = Role.ADMIN.getPrefixRole().equals(currentUser.getRole());
+        boolean isAdmin = Role.ADMIN.getRoleName().equals(currentUser.getRole());
         boolean isAuthor = currentUser.getId().equals(post.getAuthor().getId());
 
         if (isAdmin || isAuthor) {
+            minioService.deleteFiles(postsBucket, post.getImageFileNames());
             postRepository.delete(post);
-            minioService.deleteUploadedFiles(postsBucket, post.getImageFileNames());
         } else {
             throw new CannotDeleteException("Вы не можете удалить данный пост");
         }

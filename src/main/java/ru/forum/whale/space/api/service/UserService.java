@@ -26,7 +26,7 @@ public class UserService {
         return usersPage.map(this::convertToUserDto);
     }
 
-    public UserDto findById(Long id) {
+    public UserDto findById(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
         return convertToUserDto(user);

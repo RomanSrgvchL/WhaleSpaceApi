@@ -15,7 +15,6 @@ import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
 import ru.forum.whale.space.api.repository.DiscussionMsgRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +68,6 @@ public class DiscussionMsgService {
                 .sender(currentUser)
                 .discussion(discussion)
                 .imageFileNames(List.copyOf(fileNames))
-                .createdAt(LocalDateTime.now())
                 .build();
 
         return convertToDiscussionMsgDto(discussionMsgRepository.save(discussionMsg));

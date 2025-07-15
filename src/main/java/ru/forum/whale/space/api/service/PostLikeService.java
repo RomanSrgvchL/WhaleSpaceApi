@@ -24,7 +24,7 @@ public class PostLikeService {
         Post post = findPostOrElseThrow(postId);
         User currentUser = sessionUtilService.findCurrentUser();
 
-        if (postLikeRepository.findByAuthorAndPost(currentUser, post).isPresent()) {
+        if (postLikeRepository.existsByAuthorAndPost(currentUser, post)) {
             throw new ResourceAlreadyExistsException("Вы уже ставили лайк на этот пост");
         }
 

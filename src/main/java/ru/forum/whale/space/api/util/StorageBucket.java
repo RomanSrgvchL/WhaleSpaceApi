@@ -7,7 +7,7 @@ public enum StorageBucket {
     USER_AVATARS_BUCKET("user-avatars"),
     CHAT_MESSAGES_BUCKET("chat-messages"),
     DISCUSSION_MESSAGES_BUCKET("discussion-messages"),
-    POST_BUCKET("posts");
+    POST_FILES_BUCKET("posts");
 
     private final String bucketName;
 
@@ -15,4 +15,3 @@ public enum StorageBucket {
         this.bucketName = bucketName;
     }
 }
-

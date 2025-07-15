@@ -1,6 +1,5 @@
 package ru.forum.whale.space.api.util;
 
-import jakarta.validation.ValidationException;
 import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
@@ -11,12 +10,10 @@ public final class ErrorUtil {
     private ErrorUtil() {
     }
 
-    public static void ifHasErrorsBuildMessageAndThrowValidationException(BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder errors = new StringBuilder();
-            ErrorUtil.recordErrors(errors, bindingResult);
-            throw new ValidationException(errors.toString());
-        }
+    public static String BuildErrorMessage(BindingResult bindingResult) {
+        StringBuilder errors = new StringBuilder();
+        ErrorUtil.recordErrors(errors, bindingResult);
+        return errors.toString();
     }
 
     private static void recordErrors(StringBuilder errors, BindingResult bindingResult) {

@@ -13,11 +13,10 @@ import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.model.Discussion;
 import ru.forum.whale.space.api.model.DiscussionMsg;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
+import ru.forum.whale.space.api.util.StorageBucket;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,6 +25,7 @@ public class DiscussionService {
     private final DiscussionRepository discussionRepository;
     private final SessionUtilService sessionUtilService;
     private final ModelMapper modelMapper;
+    private final MinioService minioService;
 
     public List<DiscussionMetaDto> findAll(Sort sort) {
         return discussionRepository.findAll(sort).stream()
@@ -43,13 +43,12 @@ public class DiscussionService {
 
     @Transactional
     public DiscussionDto save(DiscussionRequestDto discussionRequestDto) {
-        if (discussionRepository.findByTitle(discussionRequestDto.getTitle()).isPresent()) {
+        if (discussionRepository.existsByTitle(discussionRequestDto.getTitle())) {
             throw new ResourceAlreadyExistsException("Обсуждение с таким названием уже сущесвтует");
         }
 
         Discussion discussion = Discussion.builder()
                 .title(discussionRequestDto.getTitle())
-                .createdAt(LocalDateTime.now())
                 .creator(sessionUtilService.findCurrentUser())
                 .build();
 
@@ -57,9 +56,13 @@ public class DiscussionService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
-        if (discussionRepository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Обсуждение с указанным ID не найдено");
+    public void deleteById(long id) {
+        Discussion discussion = discussionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Обсуждение с указанным ID не найдено"));
+
+        for (var message : discussion.getMessages()) {
+            minioService.deleteFiles(StorageBucket.DISCUSSION_MESSAGES_BUCKET.getBucketName(),
+                    message.getImageFileNames());
         }
 
         discussionRepository.deleteById(id);

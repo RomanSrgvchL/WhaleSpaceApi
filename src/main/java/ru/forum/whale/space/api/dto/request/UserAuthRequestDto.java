@@ -17,9 +17,9 @@ public class UserAuthRequestDto {
     )
     @NotBlank(message = "Имя пользователя не должно быть пустым")
     @Size(max = 20, message = "Имя пользователя не должно содержать более 20 символов")
-    String username;
+    private String username;
 
     @NotBlank(message = "Пароль не должен быть пустым")
     @Size(max = 100, message = "Пароль не должен содержать более 100 символов")
-    String password;
+    private String password;
 }

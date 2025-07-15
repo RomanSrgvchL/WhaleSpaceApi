@@ -11,6 +11,7 @@ import ru.forum.whale.space.api.exception.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,34 +45,34 @@ public class MinioService {
         }
     }
 
-    public String generatePresignedUrl(String bucketName, String filename) {
+    public String generatePresignedUrl(String bucketName, String fileName) {
         try {
             minioClient.statObject(StatObjectArgs.builder()
                     .bucket(bucketName)
-                    .object(filename)
+                    .object(fileName)
                     .build());
         } catch (Exception e) {
-            throw new ResourceNotFoundException(String.format("Файл '%s' не найден", filename));
+            throw new ResourceNotFoundException(String.format("Файл '%s' не найден", fileName));
         }
         try {
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
                             .bucket(bucketName)
-                            .object(filename)
+                            .object(fileName)
                             .expiry(12, TimeUnit.HOURS)
                             .build());
         } catch (Exception e) {
             throw new GeneralMinioException(String.format("Ошибка при генерации временной ссылки на файл '%s': %s",
-                    filename, e.getMessage()));
+                    fileName, e.getMessage()));
         }
     }
 
-    public List<String> generatePresignedUrls(String bucketName, List<String> filenames) {
+    public List<String> generatePresignedUrls(String bucketName, List<String> fileNames) {
         List<String> presignedUrls = new ArrayList<>();
 
-        for (var filename : filenames) {
-            presignedUrls.add(generatePresignedUrl(bucketName, filename));
+        for (var fileName : fileNames) {
+            presignedUrls.add(generatePresignedUrl(bucketName, fileName));
         }
 
         return presignedUrls;
@@ -81,71 +82,87 @@ public class MinioService {
         List<String> fileNames = new ArrayList<>();
         try {
             for (MultipartFile file : files) {
-                byte[] imageBytes;
-                try (InputStream inputStream = file.getInputStream()) {
-                    imageBytes = inputStream.readAllBytes();
-                }
-
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageBytes));
-                if (image == null) {
-                    throw new IllegalOperationException("Невалидный файл изображения");
-                }
-
-                if (image.getWidth() < MIN_IMAGE_WIDTH || image.getHeight() < MIN_IMAGE_HEIGHT) {
-                    throw new IllegalOperationException(String.format(
-                            "Минимальный размер изображения — %dx%d пикселей",
-                            MIN_IMAGE_WIDTH, MIN_IMAGE_HEIGHT)
-                    );
-                }
+                byte[] imageBytes = validateImage(file, MIN_IMAGE_WIDTH, MIN_IMAGE_HEIGHT);
 
                 String fileName = folder + "/" + UUID.randomUUID();
-                try (InputStream uploadStream = new ByteArrayInputStream(imageBytes)) {
-                    minioClient.putObject(
-                            PutObjectArgs.builder()
-                                    .bucket(bucketName)
-                                    .object(fileName)
-                                    .stream(uploadStream, imageBytes.length, -1)
-                                    .contentType(file.getContentType())
-                                    .build()
-                    );
-                    fileNames.add(fileName);
-                }
+
+                loadFile(bucketName, fileName, file, imageBytes);
+
+                fileNames.add(fileName);
             }
             return fileNames;
         } catch (IllegalOperationException e) {
-            deleteUploadedFiles(bucketName, fileNames);
+            deleteFiles(bucketName, fileNames);
             throw e;
         } catch (Exception e) {
-            deleteUploadedFiles(bucketName, fileNames);
+            deleteFiles(bucketName, fileNames);
             throw new MinioUploadException("Ошибка загрузки файлов: " + e.getMessage());
         }
     }
 
-    public void deleteFile(String bucketName, String filename) {
+    public void deleteFile(String bucketName, String fileName) {
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(filename)
+                            .object(fileName)
                             .build()
             );
         } catch (Exception e) {
-            throw new MinioDeleteException(String.format("Не удалось удалить файл '%s': %s", filename, e.getMessage()));
+            throw new MinioDeleteException(String.format("Не удалось удалить файл '%s': %s", fileName, e.getMessage()));
         }
     }
 
-    public void deleteUploadedFiles(String bucketName, List<String> fileNames) {
-        for (String uploadedFileName : fileNames) {
+    public void deleteFiles(String bucketName, List<String> fileNames) {
+        for (String fileName : fileNames) {
             try {
                 minioClient.removeObject(
                         RemoveObjectArgs.builder()
                                 .bucket(bucketName)
-                                .object(uploadedFileName)
+                                .object(fileName)
                                 .build()
                 );
             } catch (Exception e) {
-                log.error("Ошибка при удалении файла {}: {}", uploadedFileName, e.getMessage());
+                log.error("Ошибка при удалении файла {}: {}", fileName, e.getMessage());
             }
+        }
+    }
+
+    public byte[] validateImage(MultipartFile file, int minImageWidth, int minImageHeight) {
+        byte[] imageBytes;
+
+        try (InputStream inputStream = file.getInputStream()) {
+            imageBytes = inputStream.readAllBytes();
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageBytes));
+            if (image == null) {
+                throw new IllegalOperationException("Невалидный файл изображения");
+            }
+
+            if (image.getWidth() < minImageWidth || image.getHeight() < minImageHeight) {
+                throw new IllegalOperationException(String.format("Минимальный размер изображения — %dx%d пикселей",
+                        minImageWidth, minImageHeight));
+            }
+        } catch (IOException e) {
+            throw new MinioUploadException("Ошибка чтения файла: " + e.getMessage());
+        }
+
+        return imageBytes;
+    }
+
+    public void loadFile(String bucketName, String fileName, MultipartFile file, byte[] bytes) {
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(fileName)
+                            .stream(new ByteArrayInputStream(bytes), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new MinioUploadException(String.format("Не удалось загрузить файл '%s': '%s' ",
+                    fileName, e.getMessage()));
         }
     }
 }

@@ -21,7 +21,7 @@ public class DiscussionMetaDto {
     private String title;
 
     @NotNull
-    private UserDto creator;
+    private UserLiteDto creator;
 
     @NotNull
     private LocalDateTime createdAt;

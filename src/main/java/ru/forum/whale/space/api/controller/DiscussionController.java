@@ -6,13 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.dto.DiscussionDto;
 import ru.forum.whale.space.api.dto.DiscussionMetaDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
 import ru.forum.whale.space.api.service.DiscussionService;
-import ru.forum.whale.space.api.util.ErrorUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -36,20 +34,17 @@ public class DiscussionController {
         }
 
         List<DiscussionMetaDto> discussionDtos = discussionService.findAll(Sort.by(direction, sort));
-        return ResponseEntity.status(HttpStatus.OK).body(discussionDtos);
+        return ResponseEntity.ok(discussionDtos);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DiscussionDto> getById(@PathVariable long id) {
         DiscussionDto discussionDto = discussionService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(discussionDto);
+        return ResponseEntity.ok(discussionDto);
     }
 
     @PostMapping
-    public ResponseEntity<DiscussionDto> create(@RequestBody @Valid DiscussionRequestDto discussionRequestDto,
-                                                BindingResult bindingResult) {
-        ErrorUtil.ifHasErrorsBuildMessageAndThrowValidationException(bindingResult);
-
+    public ResponseEntity<DiscussionDto> create(@RequestBody @Valid DiscussionRequestDto discussionRequestDto) {
         DiscussionDto discussionDto = discussionService.save(discussionRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(discussionDto);
     }
@@ -57,6 +52,6 @@ public class DiscussionController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable long id) {
         discussionService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }

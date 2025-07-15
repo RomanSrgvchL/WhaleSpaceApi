@@ -4,6 +4,8 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,78 +13,58 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.*;
+import ru.forum.whale.space.api.util.ErrorUtil;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ResponseDto> handleValidationException(ValidationException e) {
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    private ResponseEntity<ResponseDto> buildResponse(HttpStatus status, String message) {
+        return ResponseEntity.status(status).body(ResponseDto.buildFailure(message));
     }
 
-    @ExceptionHandler(IllegalOperationException.class)
-    public ResponseEntity<ResponseDto> handleIllegalOperationException(IllegalOperationException e) {
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    @ExceptionHandler({
+            ValidationException.class,
+            IllegalOperationException.class,
+            MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class
+    })
+    public ResponseEntity<ResponseDto> handleBadRequestExceptions(Exception e) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ResponseDto> handleResourceNotFoundException(ResourceNotFoundException e) {
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return buildResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ResponseDto> handleResourceAlreadyExistsException(ResourceAlreadyExistsException e) {
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        return buildResponse(HttpStatus.CONFLICT, e.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ResponseDto> handleMethodArgumentTypeMismatchException(
-            MethodArgumentTypeMismatchException e) {
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ResponseDto> handleMissingServletRequestParameterException(
-            MissingServletRequestParameterException e) {
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    @ExceptionHandler(GeneralMinioException.class)
-    public ResponseEntity<ResponseDto> handleGeneralMinioException(GeneralMinioException e) {
-        log.error(e.getMessage());
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-
-    @ExceptionHandler(MinioUploadException.class)
-    public ResponseEntity<ResponseDto> handleMinioUploadException(MinioUploadException e) {
-        log.error(e.getMessage());
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-
-    @ExceptionHandler(MinioDeleteException.class)
-    public ResponseEntity<ResponseDto> handleAvatarDeleteException(MinioDeleteException e) {
-        log.error(e.getMessage());
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    @ExceptionHandler({
+            GeneralMinioException.class,
+            MinioUploadException.class,
+            MinioDeleteException.class
+    })
+    public ResponseEntity<ResponseDto> handleMinioExceptions(Exception e) {
+        log.error(e.getMessage(), e);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ResponseDto> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
-        ResponseDto response = ResponseDto.buildFailure("Размер файла не должен превышать 3 МБ");
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
+        return buildResponse(HttpStatus.PAYLOAD_TOO_LARGE, "Размер файла не должен превышать 3 МБ");
     }
 
     @ExceptionHandler(CannotDeleteException.class)
     public ResponseEntity<ResponseDto> handleCannotDeleteException(CannotDeleteException e) {
-        ResponseDto response = ResponseDto.buildFailure(e.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        return buildResponse(HttpStatus.FORBIDDEN, e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseDto> handleValidationException(MethodArgumentNotValidException e) {
+        BindingResult bindingResult = e.getBindingResult();
+        return buildResponse(HttpStatus.BAD_REQUEST, ErrorUtil.BuildErrorMessage(bindingResult));
     }
 }

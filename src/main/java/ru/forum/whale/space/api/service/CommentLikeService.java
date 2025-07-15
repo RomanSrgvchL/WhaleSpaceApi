@@ -24,7 +24,7 @@ public class CommentLikeService {
         Comment comment = findCommentOrElseThrow(commentId);
         User currentUser = sessionUtilService.findCurrentUser();
 
-        if (commentLikeRepository.findByAuthorAndComment(currentUser, comment).isPresent()) {
+        if (commentLikeRepository.existsByAuthorAndComment(currentUser, comment)) {
             throw new ResourceAlreadyExistsException("Вы уже ставили лайк на этот комментарий");
         }
 

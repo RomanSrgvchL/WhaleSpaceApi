@@ -7,5 +7,7 @@ import ru.forum.whale.space.api.model.CommentLike;
 import ru.forum.whale.space.api.model.User;
 
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
+    boolean existsByAuthorAndComment(User author, Comment comment);
+
     Optional<CommentLike> findByAuthorAndComment(User author, Comment comment);
 }

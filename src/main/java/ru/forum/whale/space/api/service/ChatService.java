@@ -1,16 +1,16 @@
 package ru.forum.whale.space.api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.ChatDto;
 import ru.forum.whale.space.api.dto.ChatWithLastMsgDto;
-import ru.forum.whale.space.api.dto.ChatMsgDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
+import ru.forum.whale.space.api.mapper.ChatMapper;
+import ru.forum.whale.space.api.mapper.ChatMsgMapper;
 import ru.forum.whale.space.api.model.Chat;
 import ru.forum.whale.space.api.model.ChatMsg;
 import ru.forum.whale.space.api.model.User;
@@ -27,19 +27,20 @@ import java.util.List;
 public class ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
     private final SessionUtilService sessionUtilService;
+    private final ChatMapper chatMapper;
+    private final ChatMsgMapper chatMsgMapper;
 
     public List<ChatWithLastMsgDto> findAll() {
         return chatRepository.findAllByUserIdWithMessages(SessionUtil.getCurrentUserId())
                 .stream()
                 .filter(chat -> !chat.getMessages().isEmpty())
                 .map(chat -> {
-                    ChatWithLastMsgDto chatDto = modelMapper.map(chat, ChatWithLastMsgDto.class);
+                    ChatWithLastMsgDto chatDto = convertToChatWithLastMsgDto(chat);
 
                     chat.getMessages().stream()
                             .max(Comparator.comparing(ChatMsg::getCreatedAt))
-                            .ifPresent(chatMsg -> chatDto.setLastMessage(modelMapper.map(chatMsg, ChatMsgDto.class)));
+                            .ifPresent(chatMsg -> chatDto.setLastMessage(chatMsgMapper.chatMsgToChatMsgDto(chatMsg)));
 
                     return chatDto;
                 })
@@ -108,6 +109,10 @@ public class ChatService {
     }
 
     private ChatDto convertToChatDto(Chat chat) {
-        return modelMapper.map(chat, ChatDto.class);
+        return chatMapper.chatToChatDto(chat);
+    }
+
+    private ChatWithLastMsgDto convertToChatWithLastMsgDto(Chat chat) {
+        return chatMapper.chatToChatWithLastMsgDto(chat);
     }
 }

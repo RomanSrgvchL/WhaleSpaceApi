@@ -3,7 +3,6 @@ package ru.forum.whale.space.api.service;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +11,7 @@ import ru.forum.whale.space.api.dto.ChatMsgDto;
 import ru.forum.whale.space.api.dto.request.ChatMsgRequestDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
+import ru.forum.whale.space.api.mapper.ChatMsgMapper;
 import ru.forum.whale.space.api.model.Chat;
 import ru.forum.whale.space.api.model.ChatMsg;
 import ru.forum.whale.space.api.model.User;
@@ -27,9 +27,9 @@ import ru.forum.whale.space.api.util.FileUtil;
 public class ChatMsgService {
     private final ChatMsgRepository chatMsgRepository;
     private final ChatRepository chatRepository;
-    private final ModelMapper modelMapper;
-    private final MinioService minioService;
     private final SessionUtilService sessionUtilService;
+    private final MinioService minioService;
+    private final ChatMsgMapper chatMsgMapper;
     private static final String FOLDER_PATTERN = "chat-%d";
 
     @Value("${minio.chat-messages-bucket}")
@@ -71,6 +71,6 @@ public class ChatMsgService {
     }
 
     private ChatMsgDto convertToChatMsgDto(ChatMsg chatMsg) {
-        return modelMapper.map(chatMsg, ChatMsgDto.class);
+        return chatMsgMapper.chatMsgToChatMsgDto(chatMsg);
     }
 }

@@ -1,13 +1,13 @@
 package ru.forum.whale.space.api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.CommentDto;
 import ru.forum.whale.space.api.dto.request.CommentRequestDto;
 import ru.forum.whale.space.api.exception.CannotDeleteException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
+import ru.forum.whale.space.api.mapper.CommentMapper;
 import ru.forum.whale.space.api.model.Comment;
 import ru.forum.whale.space.api.model.Post;
 import ru.forum.whale.space.api.model.Role;
@@ -22,7 +22,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final SessionUtilService sessionUtilService;
-    private final ModelMapper mapper;
+    private final CommentMapper commentMapper;
 
     @Transactional
     public CommentDto save(CommentRequestDto commentRequestDto) {
@@ -58,6 +58,6 @@ public class CommentService {
     }
 
     private CommentDto convertToCommentDto(Comment comment) {
-        return mapper.map(comment, CommentDto.class);
+        return commentMapper.commentToCommentDto(comment);
     }
 }

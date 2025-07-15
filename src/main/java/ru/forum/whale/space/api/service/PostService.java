@@ -3,7 +3,6 @@ package ru.forum.whale.space.api.service;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,6 +14,8 @@ import ru.forum.whale.space.api.dto.PostDto;
 import ru.forum.whale.space.api.dto.request.PostRequestDto;
 import ru.forum.whale.space.api.exception.CannotDeleteException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
+import ru.forum.whale.space.api.mapper.CommentMapper;
+import ru.forum.whale.space.api.mapper.PostMapper;
 import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.PostRepository;
 import ru.forum.whale.space.api.repository.UserRepository;
@@ -32,8 +33,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final SessionUtilService sessionUtilService;
-    private final ModelMapper mapper;
     private final MinioService minioService;
+    private final PostMapper postMapper;
+    private final CommentMapper commentMapper;
     private static final String FOLDER_PATTERN = "post-%d";
 
     @Value("${minio.post-files-bucket}")
@@ -113,15 +115,11 @@ public class PostService {
     }
 
     private PostDto convertToPostDto(Post post) {
-        return mapper.map(post, PostDto.class);
+        return postMapper.postToPostDto(post);
     }
 
     private PostWithCommentsDto convertToPostWithCommentsDto(Post post) {
-        return mapper.map(post, PostWithCommentsDto.class);
-    }
-
-    private CommentDto convertToCommentDto(Comment comment) {
-        return mapper.map(comment, CommentDto.class);
+        return postMapper.postToPostWithCommentsDto(post);
     }
 
     private PostDto buildPostDto(Post post) {
@@ -142,7 +140,7 @@ public class PostService {
 
         postWithCommentsDto.setComments(post.getComments().stream()
                 .map(comment -> {
-                    CommentDto commentDto = convertToCommentDto(comment);
+                    CommentDto commentDto = commentMapper.commentToCommentDto(comment);
 
                     commentDto.setLikedUserIds(comment.getLikes().stream()
                             .map(like -> like.getAuthor().getId())

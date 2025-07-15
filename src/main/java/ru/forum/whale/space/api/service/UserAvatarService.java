@@ -15,8 +15,8 @@ import ru.forum.whale.space.api.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserAvatarService {
     private final UserRepository userRepository;
-    private final MinioService minioService;
     private final SessionUtilService sessionUtilService;
+    private final MinioService minioService;
     private static final int MIN_AVATAR_WIDTH = 400;
     private static final int MIN_AVATAR_HEIGHT = 400;
     private static final String FOLDER_PATTERN = "avatar-%d";

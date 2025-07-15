@@ -2,7 +2,6 @@ package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +10,7 @@ import ru.forum.whale.space.api.dto.DiscussionMsgDto;
 import ru.forum.whale.space.api.dto.request.DiscussionMsgRequestDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
+import ru.forum.whale.space.api.mapper.DiscussionMsgMapper;
 import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
 import ru.forum.whale.space.api.repository.DiscussionMsgRepository;
@@ -24,9 +24,9 @@ import java.util.List;
 public class DiscussionMsgService {
     private final DiscussionMsgRepository discussionMsgRepository;
     private final DiscussionRepository discussionRepository;
-    private final ModelMapper modelMapper;
-    private final MinioService minioService;
     private final SessionUtilService sessionUtilService;
+    private final MinioService minioService;
+    private final DiscussionMsgMapper discussionMsgMapper;
 
     @Value("${minio.discussion-messages-bucket}")
     private String discussionMessagesBucket;
@@ -74,6 +74,6 @@ public class DiscussionMsgService {
     }
 
     private DiscussionMsgDto convertToDiscussionMsgDto(DiscussionMsg discussionMsg) {
-        return modelMapper.map(discussionMsg, DiscussionMsgDto.class);
+        return discussionMsgMapper.discussionMsgToDiscussionMsgDto(discussionMsg);
     }
 }

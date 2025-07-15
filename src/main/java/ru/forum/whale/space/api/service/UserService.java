@@ -1,7 +1,6 @@
 package ru.forum.whale.space.api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -10,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.UserProfileDto;
 import ru.forum.whale.space.api.exception.*;
+import ru.forum.whale.space.api.mapper.UserMapper;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
 
@@ -19,7 +19,7 @@ import ru.forum.whale.space.api.repository.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
     private final SessionUtilService sessionUtilService;
-    private final ModelMapper modelMapper;
+    private final UserMapper userMapper;
 
     public Page<UserDto> findAll(Sort sort, int page, int size) {
         Page<User> usersPage = userRepository.findAll(PageRequest.of(page, size, sort));
@@ -50,14 +50,14 @@ public class UserService {
     }
 
     private void mergeIntoUser(UserProfileDto userProfileDto, User user) {
-        modelMapper.map(userProfileDto, user);
+        userMapper.updateUserFromUserProfileDto(userProfileDto, user);
     }
 
     private UserDto convertToUserDto(User user) {
-        return modelMapper.map(user, UserDto.class);
+        return userMapper.userToUserDto(user);
     }
 
     private UserProfileDto convertToUserProfileDto(User user) {
-        return modelMapper.map(user, UserProfileDto.class);
+        return userMapper.userToUserProfileDto(user);
     }
 }

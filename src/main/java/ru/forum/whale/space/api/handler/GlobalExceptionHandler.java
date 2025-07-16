@@ -75,4 +75,10 @@ public class GlobalExceptionHandler {
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         return buildResponse(HttpStatus.BAD_REQUEST, ErrorUtil.buildErrorMessage(violations));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseDto> handleException(Exception e) {
+        log.error("Неизвестная ошибка: {}", e.getMessage());
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Неизвестная ошибка: %s".formatted(e.getMessage()));
+    }
 }

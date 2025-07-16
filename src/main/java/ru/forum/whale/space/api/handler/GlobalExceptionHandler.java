@@ -1,6 +1,7 @@
 package ru.forum.whale.space.api.handler;
 
-import jakarta.validation.ValidationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.util.ErrorUtil;
 
+import java.util.Set;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,7 +26,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            ValidationException.class,
             IllegalOperationException.class,
             MethodArgumentTypeMismatchException.class,
             MissingServletRequestParameterException.class
@@ -65,6 +67,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseDto> handleValidationException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
-        return buildResponse(HttpStatus.BAD_REQUEST, ErrorUtil.BuildErrorMessage(bindingResult));
+        return buildResponse(HttpStatus.BAD_REQUEST, ErrorUtil.buildErrorMessage(bindingResult));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ResponseDto> handleValidationException(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        return buildResponse(HttpStatus.BAD_REQUEST, ErrorUtil.buildErrorMessage(violations));
     }
 }

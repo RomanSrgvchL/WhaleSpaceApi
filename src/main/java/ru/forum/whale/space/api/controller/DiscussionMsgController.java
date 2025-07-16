@@ -1,5 +1,6 @@
 package ru.forum.whale.space.api.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/discussionMessages")
 @RequiredArgsConstructor
+@Tag(name = "Сообщения в обсуждениях", description = "Операции с сообщениями в обсуждениях (отправка)")
 public class DiscussionMsgController {
     private final DiscussionMsgService discussionMsgService;
     private final SimpMessagingTemplate messagingTemplate;

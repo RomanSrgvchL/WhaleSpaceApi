@@ -1,5 +1,6 @@
 package ru.forum.whale.space.api.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/files")
 @RequiredArgsConstructor
+@Tag(name = "Файлы", description = "Генерация временных ссылок на файл или группу файлов")
 public class FileController {
     private final MinioService minioService;
 

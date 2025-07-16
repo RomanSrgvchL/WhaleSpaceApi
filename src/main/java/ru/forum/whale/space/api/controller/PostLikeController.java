@@ -1,5 +1,6 @@
 package ru.forum.whale.space.api.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,8 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.forum.whale.space.api.service.PostLikeService;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/posts/{postId}/likes")
+@RequiredArgsConstructor
+@Tag(name = "Лайки на постах", description = "Операции с лайками на постах")
 public class PostLikeController {
     private final PostLikeService postLikeService;
 

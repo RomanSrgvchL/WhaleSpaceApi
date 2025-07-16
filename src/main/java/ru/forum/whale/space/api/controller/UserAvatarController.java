@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.forum.whale.space.api.docs.useravatar.DeleteAvatarDocs;
+import ru.forum.whale.space.api.docs.useravatar.UploadAvatarDocs;
 import ru.forum.whale.space.api.dto.response.FileNameResponseDto;
 import ru.forum.whale.space.api.service.UserAvatarService;
 
@@ -16,6 +18,7 @@ import ru.forum.whale.space.api.service.UserAvatarService;
 public class UserAvatarController {
     private final UserAvatarService userAvatarService;
 
+    @UploadAvatarDocs
     @PostMapping
     public ResponseEntity<FileNameResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file) {
         String avatarFileName = userAvatarService.uploadAvatar(file);
@@ -23,6 +26,7 @@ public class UserAvatarController {
         return ResponseEntity.status(HttpStatus.CREATED).body(fileNameResponseDto);
     }
 
+    @DeleteAvatarDocs
     @DeleteMapping
     public ResponseEntity<Void> deleteAvatar() {
         userAvatarService.deleteAvatar();

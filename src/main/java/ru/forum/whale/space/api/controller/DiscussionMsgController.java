@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.forum.whale.space.api.docs.discussionmsg.CreateDiscussionMsgDocs;
 import ru.forum.whale.space.api.dto.DiscussionMsgDto;
 import ru.forum.whale.space.api.dto.request.DiscussionMsgRequestDto;
 import ru.forum.whale.space.api.service.DiscussionMsgService;
@@ -22,6 +23,7 @@ public class DiscussionMsgController {
     private final DiscussionMsgService discussionMsgService;
     private final SimpMessagingTemplate messagingTemplate;
 
+    @CreateDiscussionMsgDocs
     @PostMapping
     public ResponseEntity<DiscussionMsgDto> create(
             @RequestParam(value = "files", required = false) List<MultipartFile> files,

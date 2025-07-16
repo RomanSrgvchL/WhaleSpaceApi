@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.forum.whale.space.api.docs.postlike.LikePostDocs;
+import ru.forum.whale.space.api.docs.postlike.UnlikePostDocs;
 import ru.forum.whale.space.api.service.PostLikeService;
 
 @RestController
@@ -17,12 +19,14 @@ import ru.forum.whale.space.api.service.PostLikeService;
 public class PostLikeController {
     private final PostLikeService postLikeService;
 
+    @LikePostDocs
     @PostMapping
     public ResponseEntity<Void> like(@PathVariable long postId) {
         postLikeService.like(postId);
         return ResponseEntity.ok().build();
     }
 
+    @UnlikePostDocs
     @DeleteMapping
     public ResponseEntity<Void> unlike(@PathVariable long postId) {
         postLikeService.unlike(postId);

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.forum.whale.space.api.docs.file.GetPresignedUrlDocs;
+import ru.forum.whale.space.api.docs.file.GetPresignedUrlsDocs;
 import ru.forum.whale.space.api.dto.response.UrlResponseDto;
 import ru.forum.whale.space.api.service.MinioService;
 import ru.forum.whale.space.api.util.StorageBucket;
@@ -20,6 +22,7 @@ import java.util.List;
 public class FileController {
     private final MinioService minioService;
 
+    @GetPresignedUrlDocs
     @GetMapping("/presigned")
     public ResponseEntity<UrlResponseDto> getPresignedUrl(@RequestParam("fileName") String fileName,
                                                           @RequestParam("bucket") StorageBucket bucket) {
@@ -28,6 +31,7 @@ public class FileController {
         return ResponseEntity.ok(urlResponseDto);
     }
 
+    @GetPresignedUrlsDocs
     @GetMapping("/presigned/batch")
     public ResponseEntity<List<String>> getPresignedUrls(@RequestParam("fileNames") List<String> fileNames,
                                                          @RequestParam("bucket") StorageBucket bucket) {

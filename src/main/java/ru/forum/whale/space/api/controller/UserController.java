@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.forum.whale.space.api.docs.user.*;
 import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.UserProfileDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
@@ -23,6 +24,7 @@ public class UserController {
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("username", "createdAt");
     private final UserService userService;
 
+    @GetAllUsersDocs
     @GetMapping
     public ResponseEntity<PageResponseDto<UserDto>> getAll(
             @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
@@ -53,23 +55,27 @@ public class UserController {
         return ResponseEntity.ok(pageResponseDto);
     }
 
+    @GetMeDocs
     @GetMapping("/me")
     public ResponseEntity<UserDto> getMe() {
         return ResponseEntity.ok(userService.findYourself());
     }
 
+    @GetUserByIdDocs
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable long id) {
         UserDto userDto = userService.findById(id);
         return ResponseEntity.ok(userDto);
     }
 
+    @GetUserByUsernameDocs
     @GetMapping("/username/{username}")
-    public ResponseEntity<UserDto> getByName(@PathVariable String username) {
+    public ResponseEntity<UserDto> getByUsername(@PathVariable String username) {
         UserDto userDto = userService.findByUsername(username);
         return ResponseEntity.ok(userDto);
     }
 
+    @UpdateUserDocs
     @PatchMapping("/me")
     public ResponseEntity<UserProfileDto> update(@RequestBody @Valid UserProfileDto userProfileDto) {
         UserProfileDto updatedUser = userService.update(userProfileDto);

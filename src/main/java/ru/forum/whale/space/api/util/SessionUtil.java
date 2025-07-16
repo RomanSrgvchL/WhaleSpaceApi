@@ -1,14 +1,15 @@
 package ru.forum.whale.space.api.util;
 
 import java.util.Collection;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.forum.whale.space.api.security.CustomUserDetails;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SessionUtil {
-    private SessionUtil() {
-    }
-
     public static long getCurrentUserId() {
         return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }

@@ -10,7 +10,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class FileUtil {
+public final class FileUtil {
     public static void validateFiles(List<MultipartFile> files) {
         if (files != null && !files.isEmpty()) {
             if (files.size() > 3) {

@@ -1,6 +1,8 @@
 package ru.forum.whale.space.api.util;
 
 import jakarta.validation.ConstraintViolation;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
@@ -8,10 +10,8 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ErrorUtil {
-    private ErrorUtil() {
-    }
-
     public static String buildErrorMessage(BindingResult bindingResult) {
         StringBuilder errors = new StringBuilder();
         ErrorUtil.recordErrors(errors, bindingResult);

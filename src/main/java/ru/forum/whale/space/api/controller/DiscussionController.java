@@ -2,6 +2,7 @@ package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import ru.forum.whale.space.api.dto.DiscussionDto;
 import ru.forum.whale.space.api.dto.DiscussionMetaDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
 import ru.forum.whale.space.api.service.DiscussionService;
+import ru.forum.whale.space.api.util.Messages;
 
 import java.util.List;
 import java.util.Set;
@@ -44,7 +46,7 @@ public class DiscussionController {
 
     @GetDiscussionByIdDocs
     @GetMapping("/{id}")
-    public ResponseEntity<DiscussionDto> getById(@PathVariable long id) {
+    public ResponseEntity<DiscussionDto> getById(@PathVariable @Positive(message = Messages.ID_POSITIVE) long id) {
         DiscussionDto discussionDto = discussionService.findById(id);
         return ResponseEntity.ok(discussionDto);
     }
@@ -58,7 +60,7 @@ public class DiscussionController {
 
     @DeleteDiscussionByIdDocs
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable @Positive(message = Messages.ID_POSITIVE) long id) {
         discussionService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

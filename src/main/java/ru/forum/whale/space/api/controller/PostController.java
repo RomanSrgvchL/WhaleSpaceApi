@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import ru.forum.whale.space.api.dto.PostDto;
 import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.request.PostRequestDto;
 import ru.forum.whale.space.api.service.PostService;
+import ru.forum.whale.space.api.util.Messages;
 
 @RestController
 @RequestMapping("/posts")
@@ -49,14 +51,14 @@ public class PostController {
 
     @GetPostByIdDocs
     @GetMapping("/{id}")
-    public ResponseEntity<PostWithCommentsDto> getById(@PathVariable long id) {
+    public ResponseEntity<PostWithCommentsDto> getById(@PathVariable @Positive(message = Messages.ID_POSITIVE) long id) {
         PostWithCommentsDto postWithCommentsDto = postService.findById(id);
         return ResponseEntity.ok(postWithCommentsDto);
     }
 
     @GetPostByUserIdDocs
     @GetMapping("user/{userId}")
-    public ResponseEntity<List<PostDto>> getByUserId(@PathVariable long userId) {
+    public ResponseEntity<List<PostDto>> getByUserId(@PathVariable @Positive(message = Messages.ID_POSITIVE) long userId) {
         List<PostDto> postDtos = postService.findByUserId(userId);
         return ResponseEntity.ok(postDtos);
     }
@@ -71,7 +73,7 @@ public class PostController {
 
     @DeletePostByIdDocs
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable @Positive(message = Messages.ID_POSITIVE) long id) {
         postService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

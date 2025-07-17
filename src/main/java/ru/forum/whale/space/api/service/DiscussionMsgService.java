@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.DiscussionMsgDto;
-import ru.forum.whale.space.api.dto.request.DiscussionMsgRequestDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.mapper.DiscussionMsgMapper;
@@ -37,7 +36,7 @@ public class DiscussionMsgService {
     }
 
     @Transactional
-    public DiscussionMsgDto save(DiscussionMsgRequestDto discussionMsgRequestDto, List<MultipartFile> files) {
+    public DiscussionMsgDto save(long discussionId, String content, List<MultipartFile> files) {
         if (files != null && !files.isEmpty()) {
             if (files.size() > 3) {
                 throw new IllegalOperationException("Можно прикрепить не более 3 файлов");
@@ -53,7 +52,7 @@ public class DiscussionMsgService {
 
         User currentUser = sessionUtilService.findCurrentUser();
 
-        Discussion discussion = discussionRepository.findById(discussionMsgRequestDto.getDiscussionId())
+        Discussion discussion = discussionRepository.findById(discussionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Обсуждение не найдено"));
 
         String folder = "discussion-" + discussion.getId();
@@ -64,7 +63,7 @@ public class DiscussionMsgService {
         }
 
         DiscussionMsg discussionMsg = DiscussionMsg.builder()
-                .content(discussionMsgRequestDto.getContent())
+                .content(content)
                 .sender(currentUser)
                 .discussion(discussion)
                 .imageFileNames(List.copyOf(fileNames))

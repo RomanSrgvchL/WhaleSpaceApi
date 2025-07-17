@@ -15,7 +15,7 @@ import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.UserProfileDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.service.UserService;
-import ru.forum.whale.space.api.util.ErrorMessages;
+import ru.forum.whale.space.api.util.Messages;
 
 import java.util.Set;
 
@@ -34,9 +34,9 @@ public class UserController {
             @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
             @RequestParam(value = "order", defaultValue = "desc") String order,
             @RequestParam(value = "page", defaultValue = "0")
-            @PositiveOrZero(message = ErrorMessages.PAGE_MUST_BE_POSITIVE_OR_ZERO) int page,
+            @PositiveOrZero(message = Messages.PAGE_POSITIVE_OR_ZERO) int page,
             @RequestParam(value = "size", defaultValue = "6")
-            @Positive(message = ErrorMessages.SIZE_MUST_BE_POSITIVE) int size) {
+            @Positive(message = Messages.SIZE_POSITIVE) int size) {
         Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
         if (!ALLOWED_SORT_FIELDS.contains(sort)) {
@@ -65,7 +65,7 @@ public class UserController {
 
     @GetUserByIdDocs
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable long id) {
+    public ResponseEntity<UserDto> getById(@PathVariable @Positive(message = Messages.ID_POSITIVE) long id) {
         UserDto userDto = userService.findById(id);
         return ResponseEntity.ok(userDto);
     }

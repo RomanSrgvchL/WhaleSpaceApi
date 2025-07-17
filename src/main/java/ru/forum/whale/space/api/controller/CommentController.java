@@ -2,6 +2,7 @@ package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import ru.forum.whale.space.api.docs.comment.DeleteCommentByIdDocs;
 import ru.forum.whale.space.api.dto.CommentDto;
 import ru.forum.whale.space.api.dto.request.CommentRequestDto;
 import ru.forum.whale.space.api.service.CommentService;
+import ru.forum.whale.space.api.util.Messages;
 
 @RestController
 @RequestMapping("/comments")
@@ -33,7 +35,7 @@ public class CommentController {
 
     @DeleteCommentByIdDocs
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable @Positive(message = Messages.ID_POSITIVE) long id) {
         commentService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

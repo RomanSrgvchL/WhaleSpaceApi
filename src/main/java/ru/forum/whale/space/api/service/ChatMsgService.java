@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.ChatMsgDto;
-import ru.forum.whale.space.api.dto.request.ChatMsgRequestDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.mapper.ChatMsgMapper;
@@ -41,14 +40,14 @@ public class ChatMsgService {
     }
 
     @Transactional
-    public ChatMsgDto save(ChatMsgRequestDto chatMsgRequestDto, List<MultipartFile> files) {
+    public ChatMsgDto save(long chatId, String content, List<MultipartFile> files) {
         FileUtil.validateFiles(files);
 
         User currentUser = sessionUtilService.findCurrentUser();
         long currentUserId = currentUser.getId();
 
-        Chat chat = chatRepository.findById(chatMsgRequestDto.getChatId())
-                .orElseThrow(() -> new ResourceNotFoundException("Чат c указанным ID не найден"));
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Чат с указанным ID не найден"));
 
         if (currentUserId != chat.getUser1().getId() && currentUserId != chat.getUser2().getId()) {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");
@@ -61,7 +60,7 @@ public class ChatMsgService {
         }
 
         ChatMsg chatMsg = ChatMsg.builder()
-                .content(chatMsgRequestDto.getContent())
+                .content(content)
                 .sender(currentUser)
                 .chat(chat)
                 .imageFileNames(List.copyOf(fileNames))

@@ -53,7 +53,7 @@ public class DiscussionMsgService {
         User currentUser = sessionUtilService.findCurrentUser();
 
         Discussion discussion = discussionRepository.findById(discussionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Обсуждение не найдено"));
+                .orElseThrow(() -> new ResourceNotFoundException("Обсуждение с указанным ID не найдено"));
 
         String folder = "discussion-" + discussion.getId();
 

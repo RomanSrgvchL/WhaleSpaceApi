@@ -1,6 +1,7 @@
 package ru.forum.whale.space.api.config;
 
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,8 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/auth/register", "/error",
                                 "/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users", "/users/avatar/*",
-                                "/discussions", "/posts", "/files/**")
+                        .requestMatchers(HttpMethod.GET, "/users", "/discussions", "/posts", "/files/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/discussions").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/discussions/{id}").hasRole("ADMIN")

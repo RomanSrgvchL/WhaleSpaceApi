@@ -19,7 +19,7 @@ public final class FileUtil {
                 for (var file : files) {
                     String contentType = file.getContentType();
                     if (!IMAGE_JPEG_VALUE.equals(contentType) && !IMAGE_PNG_VALUE.equals(contentType)) {
-                        throw new IllegalOperationException("Файлы должен быть формата PNG или JPG/JPEG");
+                        throw new IllegalOperationException("Файлы должны быть формата PNG или JPG/JPEG");
                     }
                 }
             }

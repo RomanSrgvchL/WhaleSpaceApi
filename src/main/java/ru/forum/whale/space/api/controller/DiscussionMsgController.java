@@ -33,7 +33,7 @@ public class DiscussionMsgController {
             @PathVariable @Positive(message = Messages.ID_POSITIVE) long discussionId,
             @RequestParam(value = "content") @NotBlank(message = Messages.MSG_NOT_BLANK)
             @Size(max = 200, message = Messages.MSG_TOO_LONG) String content,
-            @RequestParam(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         DiscussionMsgDto discussionMsgDto = discussionMsgService.save(discussionId, content, files);
 
         messagingTemplate.convertAndSend("/discussion/newMessage/" + discussionId, discussionMsgDto);

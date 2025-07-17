@@ -33,7 +33,7 @@ public class ChatMsgController {
             @PathVariable @Positive(message = Messages.ID_POSITIVE) long chatId,
             @RequestParam(value = "content") @NotBlank(message = Messages.MSG_NOT_BLANK)
             @Size(max = 200, message = Messages.MSG_TOO_LONG) String content,
-            @RequestParam(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         ChatMsgDto chatMsgDto = chatMsgService.save(chatId, content, files);
 
         messagingTemplate.convertAndSend("/chat/newMessage/" + chatId, chatMsgDto);

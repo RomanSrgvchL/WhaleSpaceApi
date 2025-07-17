@@ -3,6 +3,7 @@ package ru.forum.whale.space.api.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,7 @@ public class PostLikeController {
     @PostMapping
     public ResponseEntity<Void> like(@PathVariable @Positive(message = Messages.ID_POSITIVE) long postId) {
         postLikeService.like(postId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @UnlikePostDocs

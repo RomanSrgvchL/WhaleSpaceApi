@@ -48,7 +48,7 @@ public class ChatMsgService {
         long currentUserId = currentUser.getId();
 
         Chat chat = chatRepository.findById(chatMsgRequestDto.getChatId())
-                .orElseThrow(() -> new ResourceNotFoundException("Чат c указанным ID найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("Чат c указанным ID не найден"));
 
         if (currentUserId != chat.getUser1().getId() && currentUserId != chat.getUser2().getId()) {
             throw new IllegalOperationException("Доступ к чужому чату запрещён");

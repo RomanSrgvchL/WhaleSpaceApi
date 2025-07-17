@@ -144,7 +144,7 @@ public class MinioService {
                         minImageWidth, minImageHeight));
             }
         } catch (IOException e) {
-            throw new MinioUploadException("Ошибка чтения файла: " + e.getMessage());
+            throw new IllegalOperationException("Файл повреждён или не может быть прочитан: " + e.getMessage());
         }
 
         return imageBytes;

@@ -16,30 +16,26 @@ import ru.forum.whale.space.api.dto.DiscussionDto;
 import ru.forum.whale.space.api.dto.DiscussionMetaDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
 import ru.forum.whale.space.api.service.DiscussionService;
+import ru.forum.whale.space.api.util.DiscussionSortFields;
 import ru.forum.whale.space.api.util.Messages;
 import ru.forum.whale.space.api.util.SortOrder;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/discussions")
 @RequiredArgsConstructor
 @Tag(name = "Обсуждения", description = "Операции с обсуждениями")
 public class DiscussionController {
-    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("title", "createdAt");
     private final DiscussionService discussionService;
 
     @GetAllDiscussionsDocs
     @GetMapping
     public ResponseEntity<List<DiscussionMetaDto>> getAll(
-            @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
+            @RequestParam(value = "sort", defaultValue = "CREATED_AT") DiscussionSortFields sort,
             @RequestParam(value = "order", defaultValue = "DESC") SortOrder order) {
-        if (!ALLOWED_SORT_FIELDS.contains(sort)) {
-            sort = "createdAt";
-        }
-
-        List<DiscussionMetaDto> discussionDtos = discussionService.findAll(Sort.by(order.getDirection(), sort));
+        List<DiscussionMetaDto> discussionDtos = discussionService.findAll(Sort.by(order.getDirection(),
+                sort.getFieldName()));
         return ResponseEntity.ok(discussionDtos);
     }
 

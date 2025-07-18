@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.Set;
 
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,7 @@ import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.request.PostRequestDto;
 import ru.forum.whale.space.api.service.PostService;
 import ru.forum.whale.space.api.util.Messages;
+import ru.forum.whale.space.api.util.PostSortFields;
 import ru.forum.whale.space.api.util.SortOrder;
 
 @RestController
@@ -33,18 +33,14 @@ import ru.forum.whale.space.api.util.SortOrder;
 @RequiredArgsConstructor
 @Tag(name = "Посты", description = "Операции с постами")
 public class PostController {
-    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("createdAt");
     private final PostService postService;
 
     @GetAllPostsDocs
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAll(@RequestParam(value = "sort", defaultValue = "createdAt") String sort,
-                                                @RequestParam(value = "order", defaultValue = "DESC") SortOrder order) {
-        if (!ALLOWED_SORT_FIELDS.contains(sort)) {
-            sort = "createdAt";
-        }
-
-        List<PostDto> postDtos = postService.findAll(Sort.by(order.getDirection(), sort));
+    public ResponseEntity<List<PostDto>> getAll(
+            @RequestParam(value = "sort", defaultValue = "CREATED_AT") PostSortFields sort,
+            @RequestParam(value = "order", defaultValue = "DESC") SortOrder order) {
+        List<PostDto> postDtos = postService.findAll(Sort.by(order.getDirection(), sort.getFieldName()));
         return ResponseEntity.ok(postDtos);
     }
 

@@ -26,6 +26,7 @@ import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.request.PostRequestDto;
 import ru.forum.whale.space.api.service.PostService;
 import ru.forum.whale.space.api.util.Messages;
+import ru.forum.whale.space.api.util.SortOrder;
 
 @RestController
 @RequestMapping("/posts")
@@ -38,14 +39,12 @@ public class PostController {
     @GetAllPostsDocs
     @GetMapping
     public ResponseEntity<List<PostDto>> getAll(@RequestParam(value = "sort", defaultValue = "createdAt") String sort,
-                                                @RequestParam(value = "order", defaultValue = "desc") String order) {
-        Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
-
+                                                @RequestParam(value = "order", defaultValue = "DESC") SortOrder order) {
         if (!ALLOWED_SORT_FIELDS.contains(sort)) {
             sort = "createdAt";
         }
 
-        List<PostDto> postDtos = postService.findAll(Sort.by(direction, sort));
+        List<PostDto> postDtos = postService.findAll(Sort.by(order.getDirection(), sort));
         return ResponseEntity.ok(postDtos);
     }
 

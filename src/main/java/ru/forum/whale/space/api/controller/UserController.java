@@ -16,6 +16,7 @@ import ru.forum.whale.space.api.dto.UserProfileDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.service.UserService;
 import ru.forum.whale.space.api.util.Messages;
+import ru.forum.whale.space.api.util.SortOrder;
 
 import java.util.Set;
 
@@ -32,18 +33,16 @@ public class UserController {
     @GetMapping
     public ResponseEntity<PageResponseDto<UserDto>> getAll(
             @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
-            @RequestParam(value = "order", defaultValue = "desc") String order,
+            @RequestParam(value = "order", defaultValue = "DESC") SortOrder order,
             @RequestParam(value = "page", defaultValue = "0")
             @PositiveOrZero(message = Messages.PAGE_POSITIVE_OR_ZERO) int page,
             @RequestParam(value = "size", defaultValue = "6")
             @Positive(message = Messages.SIZE_POSITIVE) int size) {
-        Sort.Direction direction = "asc".equals(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
-
         if (!ALLOWED_SORT_FIELDS.contains(sort)) {
             sort = "createdAt";
         }
     
-        Page<UserDto> usersPage = userService.findAll(Sort.by(direction, sort), page, size);
+        Page<UserDto> usersPage = userService.findAll(Sort.by(order.getDirection(), sort), page, size);
 
         PageResponseDto<UserDto> pageResponseDto = PageResponseDto.<UserDto>builder()
                 .content(usersPage.getContent())

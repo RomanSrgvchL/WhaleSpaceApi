@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id("io.freefair.lombok") version "8.14"
+}
+
+group = 'ru.forum'
+version = '1.0'
+description = 'API для социальной сети WhaleSpace'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    mapstructVersion = '1.6.3'
+    lombokMapstructVersion = '0.2.0'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    implementation 'org.springframework.session:spring-session-data-redis:3.4.3'
+    implementation 'org.flywaydb:flyway-core'
+    implementation "io.minio:minio:8.5.17"
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+
+    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql:11.8.2'
+
+    compileOnly "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructVersion}"
+
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 23
+    options.encoding = 'UTF-8'
+}
+
+bootJar {
+    archiveBaseName = 'whale-space-api'
+    archiveVersion = '1.0'
+}

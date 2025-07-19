@@ -9,15 +9,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.docs.post.*;
 import ru.forum.whale.space.api.dto.PostDto;
@@ -59,9 +53,9 @@ public class PostController {
     }
 
     @CreatePostDocs
-    @PostMapping
-    public ResponseEntity<PostDto> create(@RequestParam(value = "files", required = false) List<MultipartFile> files,
-                                          @ModelAttribute @Valid PostRequestDto postRequestDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PostDto> create(@RequestPart("post") @Valid PostRequestDto postRequestDto,
+                                          @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         PostDto postDto = postService.save(postRequestDto, files);
         return ResponseEntity.status(HttpStatus.CREATED).body(postDto);
     }

@@ -20,7 +20,7 @@ public class UserAvatarController {
 
     @UploadAvatarDocs
     @PostMapping
-    public ResponseEntity<FileNameResponseDto> uploadAvatar(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<FileNameResponseDto> uploadAvatar(@RequestPart("file") MultipartFile file) {
         String avatarFileName = userAvatarService.uploadAvatar(file);
         FileNameResponseDto fileNameResponseDto = new FileNameResponseDto(avatarFileName);
         return ResponseEntity.status(HttpStatus.CREATED).body(fileNameResponseDto);

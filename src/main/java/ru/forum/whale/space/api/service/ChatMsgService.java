@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.ChatMsgDto;
+import ru.forum.whale.space.api.dto.request.MessageRequestDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.mapper.ChatMsgMapper;
@@ -40,7 +41,7 @@ public class ChatMsgService {
     }
 
     @Transactional
-    public ChatMsgDto save(long chatId, String content, List<MultipartFile> files) {
+    public ChatMsgDto save(long chatId, MessageRequestDto messageRequestDto, List<MultipartFile> files) {
         FileUtil.validateFiles(files);
 
         User currentUser = sessionUtilService.findCurrentUser();
@@ -60,7 +61,7 @@ public class ChatMsgService {
         }
 
         ChatMsg chatMsg = ChatMsg.builder()
-                .content(content)
+                .content(messageRequestDto.getContent())
                 .sender(currentUser)
                 .chat(chat)
                 .imageFileNames(List.copyOf(fileNames))

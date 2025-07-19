@@ -1,9 +1,7 @@
 package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.docs.discussionmsg.CreateDiscussionMsgDocs;
 import ru.forum.whale.space.api.dto.DiscussionMsgDto;
+import ru.forum.whale.space.api.dto.request.MessageRequestDto;
 import ru.forum.whale.space.api.service.DiscussionMsgService;
 import ru.forum.whale.space.api.util.Messages;
 
@@ -31,10 +30,9 @@ public class DiscussionMsgController {
     @PostMapping
     public ResponseEntity<DiscussionMsgDto> create(
             @PathVariable @Positive(message = Messages.ID_POSITIVE) long discussionId,
-            @RequestParam(value = "content") @NotBlank(message = Messages.MSG_NOT_BLANK)
-            @Size(max = 200, message = Messages.MSG_TOO_LONG) String content,
+            @RequestPart(value = "message") MessageRequestDto messageRequestDto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        DiscussionMsgDto discussionMsgDto = discussionMsgService.save(discussionId, content, files);
+        DiscussionMsgDto discussionMsgDto = discussionMsgService.save(discussionId, messageRequestDto, files);
 
         messagingTemplate.convertAndSend("/discussion/newMessage/" + discussionId, discussionMsgDto);
 

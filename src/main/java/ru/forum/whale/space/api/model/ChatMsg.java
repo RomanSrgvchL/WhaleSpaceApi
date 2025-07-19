@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.forum.whale.space.api.util.Messages;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,8 +34,8 @@ public class ChatMsg {
     @JoinColumn(name = "sender_id")
     private User sender;
 
-    @NotBlank(message = "Сообщение не должно быть пустым")
-    @Size(max = 200, message = "Длина сообщения не должна превышать 200 символов")
+    @NotBlank(message = Messages.MSG_NOT_BLANK)
+    @Size(max = 200, message = Messages.MSG_TOO_LONG)
     @Column(name = "content")
     private String content;
 

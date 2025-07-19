@@ -3,7 +3,6 @@ package ru.forum.whale.space.api.service;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +19,7 @@ import ru.forum.whale.space.api.repository.ChatMsgRepository;
 
 import java.util.List;
 import ru.forum.whale.space.api.util.FileUtil;
+import ru.forum.whale.space.api.util.StorageBucket;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,10 +30,10 @@ public class ChatMsgService {
     private final SessionUtilService sessionUtilService;
     private final MinioService minioService;
     private final ChatMsgMapper chatMsgMapper;
+
     private static final String FOLDER_PATTERN = "chat-%d";
 
-    @Value("${minio.chat-messages-bucket}")
-    private String chatMessagesBucket;
+    private static final String chatMessagesBucket = StorageBucket.CHAT_MESSAGES_BUCKET.getBucketName();
 
     @PostConstruct
     private void initChatMessagesBucket() {

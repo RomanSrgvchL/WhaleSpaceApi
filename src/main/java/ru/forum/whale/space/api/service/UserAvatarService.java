@@ -2,13 +2,13 @@ package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
+import ru.forum.whale.space.api.util.StorageBucket;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,10 +19,10 @@ public class UserAvatarService {
     private final MinioService minioService;
     private static final int MIN_AVATAR_WIDTH = 400;
     private static final int MIN_AVATAR_HEIGHT = 400;
+
     private static final String FOLDER_PATTERN = "avatar-%d";
 
-    @Value("${minio.user-avatars-bucket}")
-    private String avatarBucket;
+    private  static final String avatarBucket = StorageBucket.USER_AVATARS_BUCKET.getBucketName();
 
     @PostConstruct
     private void initAvatarBucket() {

@@ -2,7 +2,6 @@ package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +13,7 @@ import ru.forum.whale.space.api.mapper.DiscussionMsgMapper;
 import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
 import ru.forum.whale.space.api.repository.DiscussionMsgRepository;
+import ru.forum.whale.space.api.util.StorageBucket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,9 @@ public class DiscussionMsgService {
     private final MinioService minioService;
     private final DiscussionMsgMapper discussionMsgMapper;
 
-    @Value("${minio.discussion-messages-bucket}")
-    private String discussionMessagesBucket;
+    private static final String FOLDER_PATTERN = "discussion-%d";
+
+    private static final String discussionMessagesBucket = StorageBucket.DISCUSSION_MESSAGES_BUCKET.getBucketName();
 
     @PostConstruct
     private void initChatMessagesBucket() {
@@ -56,10 +57,9 @@ public class DiscussionMsgService {
         Discussion discussion = discussionRepository.findById(discussionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Обсуждение с указанным ID не найдено"));
 
-        String folder = "discussion-" + discussion.getId();
-
         List<String> fileNames = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
+            String folder = FOLDER_PATTERN.formatted(discussion.getId());
             fileNames = minioService.uploadImages(discussionMessagesBucket, files, folder);
         }
 

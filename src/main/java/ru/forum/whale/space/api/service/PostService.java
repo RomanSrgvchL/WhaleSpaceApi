@@ -3,7 +3,6 @@ package ru.forum.whale.space.api.service;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import ru.forum.whale.space.api.util.FileUtil;
+import ru.forum.whale.space.api.util.StorageBucket;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,10 +36,10 @@ public class PostService {
     private final MinioService minioService;
     private final PostMapper postMapper;
     private final CommentMapper commentMapper;
+
     private static final String FOLDER_PATTERN = "post-%d";
 
-    @Value("${minio.post-files-bucket}")
-    private String postsBucket;
+    private static final String postsBucket = StorageBucket.POST_FILES_BUCKET.getBucketName();
 
     @PostConstruct
     private void initPostsBucket() {

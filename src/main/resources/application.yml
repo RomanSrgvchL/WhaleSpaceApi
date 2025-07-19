@@ -53,7 +53,3 @@ minio:
   url: ${MINIO_URL}
   access-key: ${MINIO_ACCESS_KEY}
   secret-key: ${MINIO_SECRET_KEY}
-  user-avatars-bucket: user-avatars
-  chat-messages-bucket: chat-messages
-  discussion-messages-bucket: discussion-messages
-  post-files-bucket: posts

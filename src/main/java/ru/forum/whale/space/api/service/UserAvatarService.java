@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
-import ru.forum.whale.space.api.util.StorageBucket;
+import ru.forum.whale.space.api.enums.StorageBucket;
 
 @Service
 @Transactional(readOnly = true)

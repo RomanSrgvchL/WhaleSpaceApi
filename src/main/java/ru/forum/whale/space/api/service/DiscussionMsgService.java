@@ -13,7 +13,7 @@ import ru.forum.whale.space.api.mapper.DiscussionMsgMapper;
 import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
 import ru.forum.whale.space.api.repository.DiscussionMsgRepository;
-import ru.forum.whale.space.api.util.StorageBucket;
+import ru.forum.whale.space.api.enums.StorageBucket;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,9 +16,9 @@ import ru.forum.whale.space.api.dto.DiscussionDto;
 import ru.forum.whale.space.api.dto.DiscussionMetaDto;
 import ru.forum.whale.space.api.dto.request.DiscussionRequestDto;
 import ru.forum.whale.space.api.service.DiscussionService;
-import ru.forum.whale.space.api.util.DiscussionSortFields;
+import ru.forum.whale.space.api.enums.DiscussionSortFields;
 import ru.forum.whale.space.api.util.Messages;
-import ru.forum.whale.space.api.util.SortOrder;
+import ru.forum.whale.space.api.enums.SortOrder;
 
 import java.util.List;
 

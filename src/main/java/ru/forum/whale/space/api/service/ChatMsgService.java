@@ -19,7 +19,7 @@ import ru.forum.whale.space.api.repository.ChatMsgRepository;
 
 import java.util.List;
 import ru.forum.whale.space.api.util.FileUtil;
-import ru.forum.whale.space.api.util.StorageBucket;
+import ru.forum.whale.space.api.enums.StorageBucket;
 
 @Service
 @Transactional(readOnly = true)

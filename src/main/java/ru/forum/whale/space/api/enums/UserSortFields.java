@@ -1,14 +1,15 @@
-package ru.forum.whale.space.api.util;
+package ru.forum.whale.space.api.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum PostSortFields {
+public enum UserSortFields {
+    USERNAME("username"),
     CREATED_AT("createdAt"),;
 
     private final String fieldName;
 
-    PostSortFields(String fieldName) {
+    UserSortFields(String fieldName) {
         this.fieldName = fieldName;
     }
 }

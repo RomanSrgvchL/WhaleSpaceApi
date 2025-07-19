@@ -16,8 +16,8 @@ import ru.forum.whale.space.api.dto.UserProfileDto;
 import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.service.UserService;
 import ru.forum.whale.space.api.util.Messages;
-import ru.forum.whale.space.api.util.SortOrder;
-import ru.forum.whale.space.api.util.UserSortFields;
+import ru.forum.whale.space.api.enums.SortOrder;
+import ru.forum.whale.space.api.enums.UserSortFields;
 
 @Validated
 @RestController

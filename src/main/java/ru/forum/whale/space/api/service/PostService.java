@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import ru.forum.whale.space.api.util.FileUtil;
-import ru.forum.whale.space.api.util.StorageBucket;
+import ru.forum.whale.space.api.enums.StorageBucket;
 
 @Service
 @Transactional(readOnly = true)

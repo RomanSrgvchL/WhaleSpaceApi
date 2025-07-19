@@ -19,8 +19,8 @@ import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.request.PostRequestDto;
 import ru.forum.whale.space.api.service.PostService;
 import ru.forum.whale.space.api.util.Messages;
-import ru.forum.whale.space.api.util.PostSortFields;
-import ru.forum.whale.space.api.util.SortOrder;
+import ru.forum.whale.space.api.enums.PostSortFields;
+import ru.forum.whale.space.api.enums.SortOrder;
 
 @RestController
 @RequestMapping("/posts")

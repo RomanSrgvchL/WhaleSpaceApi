@@ -1,4 +1,4 @@
-package ru.forum.whale.space.api.util;
+package ru.forum.whale.space.api.enums;
 
 import lombok.Getter;
 

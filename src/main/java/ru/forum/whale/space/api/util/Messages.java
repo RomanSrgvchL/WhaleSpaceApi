@@ -12,6 +12,7 @@ public final class Messages {
 
     public static final String MSG_NOT_BLANK = "Сообщение не должно быть пустым";
     public static final String MSG_TOO_LONG = "Длина сообщения не должна превышать 200 символов";
+    public static final String MSG_IMAGES_LIMIT = "В сообщении не может быть больше 3 изображений";
 
     public static final String DISCUSSION_NOT_BLANK = "Тема не должна быть пустой";
     public static final String DISCUSSION_TITLE_RANGE = "Длина темы должна быть в диапазоне от 5 до 100 символов";
@@ -31,6 +32,4 @@ public final class Messages {
     public static final String PASSWORD_TOO_LONG = "Пароль не должен содержать более 100 символов";
 
     public static final String BIO_TOO_LONG = "Био не должен содержать более 120 символов";
-
-    public static final String MSG_IMAGES_LIMIT = "В сообщении не может быть больше 3 изображений";
 }

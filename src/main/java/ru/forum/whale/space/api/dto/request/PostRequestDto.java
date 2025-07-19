@@ -5,12 +5,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.forum.whale.space.api.util.Messages;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class PostRequestDto {
-    @NotBlank(message = "Пост не должен быть пустым")
-    @Size(max = 2000, message = "Длина поста не должна превышать 2000 символов")
+    @NotBlank(message = Messages.POST_NOT_BLANK)
+    @Size(max = 2000, message = Messages.POST_TOO_LONG)
     private String content;
 }

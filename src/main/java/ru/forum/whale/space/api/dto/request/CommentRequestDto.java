@@ -17,7 +17,7 @@ public class CommentRequestDto {
     @NotNull(message = "Не указан ID поста")
     private Long postId;
 
-    @NotBlank(message = "Комментарий не должен быть пустым")
-    @Size(max = 1000, message = "Длина комментария не должна превышать 1000 символов")
+    @NotBlank(message = Messages.COMMENT_NOT_BLANK)
+    @Size(max = 1000, message = Messages.COMMENT_TOO_LONG)
     private String content;
 }

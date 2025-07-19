@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.forum.whale.space.api.util.Messages;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,8 +24,8 @@ public class Discussion {
     @Column(name = "id")
     private Long id;
 
-    @NotBlank(message = "Тема не должна быть пустой")
-    @Size(min = 5, max = 100, message = "Длина темы должна быть в диапазоне от 5 до 100 символов")
+    @NotBlank(message = Messages.DISCUSSION_NOT_BLANK)
+    @Size(min = 5, max = 100, message = Messages.DISCUSSION_TITLE_RANGE)
     @Column(name = "title")
     private String title;
 

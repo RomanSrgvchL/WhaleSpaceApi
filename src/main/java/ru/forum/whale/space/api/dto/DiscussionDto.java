@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.forum.whale.space.api.util.Messages;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,8 +18,8 @@ public class DiscussionDto {
     @NotNull
     private Long id;
 
-    @NotBlank(message = "Тема не должна быть пустой")
-    @Size(min = 5, max = 100, message = "Длина темы должна быть в диапазоне от 5 до 100 символов")
+    @NotBlank(message = Messages.DISCUSSION_NOT_BLANK)
+    @Size(min = 5, max = 100, message = Messages.DISCUSSION_TITLE_RANGE)
     private String title;
 
     @NotNull

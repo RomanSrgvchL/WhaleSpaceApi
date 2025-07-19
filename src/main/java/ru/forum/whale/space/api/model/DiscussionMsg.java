@@ -39,10 +39,12 @@ public class DiscussionMsg {
     @Column(name = "content")
     private String content;
 
-    @Size(max = 3, message = "В сообщении не может быть больше 3 изображений")
+    @Size(max = 3, message = Messages.MSG_IMAGES_LIMIT)
     @ElementCollection
-    @CollectionTable(name = "discussion_message_image_file_names",
-            joinColumns = @JoinColumn(name = "discussion_message_id"))
+    @CollectionTable(
+            name = "discussion_message_image_file_names",
+            joinColumns = @JoinColumn(name = "discussion_message_id")
+    )
     @Column(name = "image_file_name")
     private List<String> imageFileNames;
 

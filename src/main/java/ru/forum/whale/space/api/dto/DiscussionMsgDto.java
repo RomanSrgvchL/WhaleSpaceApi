@@ -25,7 +25,7 @@ public class DiscussionMsgDto {
     @Size(max = 200, message = Messages.MSG_TOO_LONG)
     private String content;
 
-    @Size(max = 3, message = "В сообщении не может быть больше 3 изображений")
+    @Size(max = 3, message = Messages.MSG_IMAGES_LIMIT)
     private List<String> imageFileNames;
 
     @NotNull

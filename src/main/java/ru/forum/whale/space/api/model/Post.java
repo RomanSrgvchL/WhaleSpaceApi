@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.forum.whale.space.api.util.Messages;
 
 @Getter
 @Setter
@@ -43,8 +44,8 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User author;
 
-    @NotBlank(message = "Пост не должен быть пустым")
-    @Size(max = 2000, message = "Длина поста не должна превышать 2000 символов")
+    @NotBlank(message = Messages.POST_NOT_BLANK)
+    @Size(max = 2000, message = Messages.POST_TOO_LONG)
     @Column(name = "content")
     private String content;
 
@@ -55,7 +56,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private Set<PostLike> likes;
 
-    @Size(max = 3, message = "В посте не может быть больше 3 изображений")
+    @Size(max = 3, message = Messages.POST_IMAGES_LIMIT)
     @ElementCollection
     @CollectionTable(name = "post_image_file_names", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "image_file_name")

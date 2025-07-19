@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.forum.whale.space.api.util.Messages;
 
 @Getter
 @Setter
@@ -19,8 +20,8 @@ public class CommentDto {
     @NotNull
     private UserLiteDto author;
 
-    @NotBlank(message = "Комментарий не должен быть пустым")
-    @Size(max = 1000, message = "Комментарий не должен превышать 1000 символов")
+    @NotBlank(message = Messages.COMMENT_NOT_BLANK)
+    @Size(max = 1000, message = Messages.COMMENT_TOO_LONG)
     private String content;
 
     @NotNull

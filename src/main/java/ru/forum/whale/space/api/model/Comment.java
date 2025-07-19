@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.forum.whale.space.api.util.Messages;
 
 @Getter
 @Setter
@@ -44,8 +45,8 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @NotBlank(message = "Комментарий не должен быть пустым")
-    @Size(max = 1000, message = "Длина комментария не должна превышать 1000 символов")
+    @NotBlank(message = Messages.COMMENT_NOT_BLANK)
+    @Size(max = 1000, message = Messages.COMMENT_TOO_LONG)
     @Column(name = "content")
     private String content;
 

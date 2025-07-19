@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.forum.whale.space.api.model.Gender;
+import ru.forum.whale.space.api.util.Messages;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,12 +22,9 @@ public class UserDto {
     @NotNull
     private Long id;
 
-    @Pattern(
-            regexp = "^(?!.*[;\\\\/?&#]).*$",
-            message = "Имя пользователя не должно содержать символы ; \\ / ? & #"
-    )
-    @NotBlank(message = "Имя пользователя не должно быть пустым")
-    @Size(max = 20, message = "Имя пользователя не должно содержать более 20 символов")
+    @Pattern(regexp = "^(?!.*[;\\\\/?&#]).*$", message = Messages.USERNAME_CANNOT_CONTAIN)
+    @NotBlank(message = Messages.USERNAME_NOT_BLANK)
+    @Size(max = 20, message = Messages.USERNAME_TOO_LONG)
     private String username;
 
     @NotNull
@@ -42,6 +40,6 @@ public class UserDto {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Size(max = 120, message = "Био не должен содержать более 120 символов")
+    @Size(max = 120, message = Messages.BIO_TOO_LONG)
     private String bio;
 }

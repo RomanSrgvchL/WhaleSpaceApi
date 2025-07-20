@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +28,7 @@ public class ChatMsgController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @CreateChatMsgDocs
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ChatMsgDto> create(
             @PathVariable @Positive(message = Messages.ID_POSITIVE) long chatId,
             @RequestPart(value = "message") MessageRequestDto messageRequestDto,

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.forum.whale.space.api.util.Messages;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -29,5 +29,5 @@ public class ChatMsgDto {
     private List<String> imageFileNames;
 
     @NotNull
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 }

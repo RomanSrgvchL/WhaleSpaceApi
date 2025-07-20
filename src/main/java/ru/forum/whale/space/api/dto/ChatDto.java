@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -22,7 +22,7 @@ public class ChatDto {
     private UserLiteDto user2;
 
     @NotNull
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     private List<ChatMsgDto> messages;
 }

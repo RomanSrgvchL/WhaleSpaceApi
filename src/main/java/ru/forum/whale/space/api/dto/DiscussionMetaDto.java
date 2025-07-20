@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.forum.whale.space.api.util.Messages;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -25,5 +25,5 @@ public class DiscussionMetaDto {
     private UserLiteDto creator;
 
     @NotNull
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 }

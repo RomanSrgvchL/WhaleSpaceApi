@@ -13,7 +13,7 @@ import ru.forum.whale.space.api.model.Gender;
 import ru.forum.whale.space.api.util.Messages;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class UserDto {
     private String username;
 
     @NotNull
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @NotNull
     private String role;

@@ -7,13 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.dto.DiscussionMsgDto;
 import ru.forum.whale.space.api.dto.request.MessageRequestDto;
-import ru.forum.whale.space.api.exception.IllegalOperationException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.mapper.DiscussionMsgMapper;
 import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.DiscussionRepository;
 import ru.forum.whale.space.api.repository.DiscussionMsgRepository;
 import ru.forum.whale.space.api.enums.StorageBucket;
+import ru.forum.whale.space.api.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,18 +39,7 @@ public class DiscussionMsgService {
 
     @Transactional
     public DiscussionMsgDto save(long discussionId, MessageRequestDto messageRequestDto, List<MultipartFile> files) {
-        if (files != null && !files.isEmpty()) {
-            if (files.size() > 3) {
-                throw new IllegalOperationException("Можно прикрепить не более 3 файлов");
-            } else {
-                for (var file : files) {
-                    String contentType = file.getContentType();
-                    if (!"image/jpeg".equals(contentType) && !"image/png".equals(contentType)) {
-                        throw new IllegalOperationException("Файлы должны быть формата PNG или JPG/JPEG");
-                    }
-                }
-            }
-        }
+        FileUtil.validateFiles(files);
 
         User currentUser = sessionUtilService.findCurrentUser();
 

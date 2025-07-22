@@ -46,7 +46,7 @@ public class DiscussionMsgService {
                 for (var file : files) {
                     String contentType = file.getContentType();
                     if (!"image/jpeg".equals(contentType) && !"image/png".equals(contentType)) {
-                        throw new IllegalOperationException("Файлы должен быть формата PNG или JPG/JPEG");
+                        throw new IllegalOperationException("Файлы должны быть формата PNG или JPG/JPEG");
                     }
                 }
             }

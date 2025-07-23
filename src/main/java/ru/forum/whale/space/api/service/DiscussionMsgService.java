@@ -30,11 +30,11 @@ public class DiscussionMsgService {
 
     private static final String FOLDER_PATTERN = "discussion-%d";
 
-    private static final String discussionMessagesBucket = StorageBucket.DISCUSSION_MESSAGES_BUCKET.getBucketName();
+    private static final String DISCUSSION_MESSAGES_BUCKET = StorageBucket.DISCUSSION_MESSAGES_BUCKET.getBucketName();
 
     @PostConstruct
     private void initChatMessagesBucket() {
-        minioService.initBucket(discussionMessagesBucket);
+        minioService.initBucket(DISCUSSION_MESSAGES_BUCKET);
     }
 
     @Transactional
@@ -49,7 +49,7 @@ public class DiscussionMsgService {
         List<String> fileNames = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
             String folder = FOLDER_PATTERN.formatted(discussion.getId());
-            fileNames = minioService.uploadImages(discussionMessagesBucket, files, folder);
+            fileNames = minioService.uploadImages(DISCUSSION_MESSAGES_BUCKET, files, folder);
         }
 
         DiscussionMsg discussionMsg = DiscussionMsg.builder()

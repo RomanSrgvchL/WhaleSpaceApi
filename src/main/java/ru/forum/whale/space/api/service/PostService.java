@@ -39,11 +39,11 @@ public class PostService {
 
     private static final String FOLDER_PATTERN = "post-%d";
 
-    private static final String postsBucket = StorageBucket.POST_FILES_BUCKET.getBucketName();
+    private static final String POST_FILES_BUCKET = StorageBucket.POST_FILES_BUCKET.getBucketName();
 
     @PostConstruct
     private void initPostsBucket() {
-        minioService.initBucket(postsBucket);
+        minioService.initBucket(POST_FILES_BUCKET);
     }
 
     public List<PostDto> findAll(Sort sort) {
@@ -88,7 +88,7 @@ public class PostService {
         List<String> fileNames = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
             String folder = FOLDER_PATTERN.formatted(post.getId());
-            fileNames = minioService.uploadImages(postsBucket, files, folder);
+            fileNames = minioService.uploadImages(POST_FILES_BUCKET, files, folder);
         }
 
         postWithoutFiles.setImageFileNames(fileNames);
@@ -107,7 +107,7 @@ public class PostService {
         boolean isAuthor = currentUser.getId().equals(post.getAuthor().getId());
 
         if (isAdmin || isAuthor) {
-            minioService.deleteFiles(postsBucket, post.getImageFileNames());
+            minioService.deleteFiles(POST_FILES_BUCKET, post.getImageFileNames());
             postRepository.delete(post);
         } else {
             throw new CannotDeleteException("Вы не можете удалить данный пост");

@@ -22,11 +22,11 @@ public class UserAvatarService {
 
     private static final String FOLDER_PATTERN = "avatar-%d";
 
-    private  static final String avatarBucket = StorageBucket.USER_AVATARS_BUCKET.getBucketName();
+    private  static final String USER_AVATARS_BUCKET = StorageBucket.USER_AVATARS_BUCKET.getBucketName();
 
     @PostConstruct
     private void initAvatarBucket() {
-        minioService.initBucket(avatarBucket);
+        minioService.initBucket(USER_AVATARS_BUCKET);
     }
 
     @Transactional
@@ -43,7 +43,7 @@ public class UserAvatarService {
         try {
             String avatarFileName = FOLDER_PATTERN.formatted(currentUser.getId());
 
-            minioService.loadFile(avatarBucket, avatarFileName, file, imageBytes);
+            minioService.loadFile(USER_AVATARS_BUCKET, avatarFileName, file, imageBytes);
 
             currentUser.setAvatarFileName(avatarFileName);
             userRepository.save(currentUser);
@@ -64,7 +64,7 @@ public class UserAvatarService {
             throw new IllegalOperationException("Ошибка при удалении: аватар не установлен");
         }
 
-        minioService.deleteFile(avatarBucket, avatarFileName);
+        minioService.deleteFile(USER_AVATARS_BUCKET, avatarFileName);
 
         currentUser.setAvatarFileName(null);
         userRepository.save(currentUser);

@@ -13,6 +13,8 @@ import ru.forum.whale.space.api.dto.response.ResponseDto;
 
 import java.io.IOException;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
+
 @Component
 @RequiredArgsConstructor
 public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
@@ -25,7 +27,7 @@ public class AccessDeniedExceptionHandler implements AccessDeniedHandler {
         ResponseDto responseDto = ResponseDto.buildFailure(FORBIDDEN);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(UTF_8);
         response.setStatus(HttpStatus.FORBIDDEN.value());
 
         objectMapper.writeValue(response.getWriter(), responseDto);

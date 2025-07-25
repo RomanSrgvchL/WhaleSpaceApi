@@ -38,18 +38,14 @@ public class UserAvatarService {
 
         User currentUser = sessionUtilService.findCurrentUser();
 
-        try {
-            String avatarFileName = FOLDER_PATTERN.formatted(currentUser.getId());
+        String avatarFileName = FOLDER_PATTERN.formatted(currentUser.getId());
 
-            minioService.loadFile(USER_AVATARS_BUCKET, avatarFileName, file, imageBytes);
+        minioService.loadFile(USER_AVATARS_BUCKET, avatarFileName, file, imageBytes);
 
-            currentUser.setAvatarFileName(avatarFileName);
-            userRepository.save(currentUser);
+        currentUser.setAvatarFileName(avatarFileName);
+        userRepository.save(currentUser);
 
-            return avatarFileName;
-        } catch (Exception e) {
-            throw new MinioUploadException("Не удалось загрузить аватар: " + e.getMessage());
-        }
+        return avatarFileName;
     }
 
     @Transactional

@@ -22,7 +22,7 @@ public class UserAvatarController {
     @UploadAvatarDocs
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FileNameResponseDto> uploadAvatar(@RequestPart("file") MultipartFile file) {
-        String avatarFileName = userAvatarService.uploadAvatar(file);
+        String avatarFileName = userAvatarService.upload(file);
         FileNameResponseDto fileNameResponseDto = new FileNameResponseDto(avatarFileName);
         return ResponseEntity.status(HttpStatus.CREATED).body(fileNameResponseDto);
     }
@@ -30,7 +30,7 @@ public class UserAvatarController {
     @DeleteAvatarDocs
     @DeleteMapping
     public ResponseEntity<Void> deleteAvatar() {
-        userAvatarService.deleteAvatar();
+        userAvatarService.delete();
         return ResponseEntity.noContent().build();
     }
 }

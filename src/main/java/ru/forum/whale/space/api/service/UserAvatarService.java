@@ -26,12 +26,12 @@ public class UserAvatarService {
     private  static final String USER_AVATARS_BUCKET = StorageBucket.USER_AVATARS_BUCKET.getBucketName();
 
     @PostConstruct
-    private void initAvatarBucket() {
+    private void initUserAvatarsBucket() {
         minioService.initBucket(USER_AVATARS_BUCKET);
     }
 
     @Transactional
-    public String uploadAvatar(MultipartFile file) {
+    public String upload(MultipartFile file) {
         FileUtil.validateFileContentType(file);
 
         byte[] imageBytes = minioService.validateImage(file, MIN_AVATAR_WIDTH, MIN_AVATAR_HEIGHT);
@@ -49,7 +49,7 @@ public class UserAvatarService {
     }
 
     @Transactional
-    public void deleteAvatar() {
+    public void delete() {
         User currentUser = sessionUtilService.findCurrentUser();
 
         String avatarFileName = currentUser.getAvatarFileName();

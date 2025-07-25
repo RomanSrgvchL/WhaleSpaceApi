@@ -33,7 +33,7 @@ public class DiscussionMsgService {
     private static final String DISCUSSION_MESSAGES_BUCKET = StorageBucket.DISCUSSION_MESSAGES_BUCKET.getBucketName();
 
     @PostConstruct
-    private void initChatMessagesBucket() {
+    private void initDiscussionMessagesBucket() {
         minioService.initBucket(DISCUSSION_MESSAGES_BUCKET);
     }
 

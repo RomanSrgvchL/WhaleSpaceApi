@@ -9,6 +9,7 @@ import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
 import ru.forum.whale.space.api.enums.StorageBucket;
+import ru.forum.whale.space.api.util.FileUtil;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,10 +32,7 @@ public class UserAvatarService {
 
     @Transactional
     public String uploadAvatar(MultipartFile file) {
-        String contentType = file.getContentType();
-        if (!"image/jpeg".equals(contentType) && !"image/png".equals(contentType)) {
-            throw new IllegalOperationException("Файл должен быть формата PNG или JPG/JPEG");
-        }
+        FileUtil.validateFileContentType(file);
 
         byte[] imageBytes = minioService.validateImage(file, MIN_AVATAR_WIDTH, MIN_AVATAR_HEIGHT);
 

@@ -1,7 +1,7 @@
 package ru.forum.whale.space.api.service;
 
 import jakarta.annotation.PostConstruct;
-import java.util.ArrayList;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,7 @@ import ru.forum.whale.space.api.dto.CommentDto;
 import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.PostDto;
 import ru.forum.whale.space.api.dto.request.PostRequestDto;
+import ru.forum.whale.space.api.enums.PostSortFields;
 import ru.forum.whale.space.api.exception.CannotDeleteException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.mapper.CommentMapper;
@@ -23,6 +24,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import ru.forum.whale.space.api.util.FileUtil;
 import ru.forum.whale.space.api.enums.StorageBucket;
 
@@ -67,7 +69,8 @@ public class PostService {
             throw new ResourceNotFoundException("Пользователь с указанным ID не найден");
         }
 
-        return postRepository.findAllByAuthorId(userId, Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+        return postRepository.findAllByAuthorId(userId, Sort.by(Sort.Direction.DESC,
+                        PostSortFields.CREATED_AT.getFieldName())).stream()
                 .map(this::buildPostDto)
                 .toList();
     }
@@ -83,17 +86,14 @@ public class PostService {
                 .author(author)
                 .build();
 
-        Post postWithoutFiles = postRepository.save(post);
+        postRepository.save(post);
 
-        List<String> fileNames = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
             String folder = FOLDER_PATTERN.formatted(post.getId());
-            fileNames = minioService.uploadImages(POST_FILES_BUCKET, files, folder);
+            post.setImageFileNames(minioService.uploadImages(POST_FILES_BUCKET, files, folder));
         }
 
-        postWithoutFiles.setImageFileNames(fileNames);
-
-        return convertToPostDto(postRepository.save(postWithoutFiles));
+        return convertToPostDto(postRepository.save(post));
     }
 
     @Transactional

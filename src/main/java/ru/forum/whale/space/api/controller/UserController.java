@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,17 +35,8 @@ public class UserController {
             @PositiveOrZero(message = Messages.PAGE_POSITIVE_OR_ZERO) int page,
             @RequestParam(value = "size", defaultValue = "6")
             @Positive(message = Messages.SIZE_POSITIVE) int size) {
-        Page<UserDto> usersPage = userService.findAll(Sort.by(order.getDirection(), sort.getFieldName()), page, size);
-
-        PageResponseDto<UserDto> pageResponseDto = PageResponseDto.<UserDto>builder()
-                .content(usersPage.getContent())
-                .page(page)
-                .size(size)
-                .totalPages(usersPage.getTotalPages())
-                .totalElements(usersPage.getTotalElements())
-                .isLast(usersPage.isLast())
-                .build();
-
+        PageResponseDto<UserDto> pageResponseDto = userService.findAll(Sort.by(order.getDirection(),
+                sort.getFieldName()), page, size);
         return ResponseEntity.ok(pageResponseDto);
     }
 

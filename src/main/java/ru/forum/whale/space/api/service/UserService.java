@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.forum.whale.space.api.dto.UserDto;
 import ru.forum.whale.space.api.dto.UserProfileDto;
+import ru.forum.whale.space.api.dto.response.PageResponseDto;
 import ru.forum.whale.space.api.exception.*;
 import ru.forum.whale.space.api.mapper.UserMapper;
 import ru.forum.whale.space.api.model.User;
@@ -21,9 +22,18 @@ public class UserService {
     private final SessionUtilService sessionUtilService;
     private final UserMapper userMapper;
 
-    public Page<UserDto> findAll(Sort sort, int page, int size) {
-        Page<User> usersPage = userRepository.findAll(PageRequest.of(page, size, sort));
-        return usersPage.map(this::convertToUserDto);
+    public PageResponseDto<UserDto> findAll(Sort sort, int page, int size) {
+        Page<UserDto> usersPage = userRepository.findAll(PageRequest.of(page, size, sort))
+                .map(this::convertToUserDto);
+
+        return PageResponseDto.<UserDto>builder()
+                .content(usersPage.getContent())
+                .page(page)
+                .size(size)
+                .totalPages(usersPage.getTotalPages())
+                .totalElements(usersPage.getTotalElements())
+                .isLast(usersPage.isLast())
+                .build();
     }
 
     public UserDto findById(long id) {

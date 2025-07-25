@@ -51,7 +51,7 @@ public class CommentService {
         boolean isAuthor = currentUser.getId().equals(comment.getAuthor().getId());
 
         if (isAdmin || isAuthor) {
-            commentRepository.deleteById(commentId);
+            commentRepository.delete(comment);
         } else {
             throw new CannotDeleteException("Вы не можете удалить данный комментарий");
         }

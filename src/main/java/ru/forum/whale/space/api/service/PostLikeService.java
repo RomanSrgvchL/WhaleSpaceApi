@@ -28,12 +28,12 @@ public class PostLikeService {
             throw new ResourceAlreadyExistsException("Вы уже ставили лайк на этот пост");
         }
 
-        PostLike like = PostLike.builder()
+        PostLike postLike = PostLike.builder()
                 .author(currentUser)
                 .post(post)
                 .build();
 
-        postLikeRepository.save(like);
+        postLikeRepository.save(postLike);
     }
 
     @Transactional

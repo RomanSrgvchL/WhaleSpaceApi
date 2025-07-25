@@ -29,8 +29,8 @@ public class CommentLikeService {
         }
 
         CommentLike commentLike = CommentLike.builder()
-                .comment(comment)
                 .author(currentUser)
+                .comment(comment)
                 .build();
 
         commentLikeRepository.save(commentLike);

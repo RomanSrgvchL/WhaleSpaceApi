@@ -52,7 +52,7 @@ public class MinioService {
                     .object(fileName)
                     .build());
         } catch (Exception e) {
-            throw new ResourceNotFoundException(String.format("Файл '%s' не найден", fileName));
+            throw new ResourceNotFoundException(("Файл '%s' не найден".formatted(fileName)));
         }
         try {
             return minioClient.getPresignedObjectUrl(
@@ -63,19 +63,15 @@ public class MinioService {
                             .expiry(12, TimeUnit.HOURS)
                             .build());
         } catch (Exception e) {
-            throw new GeneralMinioException(String.format("Ошибка при генерации временной ссылки на файл '%s': %s",
-                    fileName, e.getMessage()));
+            throw new GeneralMinioException("Ошибка при генерации временной ссылки на файл '%s': %s"
+                    .formatted(fileName, e.getMessage()));
         }
     }
 
     public List<String> generatePresignedUrls(String bucketName, List<String> fileNames) {
-        List<String> presignedUrls = new ArrayList<>();
-
-        for (var fileName : fileNames) {
-            presignedUrls.add(generatePresignedUrl(bucketName, fileName));
-        }
-
-        return presignedUrls;
+        return fileNames.stream()
+                .map(fileName -> generatePresignedUrl(bucketName, fileName))
+                .toList();
     }
 
     public List<String> uploadImages(String bucketName, List<MultipartFile> files, String folder) {
@@ -102,26 +98,16 @@ public class MinioService {
 
     public void deleteFile(String bucketName, String fileName) {
         try {
-            minioClient.removeObject(
-                    RemoveObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(fileName)
-                            .build()
-            );
+            removeObject(bucketName, fileName);
         } catch (Exception e) {
-            throw new MinioDeleteException(String.format("Не удалось удалить файл '%s': %s", fileName, e.getMessage()));
+            throw new MinioDeleteException("Не удалось удалить файл '%s': %s".formatted(fileName, e.getMessage()));
         }
     }
 
     public void deleteFiles(String bucketName, List<String> fileNames) {
         for (String fileName : fileNames) {
             try {
-                minioClient.removeObject(
-                        RemoveObjectArgs.builder()
-                                .bucket(bucketName)
-                                .object(fileName)
-                                .build()
-                );
+                removeObject(bucketName, fileName);
             } catch (Exception e) {
                 log.error("Ошибка при удалении файла {}: {}", fileName, e.getMessage());
             }
@@ -140,8 +126,8 @@ public class MinioService {
             }
 
             if (image.getWidth() < minImageWidth || image.getHeight() < minImageHeight) {
-                throw new IllegalOperationException(String.format("Минимальный размер изображения — %dx%d пикселей",
-                        minImageWidth, minImageHeight));
+                throw new IllegalOperationException("Минимальный размер изображения — %dx%d пикселей"
+                        .formatted(minImageWidth, minImageHeight));
             }
         } catch (IOException e) {
             throw new IllegalOperationException("Файл повреждён или не может быть прочитан: " + e.getMessage());
@@ -161,8 +147,17 @@ public class MinioService {
                             .build()
             );
         } catch (Exception e) {
-            throw new MinioUploadException(String.format("Не удалось загрузить файл '%s': '%s' ",
-                    fileName, e.getMessage()));
+            throw new MinioUploadException("Не удалось загрузить файл '%s': %s"
+                    .formatted(fileName, e.getMessage()));
         }
+    }
+
+    private void removeObject(String bucketName, String fileName) throws Exception {
+        minioClient.removeObject(
+                RemoveObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(fileName)
+                        .build()
+        );
     }
 }

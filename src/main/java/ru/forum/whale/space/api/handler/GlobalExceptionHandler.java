@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.forum.whale.space.api.dto.response.ResponseDto;
@@ -28,7 +29,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             IllegalOperationException.class,
             MethodArgumentTypeMismatchException.class,
-            MissingServletRequestParameterException.class
+            MissingServletRequestParameterException.class,
+            HandlerMethodValidationException.class
     })
     public ResponseEntity<ResponseDto> handleBadRequestExceptions(Exception e) {
         return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -79,6 +81,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseDto> handleException(Exception e) {
         log.error("Неизвестная ошибка: {}", e.getMessage());
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Неизвестная ошибка: %s".formatted(e.getMessage()));
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Неизвестная ошибка: " + e.getMessage());
     }
 }

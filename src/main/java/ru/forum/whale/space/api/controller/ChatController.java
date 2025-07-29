@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.docs.chat.CreateChatDocs;
 import ru.forum.whale.space.api.docs.chat.GetAllChatsDocs;
@@ -19,6 +20,7 @@ import ru.forum.whale.space.api.util.Messages;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/chats")
 @RequiredArgsConstructor

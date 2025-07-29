@@ -1,6 +1,7 @@
 package ru.forum.whale.space.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class ChatMsgController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ChatMsgDto> create(
             @PathVariable @Positive(message = Messages.ID_POSITIVE) long chatId,
-            @RequestPart(value = "message") MessageRequestDto messageRequestDto,
+            @RequestPart(value = "message") @Valid MessageRequestDto messageRequestDto,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         ChatMsgDto chatMsgDto = chatMsgService.save(chatId, messageRequestDto, files);
 

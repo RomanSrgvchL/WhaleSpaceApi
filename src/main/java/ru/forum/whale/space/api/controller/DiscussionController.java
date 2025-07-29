@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.forum.whale.space.api.docs.discussion.CreateDiscussionDocs;
 import ru.forum.whale.space.api.docs.discussion.DeleteDiscussionByIdDocs;
@@ -22,6 +23,7 @@ import ru.forum.whale.space.api.enums.SortOrder;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/discussions")
 @RequiredArgsConstructor

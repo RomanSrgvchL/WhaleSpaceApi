@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.docs.post.*;
@@ -22,6 +23,7 @@ import ru.forum.whale.space.api.util.Messages;
 import ru.forum.whale.space.api.enums.PostSortFields;
 import ru.forum.whale.space.api.enums.SortOrder;
 
+@Validated
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor

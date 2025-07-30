@@ -40,8 +40,7 @@ public class PostService {
     private final CommentMapper commentMapper;
 
     private static final String FOLDER_PATTERN = "post-%d";
-
-    private static final String POST_FILES_BUCKET = StorageBucket.POST_FILES_BUCKET.getBucketName();
+    public static final String POST_FILES_BUCKET = StorageBucket.POST_FILES_BUCKET.getBucketName();
 
     @PostConstruct
     private void initPostsBucket() {

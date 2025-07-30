@@ -20,7 +20,7 @@ public class UserAvatarService {
     private final MinioService minioService;
 
     private static final String FOLDER_PATTERN = "avatar-%d";
-    private  static final String USER_AVATARS_BUCKET = StorageBucket.USER_AVATARS_BUCKET.getBucketName();
+    public static final String USER_AVATARS_BUCKET = StorageBucket.USER_AVATARS_BUCKET.getBucketName();
 
     public static final int MIN_AVATAR_WIDTH = 400;
     public static final int MIN_AVATAR_HEIGHT = 400;

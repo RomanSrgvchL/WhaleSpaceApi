@@ -12,11 +12,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
@@ -24,6 +20,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Entity
 @Table(name = "post_likes")
 public class PostLike {

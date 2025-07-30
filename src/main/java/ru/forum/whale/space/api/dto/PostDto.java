@@ -5,14 +5,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.ZonedDateTime;
 import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 import ru.forum.whale.space.api.util.Messages;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class PostDto {
     @NotNull
     private Long id;

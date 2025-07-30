@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ChatWithLastMsgDto {
     @NotNull
     private Long id;

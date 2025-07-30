@@ -15,11 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.forum.whale.space.api.util.Messages;
 
@@ -28,6 +24,7 @@ import ru.forum.whale.space.api.util.Messages;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Entity
 @Table(name = "comments")
 public class Comment {

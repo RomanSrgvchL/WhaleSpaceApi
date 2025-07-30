@@ -3,9 +3,7 @@ package ru.forum.whale.space.api.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.forum.whale.space.api.util.Messages;
 
 import java.time.ZonedDateTime;
@@ -13,7 +11,10 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class ChatMsgDto {
     @NotNull
     private Long id;

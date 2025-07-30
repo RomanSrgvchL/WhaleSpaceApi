@@ -1,16 +1,17 @@
 package ru.forum.whale.space.api.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class ChatDto {
     @NotNull
     private Long id;

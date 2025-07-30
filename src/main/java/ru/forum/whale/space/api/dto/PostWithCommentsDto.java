@@ -7,14 +7,15 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.forum.whale.space.api.util.Messages;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class PostWithCommentsDto {
     @NotNull
     private Long id;

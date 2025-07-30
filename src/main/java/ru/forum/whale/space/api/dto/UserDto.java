@@ -6,9 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.forum.whale.space.api.model.Gender;
 import ru.forum.whale.space.api.util.Messages;
 
@@ -17,7 +15,10 @@ import java.time.ZonedDateTime;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class UserDto {
     @NotNull
     private Long id;

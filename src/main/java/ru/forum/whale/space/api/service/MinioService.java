@@ -23,8 +23,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class MinioService {
     private final MinioClient minioClient;
-    private static final int MIN_IMAGE_WIDTH = 150;
-    private static final int MIN_IMAGE_HEIGHT = 150;
+
+    public static final int MIN_IMAGE_WIDTH = 150;
+    public static final int MIN_IMAGE_HEIGHT = 150;
 
     public void initBucket(String bucketName) {
         try {

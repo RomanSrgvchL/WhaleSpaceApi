@@ -29,7 +29,6 @@ public class DiscussionMsgService {
     private final DiscussionMsgMapper discussionMsgMapper;
 
     private static final String FOLDER_PATTERN = "discussion-%d";
-
     private static final String DISCUSSION_MESSAGES_BUCKET = StorageBucket.DISCUSSION_MESSAGES_BUCKET.getBucketName();
 
     @PostConstruct

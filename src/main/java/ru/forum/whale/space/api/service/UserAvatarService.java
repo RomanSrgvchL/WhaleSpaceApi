@@ -18,12 +18,12 @@ public class UserAvatarService {
     private final UserRepository userRepository;
     private final SessionUtilService sessionUtilService;
     private final MinioService minioService;
-    private static final int MIN_AVATAR_WIDTH = 400;
-    private static final int MIN_AVATAR_HEIGHT = 400;
 
     private static final String FOLDER_PATTERN = "avatar-%d";
-
     private  static final String USER_AVATARS_BUCKET = StorageBucket.USER_AVATARS_BUCKET.getBucketName();
+
+    public static final int MIN_AVATAR_WIDTH = 400;
+    public static final int MIN_AVATAR_HEIGHT = 400;
 
     @PostConstruct
     private void initUserAvatarsBucket() {

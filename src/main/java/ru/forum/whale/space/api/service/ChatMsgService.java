@@ -32,7 +32,6 @@ public class ChatMsgService {
     private final ChatMsgMapper chatMsgMapper;
 
     private static final String FOLDER_PATTERN = "chat-%d";
-
     private static final String CHAT_MESSAGES_BUCKET = StorageBucket.CHAT_MESSAGES_BUCKET.getBucketName();
 
     @PostConstruct

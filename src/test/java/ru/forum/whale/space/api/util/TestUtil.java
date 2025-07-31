@@ -3,12 +3,15 @@ package ru.forum.whale.space.api.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.multipart.MultipartFile;
 import ru.forum.whale.space.api.handler.AccessDeniedExceptionHandler;
 import ru.forum.whale.space.api.handler.AuthExceptionHandler;
 import ru.forum.whale.space.api.model.Chat;
+import ru.forum.whale.space.api.model.Role;
 import ru.forum.whale.space.api.model.User;
+import ru.forum.whale.space.api.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -82,5 +85,15 @@ public final class TestUtil {
         result.andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false));
+    }
+
+    public static User createAndSaveUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        User user = User.builder()
+                .username(USERNAME)
+                .password(passwordEncoder.encode(PASSWORD))
+                .role(Role.USER.getRoleName())
+                .build();
+
+        return userRepository.save(user);
     }
 }

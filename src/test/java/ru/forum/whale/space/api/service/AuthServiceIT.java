@@ -14,8 +14,6 @@ import ru.forum.whale.space.api.IntegrationTestBase;
 import ru.forum.whale.space.api.dto.request.UserAuthRequestDto;
 import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
-import ru.forum.whale.space.api.handler.AuthExceptionHandler;
-import ru.forum.whale.space.api.model.Role;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
 import ru.forum.whale.space.api.security.CustomUserDetails;
@@ -42,7 +40,7 @@ class AuthServiceIT extends IntegrationTestBase {
 
         @BeforeEach
         void setUp() {
-            user = createAndSaveUser();
+            user = createAndSaveUser(userRepository, passwordEncoder);
         }
 
         @Test
@@ -81,7 +79,7 @@ class AuthServiceIT extends IntegrationTestBase {
     class RegisterTest {
         @Test
         void register_whenUserWithSameUsernameExists_thenThrowBadCredentialsException() {
-            createAndSaveUser();
+            createAndSaveUser(userRepository, passwordEncoder);
 
             UserAuthRequestDto userAuthRequestDto = new UserAuthRequestDto(USERNAME, PASSWORD);
 
@@ -100,15 +98,5 @@ class AuthServiceIT extends IntegrationTestBase {
             assertTrue(response.isSuccess());
             assertEquals(response.getMessage(), "Регистрация прошла успешно!");
         }
-    }
-
-    private User createAndSaveUser() {
-        User user = User.builder()
-                .username(USERNAME)
-                .password(passwordEncoder.encode(PASSWORD))
-                .role(Role.USER.getRoleName())
-                .build();
-
-        return userRepository.save(user);
     }
 }

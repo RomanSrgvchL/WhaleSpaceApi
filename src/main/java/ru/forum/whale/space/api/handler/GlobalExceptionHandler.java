@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -74,15 +75,15 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, ErrorUtil.buildErrorMessage(bindingResult));
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ResponseDto> handleBadCredentials(BadCredentialsException e) {
+        ResponseDto response = ResponseDto.buildFailure(AuthExceptionHandler.BAD_CREDENTIALS);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ResponseDto> handleValidationException(ConstraintViolationException e) {
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         return buildResponse(HttpStatus.BAD_REQUEST, ErrorUtil.buildErrorMessage(violations));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseDto> handleException(Exception e) {
-        log.error("Неизвестная ошибка: {}", e.getMessage());
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Неизвестная ошибка: " + e.getMessage());
     }
 }

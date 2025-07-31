@@ -30,6 +30,7 @@ public final class TestUtil {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String FILENAME = "file";
+    public static final String INVALID = "invalid";
 
     public static MultipartFile createMockMultipartFile(String contentType) {
         MultipartFile file = mock(MultipartFile.class);

@@ -15,8 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static ru.forum.whale.space.api.util.TestUtil.FILENAME;
-import static ru.forum.whale.space.api.util.TestUtil.createBadRequestResponse;
+import static ru.forum.whale.space.api.util.TestUtil.*;
 
 @CustomWebMvcTest(FileController.class)
 class FileControllerTest {
@@ -48,7 +47,7 @@ class FileControllerTest {
     void getPresignedUrl_whenInvalidBucket_thenReturnBadRequest() throws Exception {
         createBadRequestResponse(mockMvc.perform(get(BASE_URL + "/presigned")
                         .param("fileName", FILENAME)
-                        .param("bucket", "INVALID")));
+                        .param("bucket", INVALID)));
     }
 
     @Test
@@ -76,6 +75,6 @@ class FileControllerTest {
 
         createBadRequestResponse(mockMvc.perform(get(BASE_URL + "/presigned/batch")
                 .param("fileNames", fileNames.toArray(new String[0]))
-                .param("bucket", "INVALID")));
+                .param("bucket", INVALID)));
     }
 }

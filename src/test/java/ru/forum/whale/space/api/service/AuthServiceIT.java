@@ -14,6 +14,7 @@ import ru.forum.whale.space.api.IntegrationTestBase;
 import ru.forum.whale.space.api.dto.request.UserAuthRequestDto;
 import ru.forum.whale.space.api.dto.response.ResponseDto;
 import ru.forum.whale.space.api.exception.ResourceAlreadyExistsException;
+import ru.forum.whale.space.api.handler.AuthExceptionHandler;
 import ru.forum.whale.space.api.model.Role;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.UserRepository;
@@ -46,7 +47,7 @@ class AuthServiceIT extends IntegrationTestBase {
 
         @Test
         void login_whenInvalidUsernameOrPassword_thenThrowBadCredentialsException() {
-            UserAuthRequestDto userAuthRequestDto = new UserAuthRequestDto("INVALID", "INVALID");
+            UserAuthRequestDto userAuthRequestDto = new UserAuthRequestDto(INVALID, INVALID);
 
             HttpServletRequest request = mock(HttpServletRequest.class);
 

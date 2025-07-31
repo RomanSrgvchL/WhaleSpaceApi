@@ -59,13 +59,13 @@ class PostControllerTest {
     @Test
     void getAll_whenInvalidSortParam_thenReturnBadRequest() throws Exception {
         createBadRequestResponse(mockMvc.perform(get(BASE_URL)
-                .param("sort", "INVALID")));
+                .param("sort", INVALID)));
     }
 
     @Test
     void getAll_whenInvalidOrderParam_thenReturnBadRequest() throws Exception {
         createBadRequestResponse(mockMvc.perform(get(BASE_URL)
-                .param("order", "INVALID")));
+                .param("order", INVALID)));
     }
 
     @WithMockUser

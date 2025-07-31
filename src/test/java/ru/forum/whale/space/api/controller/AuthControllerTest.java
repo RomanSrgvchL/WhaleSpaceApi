@@ -52,7 +52,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void login_thenLoginUser() throws Exception {
+    void login_thenLoginUserAndReturnSuccessfulResponseDto() throws Exception {
         UserAuthRequestDto userAuthRequestDto = new UserAuthRequestDto(USERNAME, PASSWORD);
 
         ResponseDto response = ResponseDto.buildSuccess("Вход выполнен успешно!");
@@ -69,7 +69,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void register_thenRegisterUser() throws Exception {
+    void register_thenRegisterUserAndReturnSuccessfulResponseDto() throws Exception {
         UserAuthRequestDto userAuthRequestDto = new UserAuthRequestDto(USERNAME, PASSWORD);
 
         ResponseDto response = ResponseDto.buildSuccess("Регистрация прошла успешно!");

@@ -1,8 +1,8 @@
-FROM openjdk:23-jdk-slim
+FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
-COPY target/whale-space-api-1.0.jar /app/app.jar
+COPY build/libs/whale-space-api-1.0.jar /app/app.jar
 
 EXPOSE 8080
 

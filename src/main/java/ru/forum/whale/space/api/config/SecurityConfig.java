@@ -65,9 +65,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "http://localhost",
-                "http://localhost:63342",
-                "http://localhost:63343"
+                "http://localhost"
         ));
 
         configuration.addAllowedMethod("*");

@@ -24,7 +24,7 @@ import ru.forum.whale.space.api.util.Messages;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"post"})
 @Entity
 @Table(name = "comments")
 public class Comment {

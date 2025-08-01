@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"discussion"})
 @Entity
 @Table(name = "discussion_messages")
 public class DiscussionMsg {

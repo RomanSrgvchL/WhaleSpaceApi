@@ -20,7 +20,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"comment"})
 @Entity
 @Table(name = "comment_likes")
 public class CommentLike {

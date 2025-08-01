@@ -56,13 +56,15 @@ public class MinioService {
             throw new ResourceNotFoundException(("Файл '%s' не найден".formatted(fileName)));
         }
         try {
-            return minioClient.getPresignedObjectUrl(
+            String url = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
                             .bucket(bucketName)
                             .object(fileName)
                             .expiry(12, TimeUnit.HOURS)
                             .build());
+
+            return url.replaceFirst("minio:9000", "localhost/minio");
         } catch (Exception e) {
             throw new GeneralMinioException("Ошибка при генерации временной ссылки на файл '%s': %s"
                     .formatted(fileName, e.getMessage()));

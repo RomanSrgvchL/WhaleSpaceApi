@@ -3,15 +3,13 @@ package ru.forum.whale.space.api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.forum.whale.space.api.aspect.EnableActionLogging;
 import ru.forum.whale.space.api.dto.CommentDto;
 import ru.forum.whale.space.api.dto.request.CommentRequestDto;
 import ru.forum.whale.space.api.exception.CannotDeleteException;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.mapper.CommentMapper;
-import ru.forum.whale.space.api.model.Comment;
-import ru.forum.whale.space.api.model.Post;
-import ru.forum.whale.space.api.model.Role;
-import ru.forum.whale.space.api.model.User;
+import ru.forum.whale.space.api.model.*;
 import ru.forum.whale.space.api.repository.CommentRepository;
 import ru.forum.whale.space.api.repository.PostRepository;
 
@@ -24,6 +22,7 @@ public class CommentService {
     private final SessionUtilService sessionUtilService;
     private final CommentMapper commentMapper;
 
+    @EnableActionLogging(logType = LogType.COMMENT)
     @Transactional
     public CommentDto save(CommentRequestDto commentRequestDto) {
         Post post = postRepository.findById(commentRequestDto.getPostId())

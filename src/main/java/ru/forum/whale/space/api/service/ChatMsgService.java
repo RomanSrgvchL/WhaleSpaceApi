@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.forum.whale.space.api.aspect.EnableActionLogging;
 import ru.forum.whale.space.api.dto.ChatMsgDto;
 import ru.forum.whale.space.api.dto.request.MessageRequestDto;
 import ru.forum.whale.space.api.exception.IllegalOperationException;
@@ -13,6 +14,7 @@ import ru.forum.whale.space.api.exception.ResourceNotFoundException;
 import ru.forum.whale.space.api.mapper.ChatMsgMapper;
 import ru.forum.whale.space.api.model.Chat;
 import ru.forum.whale.space.api.model.ChatMsg;
+import ru.forum.whale.space.api.model.LogType;
 import ru.forum.whale.space.api.model.User;
 import ru.forum.whale.space.api.repository.ChatRepository;
 import ru.forum.whale.space.api.repository.ChatMsgRepository;
@@ -39,6 +41,7 @@ public class ChatMsgService {
         minioService.initBucket(CHAT_MESSAGES_BUCKET);
     }
 
+    @EnableActionLogging(logType = LogType.CHAT_MESSAGE)
     @Transactional
     public ChatMsgDto save(long chatId, MessageRequestDto messageRequestDto, List<MultipartFile> files) {
         FileUtil.validateFiles(files);

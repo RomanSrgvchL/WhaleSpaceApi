@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.forum.whale.space.api.aspect.EnableActionLogging;
 import ru.forum.whale.space.api.dto.CommentDto;
 import ru.forum.whale.space.api.dto.PostWithCommentsDto;
 import ru.forum.whale.space.api.dto.PostDto;
@@ -74,6 +75,7 @@ public class PostService {
                 .toList();
     }
 
+    @EnableActionLogging(logType = LogType.POST)
     @Transactional
     public PostDto save(PostRequestDto postRequestDto, List<MultipartFile> files) {
         FileUtil.validateFiles(files);

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.forum.whale.space.api.aspect.EnableActionLogging;
 import ru.forum.whale.space.api.dto.DiscussionMsgDto;
 import ru.forum.whale.space.api.dto.request.MessageRequestDto;
 import ru.forum.whale.space.api.exception.ResourceNotFoundException;
@@ -36,6 +37,7 @@ public class DiscussionMsgService {
         minioService.initBucket(DISCUSSION_MESSAGES_BUCKET);
     }
 
+    @EnableActionLogging(logType = LogType.DISCUSSION_MESSAGE)
     @Transactional
     public DiscussionMsgDto save(long discussionId, MessageRequestDto messageRequestDto, List<MultipartFile> files) {
         FileUtil.validateFiles(files);

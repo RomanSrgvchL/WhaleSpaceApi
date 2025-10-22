@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/users", "/discussions", "/posts", "/files/**")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/logs").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/discussions").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/discussions/{id}").hasRole("ADMIN")
                         .anyRequest().hasAnyRole("USER", "ADMIN"))

@@ -34,6 +34,9 @@ class AuthServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private SessionService sessionService;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -77,6 +80,7 @@ class AuthServiceTest {
                 verify(oldSession).invalidate();
                 verify(newSession).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                         securityContext);
+                verify(sessionService).saveSessionMetadata(newSession, request);
 
                 assertTrue(response.isSuccess());
                 assertEquals("Вход выполнен успешно!", response.getMessage());
@@ -103,6 +107,7 @@ class AuthServiceTest {
                 verify(oldSession, never()).invalidate();
                 verify(newSession).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                         securityContext);
+                verify(sessionService).saveSessionMetadata(newSession, request);
 
                 assertTrue(response.isSuccess());
                 assertEquals("Вход выполнен успешно!", response.getMessage());

@@ -14,6 +14,10 @@ public final class SessionUtil {
         return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
 
+    public static String getCurrentUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     public static Collection<? extends GrantedAuthority> getCurrentAuthorities() {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities();
     }

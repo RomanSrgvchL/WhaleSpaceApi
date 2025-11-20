@@ -24,6 +24,7 @@ import ru.forum.whale.space.api.repository.UserRepository;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
+    private final SessionService sessionService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -43,6 +44,8 @@ public class AuthService {
 
         HttpSession newSession = request.getSession(true);
         newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+
+        sessionService.saveSessionMetadata(newSession, request);
 
         return ResponseDto.buildSuccess("Вход выполнен успешно!");
     }
